@@ -1,0 +1,57 @@
+---
+// GitHub Pages отдаёт для любого неизвестного адреса один файл /404.html,
+// поэтому страница двуязычная: скрипт оставляет текст на языке из начала адреса.
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import { href } from '../lib/site';
+import { t } from '../i18n';
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t('ru', 'notFound.title')} · {t('en', 'notFound.title')}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <Font cssVariable="--font-source-sans" />
+    <Font cssVariable="--font-plex-serif" />
+    <Font cssVariable="--font-plex-mono" />
+    <script is:inline>
+      (function () {
+        var theme = null;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch (e) {}
+        var dark = theme ? theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
+  </head>
+  <body class="grid place-items-center p-6">
+    <main class="max-w-xl text-center">
+      <p class="eyebrow">404</p>
+      <!-- Один заголовок на два языка; скрипт оставляет язык из начала адреса -->
+      <h1 class="mt-3 text-3xl font-semibold">
+        <span data-lang="ru">{t('ru', 'notFound.title')}</span>
+        <span data-sep aria-hidden="true"> / </span>
+        <span data-lang="en" lang="en">{t('en', 'notFound.title')}</span>
+      </h1>
+      <p class="mt-3 text-muted" data-lang="ru">{t('ru', 'notFound.text')}</p>
+      <p class="mt-1 text-muted" data-lang="en" lang="en">{t('en', 'notFound.text')}</p>
+      <p class="mt-6 flex justify-center gap-3">
+        <a class="btn-primary" data-lang="ru" href={href('/ru/')}>{t('ru', 'notFound.home')}</a>
+        <a class="btn-primary" data-lang="en" lang="en" href={href('/en/')}>{t('en', 'notFound.home')}</a>
+      </p>
+    </main>
+    <script is:inline>
+      (function () {
+        var en = /\/en(\/|$)/.test(location.pathname);
+        document.documentElement.lang = en ? 'en' : 'ru';
+        var hide = document.querySelectorAll('[data-lang="' + (en ? 'ru' : 'en') + '"], [data-sep]');
+        for (var i = 0; i < hide.length; i++) hide[i].hidden = true;
+      })();
+    </script>
+  </body>
+</html>

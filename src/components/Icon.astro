@@ -1,0 +1,28 @@
+---
+import { getIcon } from '../lib/icons';
+
+interface Props {
+  /** 'lucide:search', 'si:github' или просто 'search' (lucide) */
+  name: string;
+  size?: number;
+  class?: string;
+  /** Подпись для скринридеров; без неё иконка декоративная */
+  label?: string;
+}
+
+const { name, size = 20, class: className, label } = Astro.props;
+const icon = getIcon(name);
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={`0 0 ${icon.width} ${icon.height}`}
+  width={size}
+  height={size}
+  class={className}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+  set:html={icon.body}
+/>

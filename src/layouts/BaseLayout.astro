@@ -1,0 +1,104 @@
+---
+import { Font } from 'astro:assets';
+import 'katex/dist/katex.min.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { type Lang, LANGS, OG_LOCALE, otherLang, t } from '../i18n';
+import { href, pagePath } from '../lib/site';
+
+interface Props {
+  lang: Lang;
+  /** Заголовок страницы без имени сайта; без него — заголовок сайта */
+  title?: string;
+  description?: string;
+  /** Есть ли версия страницы на другом языке (hreflang, переключатель языка) */
+  alternate?: boolean;
+  /** Раздел для фильтра поиска Pagefind */
+  section?: string;
+  /** Индексировать ли страницу поиском (заглушки не индексируем) */
+  searchable?: boolean;
+}
+
+const {
+  lang,
+  title,
+  description = t(lang, 'site.description'),
+  alternate = true,
+  section,
+  searchable = true,
+} = Astro.props;
+
+const site = Astro.site!;
+const rest = pagePath(Astro.url.pathname);
+const pageTitle = title ? `${title} — ${t(lang, 'site.name')}` : t(lang, 'site.title');
+const canonical = new URL(href(`/${lang}/${rest}`), site).href;
+const alternates = alternate ? LANGS.map((l) => ({ lang: l, url: new URL(href(`/${l}/${rest}`), site).href })) : [];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.url} />)}
+    {alternate && <link rel="alternate" hreflang="x-default" href={new URL(href('/'), site).href} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={t(lang, 'site.name')} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    {alternate && <meta property="og:locale:alternate" content={OG_LOCALE[otherLang(lang)]} />}
+    <meta name="twitter:card" content="summary" />
+    <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={href('/sitemap-index.xml')} />
+    <Font
+      cssVariable="--font-source-sans"
+      preload={
+        lang === 'ru'
+          ? [
+              { style: 'normal', subset: 'cyrillic' },
+              { style: 'normal', subset: 'latin' },
+            ]
+          : [{ style: 'normal', subset: 'latin' }]
+      }
+    />
+    <Font cssVariable="--font-plex-serif" />
+    <Font cssVariable="--font-plex-mono" />
+    <script is:inline>
+      // Тема до отрисовки, чтобы страница не мигала
+      (function () {
+        var theme = null;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch (e) {}
+        var dark = theme ? theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t(lang, 'a11y.skip')}</a>
+    <Header lang={lang} alternate={alternate} />
+    <main id="main" class="fade-in">
+      {
+        searchable ? (
+          <div data-pagefind-body data-pagefind-filter={section ? `section:${section}` : undefined}>
+            <slot />
+          </div>
+        ) : (
+          <slot />
+        )
+      }
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

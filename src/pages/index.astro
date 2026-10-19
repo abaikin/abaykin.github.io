@@ -1,0 +1,60 @@
+---
+// Корень сайта: выбирает язык (ручной выбор → язык браузера) и переходит на /ru/ или /en/.
+// GitHub Pages не умеет определять язык по IP, поэтому выбор делается в браузере.
+import '../styles/global.css';
+import { href } from '../lib/site';
+
+const site = Astro.site!;
+const ru = href('/ru/');
+const en = href('/en/');
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Алексей Байкин · Aleksei Baikin</title>
+    <meta
+      name="description"
+      content="Сайт Алексея Николаевича Байкина / Personal website of Aleksei Baikin: hydraulic fracturing modelling, publications, talks, projects."
+    />
+    <link rel="alternate" hreflang="ru" href={new URL(ru, site).href} />
+    <link rel="alternate" hreflang="en" href={new URL(en, site).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(href('/'), site).href} />
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <script is:inline define:vars={{ ru, en }}>
+      (function () {
+        var lang = null;
+        try {
+          lang = localStorage.getItem('lang');
+        } catch (e) {}
+        if (lang !== 'ru' && lang !== 'en') {
+          lang = 'en';
+          var list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+          for (var i = 0; i < list.length; i++) {
+            var code = String(list[i]).toLowerCase();
+            if (code.indexOf('ru') === 0) {
+              lang = 'ru';
+              break;
+            }
+            if (code.indexOf('en') === 0) {
+              lang = 'en';
+              break;
+            }
+          }
+        }
+        location.replace(lang === 'ru' ? ru : en);
+      })();
+    </script>
+  </head>
+  <body class="grid place-items-center p-6">
+    <main class="text-center">
+      <p class="font-serif text-2xl font-semibold">Алексей Байкин · <span lang="en">Aleksei Baikin</span></p>
+      <p class="mt-5 flex justify-center gap-6 text-lg">
+        <a href={ru} hreflang="ru">Русский</a>
+        <a href={en} hreflang="en" lang="en">English</a>
+      </p>
+    </main>
+  </body>
+</html>

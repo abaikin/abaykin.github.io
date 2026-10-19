@@ -1,0 +1,39 @@
+---
+// Временные страницы разделов, которые появятся на следующих шагах.
+// Когда раздел готов, он получает свою страницу, а здесь его нужно убрать из списка.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+import { type Lang, type UIKey, LANGS, t } from '../../../i18n';
+
+export function getStaticPaths() {
+  const sections = [
+    { section: 'papers', nav: 'nav.papers', lead: 'section.papers', icon: 'file-text' },
+    { section: 'talks', nav: 'nav.talks', lead: 'section.talks', icon: 'presentation' },
+    { section: 'experience', nav: 'nav.experience', lead: 'section.experience', icon: 'briefcase' },
+    { section: 'courses', nav: 'nav.courses', lead: 'section.courses', icon: 'book-open' },
+    { section: 'blog', nav: 'nav.blog', lead: 'section.blog', icon: 'pen-line' },
+    { section: 'hobby', nav: 'nav.hobby', lead: 'section.hobby', icon: 'map' },
+  ];
+  return LANGS.flatMap((lang) =>
+    sections.map(({ section, ...props }) => ({ params: { lang, section }, props })),
+  );
+}
+
+const lang = Astro.params.lang as Lang;
+const { nav, lead, icon } = Astro.props as { nav: UIKey; lead: UIKey; icon: string };
+---
+
+<BaseLayout lang={lang} title={t(lang, nav)} description={t(lang, lead)} searchable={false}>
+  <div class="wrap py-12 lg:py-16">
+    <SectionHeading icon={`lucide:${icon}`} as="h1">{t(lang, nav)}</SectionHeading>
+    <p class="max-w-2xl text-lg text-muted">{t(lang, lead)}</p>
+    <div class="card mt-10 flex max-w-2xl items-start gap-4 border-dashed p-6">
+      <span class="icon-circle" aria-hidden="true"><Icon name="lucide:hammer" size={20} /></span>
+      <div>
+        <p class="font-semibold text-heading">{t(lang, 'section.inProgress')}</p>
+        <p class="mt-1 text-muted">{t(lang, 'section.inProgressText')}</p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

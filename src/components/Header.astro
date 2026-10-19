@@ -1,0 +1,288 @@
+---
+import Icon from './Icon.astro';
+import { type Lang, type UIKey, otherLang, t } from '../i18n';
+import { langHref, pagePath } from '../lib/site';
+
+interface Props {
+  lang: Lang;
+  /** Есть ли у страницы версия на другом языке (иначе переключатель ведёт на главную) */
+  alternate?: boolean;
+}
+
+const { lang, alternate = true } = Astro.props;
+const current = pagePath(Astro.url.pathname);
+const target = otherLang(lang);
+const switchHref = langHref(target, alternate ? current : '');
+
+const NAV: { key: UIKey; path: string }[] = [
+  { key: 'nav.bio', path: '' },
+  { key: 'nav.papers', path: 'papers/' },
+  { key: 'nav.talks', path: 'talks/' },
+  { key: 'nav.experience', path: 'experience/' },
+  { key: 'nav.projects', path: 'projects/' },
+  { key: 'nav.courses', path: 'courses/' },
+  { key: 'nav.lab', path: 'lab/' },
+  { key: 'nav.blog', path: 'blog/' },
+  { key: 'nav.hobby', path: 'hobby/' },
+];
+const isActive = (path: string) => (path === '' ? current === '' : current.startsWith(path));
+---
+
+<header class="site-header sticky top-0 z-40 border-b border-border bg-header text-header-fg">
+  <div class="wrap flex h-16 items-center gap-1.5">
+    <a
+      href={langHref(lang, 'search/')}
+      class="icon-btn -ml-2"
+      id="search-toggle"
+      aria-label={t(lang, 'header.search')}
+      title={t(lang, 'header.search')}
+      aria-controls="header-search"
+      aria-expanded="false"
+    >
+      <Icon name="lucide:search" size={20} />
+    </a>
+    <a href={langHref(lang)} class="brand whitespace-nowrap font-serif text-lg font-semibold">
+      {t(lang, 'site.name')}
+    </a>
+
+    <nav aria-label={t(lang, 'nav.label')} class="ml-auto hidden xl:block">
+      <ul class="flex items-center gap-0.5">
+        {
+          NAV.map((item) => (
+            <li>
+              <a
+                href={langHref(lang, item.path)}
+                class="nav-link"
+                aria-current={isActive(item.path) ? 'page' : undefined}
+              >
+                {t(lang, item.key)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1 xl:ml-3">
+      <a
+        href={switchHref}
+        hreflang={target}
+        lang={target}
+        class="lang-switch"
+        data-lang={target}
+        aria-label={t(target, 'header.langSwitch')}
+        title={t(target, 'header.langSwitch')}
+      >
+        {target.toUpperCase()}
+      </a>
+      <button
+        type="button"
+        class="icon-btn"
+        id="theme-toggle"
+        data-label-dark={t(lang, 'header.themeToDark')}
+        data-label-light={t(lang, 'header.themeToLight')}
+        aria-label={t(lang, 'header.themeToDark')}
+      >
+        <Icon name="lucide:moon" size={20} class="theme-icon-moon" />
+        <Icon name="lucide:sun" size={20} class="theme-icon-sun" />
+      </button>
+      <button
+        type="button"
+        class="icon-btn -mr-2 xl:hidden"
+        id="menu-toggle"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+        data-label-open={t(lang, 'header.menuOpen')}
+        data-label-close={t(lang, 'header.menuClose')}
+        aria-label={t(lang, 'header.menuOpen')}
+      >
+        <Icon name="lucide:menu" size={22} class="menu-icon-open" />
+        <Icon name="lucide:x" size={22} class="menu-icon-close" />
+      </button>
+    </div>
+  </div>
+
+  <div id="header-search" class="border-t border-border" hidden>
+    <form class="wrap flex items-center gap-2 py-3" action={langHref(lang, 'search/')} method="get" role="search">
+      <label for="header-search-q" class="sr-only">{t(lang, 'header.searchLabel')}</label>
+      <input
+        id="header-search-q"
+        name="q"
+        type="search"
+        class="field"
+        placeholder={t(lang, 'header.searchPlaceholder')}
+        autocomplete="off"
+        required
+      />
+      <button type="submit" class="btn-primary">{t(lang, 'header.searchSubmit')}</button>
+      <button type="button" class="icon-btn" id="search-close" aria-label={t(lang, 'header.searchClose')}>
+        <Icon name="lucide:x" size={20} />
+      </button>
+    </form>
+  </div>
+
+  <nav id="mobile-nav" aria-label={t(lang, 'nav.label')} class="border-t border-border xl:hidden" hidden>
+    <ul class="wrap grid gap-1 py-3 sm:grid-cols-2">
+      {
+        NAV.map((item) => (
+          <li>
+            <a
+              href={langHref(lang, item.path)}
+              class="nav-link nav-link-mobile"
+              aria-current={isActive(item.path) ? 'page' : undefined}
+            >
+              {t(lang, item.key)}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style is:global>
+  .site-header .brand {
+    color: var(--c-header-fg);
+    text-decoration: none;
+  }
+  .site-header .brand:hover {
+    color: var(--c-primary);
+  }
+  .nav-link {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 0.975rem;
+    font-weight: 500;
+    color: var(--c-header-fg);
+    text-decoration: none;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+  .nav-link:hover {
+    color: var(--c-primary);
+    background: color-mix(in oklab, var(--c-primary) 8%, transparent);
+  }
+  .nav-link[aria-current='page'] {
+    color: var(--c-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.45em;
+  }
+  .nav-link-mobile {
+    padding: 0.6rem 0.75rem;
+    font-size: 1.0625rem;
+  }
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.25rem;
+    min-width: 2.75rem;
+    padding: 0 0.6rem;
+    border: 1px solid var(--c-border-strong);
+    border-radius: 9999px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--c-header-fg);
+    text-decoration: none;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .lang-switch:hover {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+  }
+  [data-theme='dark'] .theme-icon-moon,
+  :root:not([data-theme='dark']) .theme-icon-sun {
+    display: none;
+  }
+  #menu-toggle[aria-expanded='true'] .menu-icon-open,
+  #menu-toggle[aria-expanded='false'] .menu-icon-close {
+    display: none;
+  }
+</style>
+
+<script>
+  // Тема: ручной выбор хранится в localStorage, иначе — системная настройка
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('theme-toggle');
+  const storedTheme = () => {
+    try {
+      return localStorage.getItem('theme');
+    } catch {
+      return null;
+    }
+  };
+  function applyTheme(theme: 'light' | 'dark') {
+    root.dataset.theme = theme;
+    if (themeBtn) {
+      const label = theme === 'dark' ? themeBtn.dataset.labelLight : themeBtn.dataset.labelDark;
+      themeBtn.setAttribute('aria-label', label ?? '');
+    }
+  }
+  applyTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+  themeBtn?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      /* приватный режим: просто не запоминаем */
+    }
+    applyTheme(next);
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!storedTheme()) applyTheme(e.matches ? 'dark' : 'light');
+  });
+
+  // Язык: ручной выбор запоминается и важнее языка браузера
+  document.querySelectorAll<HTMLAnchorElement>('a[data-lang]').forEach((a) =>
+    a.addEventListener('click', () => {
+      try {
+        localStorage.setItem('lang', a.dataset.lang ?? '');
+      } catch {
+        /* не критично */
+      }
+    }),
+  );
+
+  // Мобильное меню
+  const menuBtn = document.getElementById('menu-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+  menuBtn?.addEventListener('click', () => {
+    const open = menuBtn.getAttribute('aria-expanded') !== 'true';
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', (open ? menuBtn.dataset.labelClose : menuBtn.dataset.labelOpen) ?? '');
+    if (mobileNav) mobileNav.hidden = !open;
+  });
+
+  // Поиск в шапке: лупа раскрывает поле, Enter ведёт на страницу результатов
+  const searchToggle = document.getElementById('search-toggle');
+  const searchPanel = document.getElementById('header-search');
+  const searchInput = document.getElementById('header-search-q') as HTMLInputElement | null;
+  function setSearch(open: boolean) {
+    if (!searchPanel) return;
+    searchPanel.hidden = !open;
+    searchToggle?.setAttribute('aria-expanded', String(open));
+    if (open) searchInput?.focus();
+  }
+  searchToggle?.addEventListener('click', (e) => {
+    e.preventDefault();
+    // hidden в TS 6 может быть true | false | 'until-found'
+    setSearch(!searchPanel || searchPanel.hidden !== false);
+  });
+  document.getElementById('search-close')?.addEventListener('click', () => {
+    setSearch(false);
+    searchToggle?.focus();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && searchPanel && !searchPanel.hidden) {
+      setSearch(false);
+      searchToggle?.focus();
+    }
+  });
+</script>

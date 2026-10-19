@@ -1,0 +1,18 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Иконка lucide в тонированном круге */
+  icon: string;
+  id?: string;
+  as?: 'h1' | 'h2' | 'h3';
+}
+
+const { icon, id, as: Tag = 'h2' } = Astro.props;
+const size = Tag === 'h1' ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-[1.75rem]';
+---
+
+<div class="mb-6 flex items-center gap-3">
+  <span class="icon-circle" aria-hidden="true"><Icon name={icon} size={20} /></span>
+  <Tag id={id} class:list={['font-semibold tracking-tight', size]}><slot /></Tag>
+</div>

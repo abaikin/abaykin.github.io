@@ -1,0 +1,13 @@
+---
+import { type Lang, t } from '../i18n';
+
+// Видимая пометка пробела в данных (поле со значением TODO)
+interface Props {
+  lang: Lang;
+  text?: string;
+}
+
+const { lang, text } = Astro.props;
+---
+
+<span class="todo-note" title="TODO">{text ?? t(lang, 'common.todo')}</span>
