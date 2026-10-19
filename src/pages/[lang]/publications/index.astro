@@ -1,0 +1,207 @@
+---
+// Публикации: src/data/publications.bib → список по годам с поиском, фильтрами (тип, индексация, темы)
+// и сортировкой. Все записи есть в статическом HTML; скрипт только скрывает и переставляет их.
+// Состояние фильтров хранится в адресе: ?q=…&type=journal,rid&index=scopus&tag=poroelasticity&sort=asc
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+import PublicationItem, { type RelatedLink } from '../../../components/PublicationItem.astro';
+import { type Lang, type UIKey, langPaths, loc, t } from '../../../i18n';
+import { href, langHref } from '../../../lib/site';
+import { comparePubs, findJournal, ownerFamilies } from '../../../lib/publications';
+
+export const getStaticPaths = langPaths;
+
+const lang = Astro.params.lang as Lang;
+
+const pubs = (await getCollection('publications')).sort(comparePubs);
+const journals = (await getCollection('journals')).map((j) => j.data);
+const tagEntries = await getCollection('tags');
+const tagLabels = new Map(tagEntries.map((tag) => [tag.id, tag.data[lang]]));
+const profileEntry = await getEntry('profile', 'profile');
+if (!profileEntry) throw new Error('Нет данных src/data/profile.yaml');
+const owners = ownerFamilies([profileEntry.data.name_ru, profileEntry.data.name_en, ...profileEntry.data.alt_names]);
+
+// Обратные связи: проекты и выступления, которые ссылаются на публикацию
+const related = (pairs: [string, RelatedLink][]) => {
+  const map = new Map<string, RelatedLink[]>();
+  for (const [key, link] of pairs) map.set(key, [...(map.get(key) ?? []), link]);
+  return map;
+};
+const projectsByPub = related(
+  (await getCollection('projects')).flatMap((p) => {
+    const title = loc(p.data, 'title', lang)!;
+    return p.data.publications.map((ref): [string, RelatedLink] => [
+      ref.id,
+      { title: title.text, lang: title.lang, href: langHref(lang, `projects/${p.id}/`) },
+    ]);
+  }),
+);
+// Раздел «Выступления» наполняется на шаге 3; пока файлов нет, коллекцию не запрашиваем (иначе предупреждение)
+const hasTalks = Object.keys(import.meta.glob('/src/content/talks/*.yaml')).length > 0;
+const talksByPub = related(
+  (hasTalks ? await getCollection('talks') : []).flatMap((talk) => {
+    const title = loc(talk.data, 'title', lang)!;
+    return talk.data.publications.map((ref): [string, RelatedLink] => [
+      ref.id,
+      { title: title.text, lang: title.lang, href: langHref(lang, `talks/#${talk.id}`) },
+    ]);
+  }),
+);
+
+const items = pubs.map((pub) => ({ pub, journal: findJournal(pub.data, journals) }));
+const years = [...new Set(pubs.map((p) => p.data.year))];
+
+// Счётчики для фильтров
+function count<T>(values: T[]) {
+  return values.reduce((m, v) => m.set(v, (m.get(v) ?? 0) + 1), new Map<T, number>());
+}
+const TYPES = ['journal', 'conference', 'rid', 'other'] as const;
+const typeCounts = count<string>(pubs.map((p) => p.data.category));
+const INDEX = ['wos', 'scopus', 'rinc', 'rsci', 'vak', 'wl'] as const;
+const indexCounts = count<string>(
+  items.flatMap(({ pub, journal }) => [...pub.data.indexing, ...(journal?.vak ? ['vak'] : []), ...(journal?.white_list ? ['wl'] : [])]),
+);
+const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) => tag.id))).entries()].sort(
+  (a, b) => b[1] - a[1] || (tagLabels.get(a[0]) ?? a[0]).localeCompare(tagLabels.get(b[0]) ?? b[0]),
+);
+---
+
+<BaseLayout lang={lang} title={t(lang, 'nav.publications')} description={t(lang, 'section.publications')} section="publications">
+  <noscript slot="head">
+    <style>
+      .pub-details[hidden] {
+        display: block !important;
+      }
+    </style>
+  </noscript>
+
+  <div
+    class="wrap py-12 lg:py-16"
+    id="pub-root"
+    data-msg-count={t(lang, 'pubs.count')}
+    data-msg-copied={t(lang, 'pubs.copied')}
+    data-msg-copy-failed={t(lang, 'pubs.copyFailed')}
+  >
+    <SectionHeading icon="lucide:file-text" as="h1">{t(lang, 'nav.publications')}</SectionHeading>
+    <p class="max-w-3xl text-lg text-muted">{t(lang, 'section.publications')}</p>
+    <p class="mt-5">
+      <a class="btn-primary" href={href('/publications.bib')} download="baikin-publications.bib">
+        <Icon name="lucide:download" size={18} />
+        {t(lang, 'pubs.downloadBib')}
+      </a>
+    </p>
+
+    <!-- Поиск и фильтры без JavaScript не работают, поэтому их показывает скрипт -->
+    <div id="pub-filters" class="pub-filters card mt-8" hidden data-pagefind-ignore>
+      <label for="pub-q" class="sr-only">{t(lang, 'pubs.searchLabel')}</label>
+      <div class="relative">
+        <Icon name="lucide:search" size={18} class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-subtle" />
+        <input id="pub-q" type="search" class="field pl-10" placeholder={t(lang, 'pubs.searchPlaceholder')} autocomplete="off" />
+      </div>
+
+      <div class="filter-group">
+        <p class="filter-label" id="f-type">{t(lang, 'pubs.filterType')}</p>
+        <div class="filter-chips" role="group" aria-labelledby="f-type">
+          {
+            TYPES.filter((v) => typeCounts.has(v)).map((v) => (
+              <button type="button" class="filter-chip" aria-pressed="false" data-filter="type" data-value={v}>
+                {t(lang, `pubs.type.${v}` as UIKey)} <span class="filter-count">{typeCounts.get(v)}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <p class="filter-label" id="f-index">{t(lang, 'pubs.filterIndex')}</p>
+        <div class="filter-chips" role="group" aria-labelledby="f-index">
+          {
+            INDEX.filter((v) => indexCounts.has(v)).map((v) => (
+              <button type="button" class="filter-chip" aria-pressed="false" data-filter="index" data-value={v}>
+                {t(lang, `pubs.index.${v}` as UIKey)} <span class="filter-count">{indexCounts.get(v)}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <details class="filter-group filter-tags" id="pub-tags">
+        <summary class="filter-label">
+          {t(lang, 'pubs.filterTags')} <span class="filter-count">{tagCounts.length}</span>
+        </summary>
+        <div class="filter-chips" role="group" aria-label={t(lang, 'pubs.filterTags')}>
+          {
+            tagCounts.map(([tag, n]) => (
+              <button type="button" class="filter-chip" aria-pressed="false" data-filter="tag" data-value={tag}>
+                {tagLabels.get(tag) ?? tag} <span class="filter-count">{n}</span>
+              </button>
+            ))
+          }
+        </div>
+      </details>
+
+      <div class="filter-footer">
+        <label class="inline-flex items-center gap-2 text-sm">
+          <span class="text-subtle">{t(lang, 'pubs.sortLabel')}</span>
+          <select id="pub-sort" class="field w-auto py-1.5 text-sm">
+            <option value="desc">{t(lang, 'pubs.sortDesc')}</option>
+            <option value="asc">{t(lang, 'pubs.sortAsc')}</option>
+          </select>
+        </label>
+        <p id="pub-count" class="text-sm text-subtle" aria-live="polite"></p>
+        <button type="button" id="pub-reset" class="pub-btn ml-auto" hidden>
+          <Icon name="lucide:x" size={14} />
+          {t(lang, 'pubs.reset')}
+        </button>
+      </div>
+    </div>
+    <noscript><p class="mt-6 text-sm text-subtle">{t(lang, 'pubs.noscript')}</p></noscript>
+
+    <nav class="year-nav" aria-label={t(lang, 'pubs.years')} data-pagefind-ignore>
+      <ul>
+        {
+          years.map((y) => (
+            <li>
+              <a href={`#y${y}`}>{y}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div id="pub-list">
+      {
+        years.map((y) => (
+          <section id={`y${y}`} class="pub-year" aria-labelledby={`y${y}-h`}>
+            <h2 id={`y${y}-h`} class="pub-year-heading">
+              {y}
+            </h2>
+            <ol class="pub-items">
+              {items
+                .filter(({ pub }) => pub.data.year === y)
+                .map(({ pub, journal }) => (
+                  <PublicationItem
+                    lang={lang}
+                    pub={pub}
+                    journal={journal}
+                    owners={owners}
+                    tagLabels={tagLabels}
+                    projects={projectsByPub.get(pub.id)}
+                    talks={talksByPub.get(pub.id)}
+                  />
+                ))}
+            </ol>
+          </section>
+        ))
+      }
+    </div>
+    <p id="pub-empty" class="mt-10 text-lg text-muted" hidden>{t(lang, 'pubs.empty')}</p>
+  </div>
+  <div id="pub-toast" class="toast" role="status" aria-live="polite" hidden></div>
+</BaseLayout>
+
+<script>
+  import '../../../scripts/publications';
+</script>

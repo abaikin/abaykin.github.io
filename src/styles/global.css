@@ -427,6 +427,295 @@
     text-transform: uppercase;
     color: var(--c-subtle);
   }
+  /* ===== Публикации ===== */
+  /* Пометка «машинный перевод» и подобные уточнения рядом с текстом */
+  .mt-note {
+    margin-inline-start: 0.5rem;
+    font-size: 0.8125rem;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--c-subtle);
+  }
+  /* Значок индексации (WoS, Scopus, ВАК…) — информационный, поэтому нейтральный */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.5rem;
+    border: 1px solid var(--c-border-strong);
+    border-radius: 0.375rem;
+    background: var(--c-surface-alt);
+    color: var(--c-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    cursor: default;
+  }
+  .badge-link {
+    color: var(--c-primary);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .badge-link:hover {
+    border-color: var(--c-primary);
+  }
+  /* Небольшие кнопки у записи: Подробнее, DOI, BibTeX, Цитировать */
+  .pub-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--c-border-strong);
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--c-primary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .pub-btn:hover {
+    color: var(--c-primary);
+    border-color: color-mix(in oklab, var(--c-primary) 45%, var(--c-border-strong));
+    background: var(--c-primary-soft);
+  }
+  .pub-btn[aria-expanded='true'] .pub-chevron {
+    transform: rotate(180deg);
+  }
+  .pub-chevron {
+    transition: transform 0.2s ease;
+  }
+  /* Фильтры */
+  .pub-filters {
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  .filter-group {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .filter-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-subtle);
+  }
+  .filter-tags > summary {
+    width: fit-content;
+    cursor: pointer;
+  }
+  .filter-tags > summary:hover {
+    color: var(--c-primary);
+  }
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--c-border-strong);
+    border-radius: 9999px;
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .filter-chip:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+  }
+  .filter-chip[aria-pressed='true'] {
+    background: var(--c-primary-soft);
+    border-color: var(--c-primary);
+    color: var(--c-primary-soft-fg);
+  }
+  .filter-count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--c-subtle);
+  }
+  .filter-chip[aria-pressed='true'] .filter-count {
+    color: inherit;
+  }
+  .filter-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--c-border);
+  }
+  /* Липкая полоска с годами под шапкой */
+  .year-nav {
+    position: sticky;
+    top: 4rem;
+    z-index: 30;
+    margin-top: 1.5rem;
+    border-bottom: 1px solid var(--c-border);
+    background: color-mix(in oklab, var(--c-bg) 92%, transparent);
+    backdrop-filter: blur(6px);
+  }
+  .year-nav ul {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    scrollbar-width: thin;
+  }
+  .year-nav a {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .year-nav a:hover {
+    background: var(--c-primary-soft);
+  }
+  .pub-year {
+    scroll-margin-top: 7.5rem;
+  }
+  .pub-year-heading {
+    margin-top: 2.25rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--c-border);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  .pub-items {
+    display: grid;
+  }
+  .pub {
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .pub:last-child {
+    border-bottom: 0;
+  }
+  .pub-kind {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-secondary);
+  }
+  .pub-title {
+    margin-top: 0.2rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.4;
+    scroll-margin-top: 7.5rem;
+  }
+  .pub:has(.pub-title:target) {
+    margin-inline: -0.75rem;
+    padding-inline: 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--c-primary-soft);
+  }
+  .pub-subtitle {
+    margin-top: 0.15rem;
+    font-size: 0.9375rem;
+    color: var(--c-muted);
+  }
+  .pub-authors {
+    margin-top: 0.35rem;
+    font-size: 0.9375rem;
+  }
+  .pub-owner {
+    font-weight: 700;
+    color: var(--c-heading);
+  }
+  .pub-venue {
+    margin-top: 0.15rem;
+    font-size: 0.9375rem;
+    font-style: italic;
+    color: var(--c-muted);
+  }
+  .pub-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+  }
+  .pub-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.7rem;
+  }
+  .pub-details {
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 0.85rem;
+    padding: 1rem 1.1rem;
+    border-left: 3px solid var(--c-secondary-line);
+    border-radius: 0 0.5rem 0.5rem 0;
+    background: var(--c-surface-alt);
+    font-size: 0.9375rem;
+  }
+  .pub-dt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-subtle);
+  }
+  .pub-abstract {
+    margin-top: 0.35rem;
+    line-height: 1.65;
+  }
+  .pub-abstract p + p {
+    margin-top: 0.6rem;
+  }
+  .pub-original {
+    margin-top: 0.6rem;
+  }
+  .pub-original > summary {
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--c-primary);
+  }
+  .pub-related {
+    margin-top: 0.3rem;
+    list-style: disc;
+    padding-inline-start: 1.25rem;
+  }
+  /* Уведомление «Скопировано» */
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    z-index: 60;
+    transform: translateX(-50%);
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.6rem;
+    background: var(--c-heading);
+    color: var(--c-bg);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px -5px rgb(var(--c-shadow) / 0.3);
+  }
+
   /* Цвета плагина typography берём из палитры */
   .prose {
     --tw-prose-body: var(--c-fg);

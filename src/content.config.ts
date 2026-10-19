@@ -1,6 +1,8 @@
 import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { bibtexLoader } from './lib/bibtex-loader';
+import { optionalGlob } from './lib/optional-glob';
 
 // Пометка пробела в данных: значение 'TODO' (см. npm run todo)
 const text = z.string().min(1);
@@ -91,6 +93,9 @@ const projects = defineCollection({
       links: z.array(z.strictObject({ label: text, url: z.url() })).default([]),
       cover: image().optional(),
       tags: z.array(reference('tags')).default([]),
+      // Связанные работы: ключи из publications.bib и id выступлений (имя файла в src/content/talks/)
+      publications: z.array(reference('publications')).default([]),
+      talks: z.array(reference('talks')).default([]),
       translation,
     }),
 });
@@ -125,4 +130,108 @@ const tags = defineCollection({
   }),
 });
 
-export const collections = { profile, education, projects, laboratory, tags };
+const optText = text.optional();
+
+/**
+ * Публикации: src/data/publications.bib (разбор — src/lib/bibtex-loader.ts).
+ * Здесь проверяются уже разобранные записи: язык, год, DOI, теги, индексация.
+ */
+const publications = defineCollection({
+  loader: bibtexLoader({ path: 'src/data/publications.bib' }),
+  schema: z.strictObject({
+    entry_type: text,
+    category: z.enum(['journal', 'conference', 'rid', 'other']),
+    kind: z.enum(['article', 'proceedings', 'abstract', 'patent', 'software', 'thesis', 'preprint', 'teaching', 'other']),
+    lang: z.enum(['ru', 'en'], { message: 'langid: укажите {russian} или {english}' }),
+    year: year,
+    date: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'date: формат 2024-01-12').optional(),
+    authors: z.array(text).min(1, 'author: нужен хотя бы один автор'),
+    authors_en: z.array(text).default([]),
+    author_order_todo: z.boolean(),
+    title: text,
+    title_ru: optText,
+    title_en: optText,
+    journal: optText,
+    journal_en: optText,
+    booktitle: optText,
+    booktitle_en: optText,
+    institution: optText,
+    publisher: optText,
+    address: optText,
+    volume: optText,
+    number: optText,
+    pages: optText,
+    eid: optText,
+    thesis_type: optText,
+    holder: optText,
+    holder_en: optText,
+    note: optText,
+    note_ru: optText,
+    note_en: optText,
+    issn: z.array(z.string().regex(/^\d{4}-\d{3}[\dX]$/, 'issn: формат 1234-567X')).default([]),
+    isbn: optText,
+    doi: z.string().regex(/^10\.\d{4,9}\/\S+$/, 'doi: формат 10.xxxx/…, без https://doi.org/').optional(),
+    url: z.url().optional(),
+    eprint: optText,
+    eprinttype: z.enum(['arxiv', 'ssrn']).optional(),
+    abstract: optText,
+    abstract_ru: optText,
+    abstract_en: optText,
+    translation,
+    tags: z.array(reference('tags')).default([]),
+    indexing: z.array(z.enum(['wos', 'scopus', 'rinc', 'rsci'])).default([]),
+    elibrary: z.string().regex(/^\d+$/, 'elibrary: номер статьи в eLibrary (цифры)').optional(),
+    fulltext: optText,
+    citation_ru: optText,
+    citation_en: optText,
+    bibtex: text,
+  }),
+});
+
+/** Журналы: категория ВАК и уровень «Белого списка» по ISSN — src/data/journals.yaml */
+const journals = defineCollection({
+  loader: file('src/data/journals.yaml'),
+  schema: z
+    .strictObject({
+      name_ru: optText,
+      name_en: optText,
+      issn: z.array(z.string().regex(/^\d{4}-\d{3}[\dX]$/)).default([]),
+      vak: z.enum(['K1', 'K2', 'K3']).optional(),
+      vak_basis: z.enum(['list', 'equated']).optional(),
+      white_list: z.number().int().min(1).max(4).optional(),
+      white_list_year: year.optional(),
+    })
+    .refine((j) => j.issn.length > 0 || j.name_ru || j.name_en, 'нужен issn или название журнала'),
+});
+
+/**
+ * Выступления: src/content/talks/<id>.yaml, один файл на доклад (раздел наполняется на шаге 3).
+ * status: пленарный / приглашённый / секционный / короткое сообщение / стендовый;
+ * scope («охват»): международная / всероссийская / всероссийская с международным участием / не указано.
+ */
+const talks = defineCollection({
+  loader: optionalGlob({ base: './src/content/talks', extension: '.yaml' }),
+  schema: z
+    .object({
+      date: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/),
+      title_ru: optText,
+      title_en: optText,
+      event_ru: optText,
+      event_en: optText,
+      city_ru: optText,
+      city_en: optText,
+      url: z.url().optional(),
+      status: z.enum(['plenary', 'invited', 'oral', 'short', 'poster', 'TODO']).default('TODO'),
+      scope: z.enum(['international', 'national-intl', 'national', 'unknown']).default('unknown'),
+      speaker: z.union([z.boolean(), z.literal('TODO')]).default('TODO'),
+      abstract_pdf: optText,
+      slides_pdf: optText,
+      video: optText,
+      publications: z.array(reference('publications')).default([]),
+      tags: z.array(reference('tags')).default([]),
+      translation,
+    })
+    .refine((t) => t.title_ru || t.title_en, 'нужно title_ru или title_en'),
+});
+
+export const collections = { profile, education, projects, laboratory, tags, publications, journals, talks };

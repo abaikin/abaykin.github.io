@@ -1,0 +1,130 @@
+# Журналы: категория ВАК и уровень «Белого списка».
+# Публикация находит журнал по ISSN (поле issn в publications.bib), а если ISSN нет — по названию (journal = name_ru или name_en).
+#
+# vak — категория журнала в Перечне ВАК: K1, K2, K3 (латиницей; на сайте пишется «К1»).
+#   vak_basis: list    — категория из «Распределения журналов Перечня по категориям К1, К2, К3»
+#                        (категорирование 01.01.2024; копия списка: spmi.ru/sites/default/files/zashita/kategorirovanie-perechnya.pdf);
+#   vak_basis: equated — журнал входит в WoS, Scopus, MathSciNet, zbMATH, Springer или GeoRef:
+#                        по письму ВАК от 06.12.2022 № 02-1198 такие журналы приравниваются к К1.
+#   Для зарубежных журналов категория ВАК не указывается: у них видны WoS и Scopus.
+# white_list — уровень в «Белом списке» (1 — высший, 4 — низший), white_list_year — год утверждения уровня.
+#   Источник: journalrank.rcsi.science (РЦНИ), проверено 19.10.2026; действует последний утверждённый уровень.
+
+# ---------- Российские журналы ----------
+neftyanoe-khozyaystvo:
+  name_ru: Нефтяное хозяйство
+  name_en: Neftyanoe Khozyaystvo – Oil Industry
+  issn: [0028-2448]
+  vak: K1
+  vak_basis: list
+  white_list: 1
+  white_list_year: 2025
+
+georesursy:
+  name_ru: Георесурсы
+  name_en: Georesursy
+  issn: [1608-5043, 1608-5078]
+  vak: K1
+  vak_basis: equated
+  white_list: 1
+  white_list_year: 2025
+
+pmtf:
+  name_ru: Прикладная механика и техническая физика
+  issn: [0869-5032]
+  # К1 — через переводную версию Journal of Applied Mechanics and Technical Physics (WoS, Scopus, Springer)
+  vak: K1
+  vak_basis: equated
+  white_list: 2
+  white_list_year: 2025
+
+gimsrs:
+  name_ru: Геология и минерально-сырьевые ресурсы Сибири
+  name_en: Geology and Mineral Resources of Siberia
+  issn: [2078-0575, 2311-9594]
+  vak: K1
+  vak_basis: equated
+  white_list: 2
+  white_list_year: 2026
+
+proneft:
+  name_ru: PROнефть. Профессионально о нефти
+  name_en: PROneft. Professionally about Oil
+  issn: [2587-7399, 2588-0055]
+  vak: K3
+  vak_basis: list
+  white_list: 3
+  white_list_year: 2025
+
+semr:
+  name_ru: Сибирские электронные математические известия
+  name_en: Siberian Electronic Mathematical Reports
+  issn: [1813-3304]
+  vak: K1
+  vak_basis: equated
+  white_list: 2
+  white_list_year: 2025
+
+kachestvo-i-zhizn:
+  name_ru: Качество и жизнь
+  issn: [2312-5209]
+  vak: K3
+  vak_basis: list
+  white_list: 4
+  white_list_year: 2025
+
+nauka-i-biznes:
+  # В «Белом списке» не найден. ISSN не известен (TODO), поэтому журнал ищется по названию.
+  name_ru: "Наука и бизнес: пути развития"
+  vak: K3
+  vak_basis: list
+
+# ---------- Зарубежные журналы и переводные версии ----------
+engineering-fracture-mechanics:
+  name_en: Engineering Fracture Mechanics
+  issn: [0013-7944, 1873-7315]
+  white_list: 1
+  white_list_year: 2023
+
+geoenergy-science-engineering:
+  # бывший Journal of Petroleum Science and Engineering (те же ISSN 0920-4105, 1873-4715)
+  name_en: Geoenergy Science and Engineering
+  issn: [2949-8910, 2949-8929, 0920-4105, 1873-4715]
+  white_list: 1
+  white_list_year: 2023
+
+rock-mechanics-rock-engineering:
+  name_en: Rock Mechanics and Rock Engineering
+  issn: [0723-2632, 1434-453X]
+  white_list: 1
+  white_list_year: 2023
+
+ijrmms:
+  name_en: International Journal of Rock Mechanics and Mining Sciences
+  issn: [1365-1609, 1873-4545]
+  white_list: 1
+  white_list_year: 2023
+
+gete:
+  name_en: Geomechanics for Energy and the Environment
+  issn: [2352-3808]
+  white_list: 1
+  white_list_year: 2023
+
+ijss:
+  name_en: International Journal of Solids and Structures
+  issn: [0020-7683, 1879-2146]
+  white_list: 1
+  white_list_year: 2023
+
+jamtp:
+  name_en: Journal of Applied Mechanics and Technical Physics
+  issn: [0021-8944, 1573-8620]
+  white_list: 2
+  white_list_year: 2023
+
+siberian-math-journal:
+  name_en: Siberian Mathematical Journal
+  issn: [0037-4466, 1573-9260]
+  white_list: 2
+  white_list_year: 2023
