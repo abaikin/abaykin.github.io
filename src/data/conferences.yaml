@@ -1,0 +1,96 @@
+# Серии мероприятий для фильтра «Мероприятие» на странице «Выступления».
+# Ключ — идентификатор серии: его пишут в поле conference выступления (src/content/talks/<id>.yaml).
+# short_* — подпись в фильтре, name_* — полное название серии (подсказка при наведении).
+# Название конкретного выпуска (номер, год) пишется в файле выступления: event_ru / event_en.
+# Если *_ru нет, на русской странице показывается английское название, и наоборот.
+# translation: auto — английские названия российских мероприятий переведены машинно, проверьте.
+
+cfrac:
+  short_ru: CFRAC
+  short_en: CFRAC
+  name_en: International Conference on Computational Modeling of Fracture and Failure of Materials and Structures
+
+geoproc:
+  short_ru: GeoProc
+  short_en: GeoProc
+  name_en: International Conference on Coupled THMC Processes in Geosystems
+
+biot:
+  short_ru: Biot Conference
+  short_en: Biot Conference
+  name_en: Biot Conference on Poromechanics
+
+usnccm:
+  short_ru: USNCCM
+  short_en: USNCCM
+  name_en: U.S. National Congress on Computational Mechanics
+
+esmc:
+  short_ru: ESMC
+  short_en: ESMC
+  name_en: European Solid Mechanics Conference
+
+hydro60:
+  short_ru: Механика сплошных сред и физика взрыва
+  short_en: Continuum Mechanics and Explosion Physics
+  name_ru: Современные проблемы механики сплошных сред и физики взрыва (к 60-летию ИГиЛ СО РАН)
+  name_en: Modern Problems of Continuum Mechanics and Explosion Physics (60th anniversary of the Lavrentyev Institute of Hydrodynamics)
+  translation: auto
+
+polar-mech:
+  short_ru: Полярная механика
+  short_en: Polar Mechanics
+  name_ru: Всероссийская конференция с международным участием «Полярная механика»
+  name_en: All-Russian Conference with International Participation “Polar Mechanics”
+
+mpmss:
+  short_ru: Математические проблемы механики сплошных сред
+  short_en: Mathematical Problems of Continuum Mechanics
+  name_ru: Всероссийская конференция и школа молодых учёных «Математические проблемы механики сплошных сред»
+  name_en: All-Russian Conference and School for Young Scientists “Mathematical Problems of Continuum Mechanics”
+  translation: auto
+
+frac-workshop:
+  short_ru: Coupled THM Problems of Fracture Mechanics
+  short_en: Coupled THM Problems of Fracture Mechanics
+  name_en: International workshop “Coupled thermo-hydro-mechanical problems of fracture mechanics”
+
+mech-congress:
+  short_ru: Всероссийский съезд по механике
+  short_en: All-Russian Congress on Mechanics
+  name_ru: Всероссийский съезд по фундаментальным проблемам теоретической и прикладной механики
+  name_en: All-Russian Congress on Fundamental Problems of Theoretical and Applied Mechanics
+  translation: auto
+
+ispras:
+  short_ru: Ivannikov ISPRAS Open Conference
+  short_en: Ivannikov ISPRAS Open Conference
+  name_en: Ivannikov ISPRAS Open Conference
+
+tfg:
+  short_ru: Теплофизика и физическая гидродинамика
+  short_en: Thermophysics and Physical Hydrodynamics
+  name_ru: Всероссийская научная конференция с элементами школы молодых учёных «Теплофизика и физическая гидродинамика» (ТФГ)
+  name_en: All-Russian Scientific Conference with a School for Young Scientists “Thermophysics and Physical Hydrodynamics”
+  translation: auto
+
+rn-digital:
+  short_ru: Цифровые технологии в добыче углеводородов
+  short_en: Digital Technologies in Hydrocarbon Production
+  name_ru: Научно-техническая конференция «Цифровые технологии в добыче углеводородов» (ООО «РН-БашНИПИнефть»)
+  name_en: Scientific and technical conference “Digital Technologies in Hydrocarbon Production” (RN-BashNIPIneft)
+  translation: auto
+
+problems-mech:
+  short_ru: Проблемы механики
+  short_en: Problems of Mechanics
+  name_ru: "Всероссийская школа-конференция молодых учёных «Проблемы механики: теория, эксперимент и новые технологии»"
+  name_en: "All-Russian School-Conference of Young Scientists “Problems of Mechanics: Theory, Experiment and New Technologies”"
+  translation: auto
+
+geomodel:
+  short_ru: Геомодель
+  short_en: Geomodel
+  name_ru: Научно-практическая конференция по вопросам геологоразведки и разработки месторождений нефти и газа «Геомодель»
+  name_en: Geomodel, scientific and practical conference on oil and gas exploration and field development
+  translation: auto

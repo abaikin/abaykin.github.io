@@ -13,6 +13,7 @@ start: TODO
 tags: [hydraulic-fracturing, planar3d, software]
 translation: auto
 # Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
+# Выступления с тезисами или трудами из списка publications показываются сами; в talks — только остальные.
 # Список предложен по названиям работ — проверьте.
 publications: [erofeev2019kiber, valov2019modelirovanie, valov2019modelirovanieb, golovin2020modul, golovin2020modulb, valov2023implicit, shukalo2026acceleration]
-talks: []
+talks: [2019-frac-workshop-planar3d]

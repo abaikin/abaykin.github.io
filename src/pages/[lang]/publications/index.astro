@@ -44,7 +44,7 @@ const projectsByPub = related(
 const hasTalks = Object.keys(import.meta.glob('/src/content/talks/*.yaml')).length > 0;
 const talksByPub = related(
   (hasTalks ? await getCollection('talks') : []).flatMap((talk) => {
-    const title = loc(talk.data, 'title', lang)!;
+    const title = loc(talk.data, 'title', talk.data.lang)!; // название на языке доклада, как в списке выступлений
     return talk.data.publications.map((ref): [string, RelatedLink] => [
       ref.id,
       { title: title.text, lang: title.lang, href: langHref(lang, `talks/#${talk.id}`) },

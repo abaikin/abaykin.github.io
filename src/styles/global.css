@@ -832,6 +832,71 @@
     list-style: disc;
     padding-inline-start: 1.1rem;
   }
+  /* ===== Выступления ===== */
+  /* Дата и город — в стиле строки «тип публикации» */
+  .talk-date {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-secondary);
+  }
+  .talk-event {
+    margin-top: 0.15rem;
+    font-size: 0.9375rem;
+    color: var(--c-muted);
+  }
+  .talk-award {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.45rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--c-heading);
+  }
+  .talk-award svg {
+    color: var(--c-secondary);
+  }
+  /* Панель с видео под кнопками выступления */
+  .talk-panel {
+    max-width: 48rem;
+    margin-top: 0.85rem;
+  }
+  /* Встроенный просмотр PDF: на телефонах скрыт, остаётся кнопка «Открыть / скачать» */
+  .pdf-embed {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .pdf-embed iframe {
+    width: 100%;
+    height: 70vh;
+    min-height: 26rem;
+    border: 1px solid var(--c-border);
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+  .pdf-embed-mobile {
+    font-size: 0.875rem;
+    color: var(--c-subtle);
+  }
+  @media (min-width: 768px) {
+    .pdf-embed-mobile {
+      display: none;
+    }
+  }
+  /* Видео: до нажатия — заставка без обращений к YouTube */
+  .video-embed {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 0.6rem;
+    background: var(--c-surface-alt);
+  }
+  .video-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
 
   /* Цвета плагина typography берём из палитры */
   .prose {

@@ -219,34 +219,91 @@ const pubsources = defineCollection({
   }),
 });
 
+/** Мероприятия (серии конференций) для фильтра «Мероприятие» на странице выступлений: src/data/conferences.yaml */
+const conferences = defineCollection({
+  loader: file('src/data/conferences.yaml'),
+  schema: z
+    .strictObject({
+      short_ru: optText,
+      short_en: optText,
+      name_ru: optText,
+      name_en: optText,
+      translation,
+    })
+    .refine((c) => c.short_ru || c.short_en || c.name_ru || c.name_en, 'нужно короткое или полное название'),
+});
+
+const isoDay = /^\d{4}-\d{2}-\d{2}$/;
+// YAML превращает 2025-09-09 в дату, а 2025 — в число; кавычки писать не нужно, приводим к строке
+const dateText = (re: RegExp, message: string) =>
+  z.preprocess(
+    (v) => (v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v),
+    z.string().regex(re, message),
+  );
+
 /**
- * Выступления: src/content/talks/<id>.yaml, один файл на доклад (раздел наполняется на шаге 3).
- * status: пленарный / приглашённый / секционный / короткое сообщение / стендовый;
- * scope («охват»): международная / всероссийская / всероссийская с международным участием / не указано.
+ * Выступления: src/content/talks/<id>.yaml, один файл на доклад; id (имя файла) — якорь …/talks/#id.
+ * date — день доклада; если известны только даты мероприятия: date — первый день, date_end — последний.
+ * status — формат: plenary (пленарный), invited (приглашённый), oral (секционный), short (короткое сообщение), poster (стендовый);
+ * scope — «охват»: international, national-intl (всероссийская с международным участием), national, unknown (не указано);
+ * speaker — выступал ли владелец сайта (true / false — докладывал соавтор / TODO).
+ * authors и tags можно не писать: тогда они берутся из первой связанной публикации (publications).
  */
 const talks = defineCollection({
   loader: optionalGlob({ base: './src/content/talks', extension: '.yaml' }),
   schema: z
-    .object({
-      date: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/),
+    .strictObject({
+      date: dateText(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'date: 2025, 2025-09 или 2025-09-09'),
+      date_end: dateText(isoDay, 'date_end: формат 2025-09-11').optional(),
+      lang: z.enum(['ru', 'en']),
       title_ru: optText,
       title_en: optText,
+      authors: z.array(text).default([]),
+      authors_en: z.array(text).default([]),
+      conference: reference('conferences'),
       event_ru: optText,
       event_en: optText,
       city_ru: optText,
       city_en: optText,
       url: z.url().optional(),
+      program_url: z.url().optional(),
+      session_ru: optText,
+      session_en: optText,
       status: z.enum(['plenary', 'invited', 'oral', 'short', 'poster', 'TODO']).default('TODO'),
       scope: z.enum(['international', 'national-intl', 'national', 'unknown']).default('unknown'),
       speaker: z.union([z.boolean(), z.literal('TODO')]).default('TODO'),
       abstract_pdf: optText,
+      abstract_url: z.url().optional(),
+      // страницы в сборнике: 59 или 36–37
+      abstract_pages: z.preprocess((v) => (typeof v === 'number' ? String(v) : v), text).optional(),
       slides_pdf: optText,
-      video: optText,
+      slides_url: z.url().optional(),
+      video: z.string().regex(/^[A-Za-z0-9_-]{11}$/, 'video: идентификатор ролика YouTube (11 символов)').optional(),
+      award_ru: optText,
+      award_en: optText,
+      award_pdf: optText,
       publications: z.array(reference('publications')).default([]),
       tags: z.array(reference('tags')).default([]),
+      note_ru: optText,
+      note_en: optText,
       translation,
     })
-    .refine((t) => t.title_ru || t.title_en, 'нужно title_ru или title_en'),
+    .refine((t) => t.title_ru || t.title_en, 'нужно title_ru или title_en')
+    .refine((t) => !t.date_end || (isoDay.test(t.date) && t.date_end > t.date), {
+      message: 'date_end: нужна полная дата date (2025-09-08), и date_end должна быть позже',
+      path: ['date_end'],
+    }),
 });
 
-export const collections = { profile, education, projects, laboratory, tags, publications, journals, pubsources, talks };
+export const collections = {
+  profile,
+  education,
+  projects,
+  laboratory,
+  tags,
+  publications,
+  journals,
+  pubsources,
+  conferences,
+  talks,
+};

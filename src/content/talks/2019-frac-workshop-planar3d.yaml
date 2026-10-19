@@ -1,0 +1,23 @@
+# Страница «Abstracts and Materials»: 1 июля, 10:15–10:45 (НГУ, ауд. 3122); тезисы и слайды выложены на сайте
+date: 2019-07-01
+lang: en
+title_en: Modeling geometry of planar hydraulic fractures using the Planar 3D ILSA model
+title_ru: Моделирование геометрии плоских трещин гидроразрыва с помощью модели Planar 3D ILSA
+translation: auto
+# порядок авторов — по тезисам (на странице мероприятия: Valov, Dontsov, Baykin)
+authors:
+  - Valov, A. V.
+  - Baykin, A. N.
+  - Dontsov, E. V.
+conference: frac-workshop
+event_en: International workshop “Coupled thermo-hydro-mechanical problems of fracture mechanics”
+city_ru: Новосибирск
+city_en: Novosibirsk, Russia
+url: http://conf.nsc.ru/frac2019/en
+program_url: http://conf.nsc.ru/files/conferences/frac2019/526098/FinalProgram.pdf
+scope: international
+status: oral
+speaker: TODO
+abstract_url: http://conf.nsc.ru/files/conferences/frac2019/522822/Valov.pdf
+slides_url: http://conf.nsc.ru/files/conferences/frac2019/529244/Presentation_Valov.pdf
+tags: [planar3d, level-set, hydraulic-fracturing]

@@ -1,0 +1,24 @@
+# Программа «Полярной механики»: 9 октября, 09:15–09:45, пленарный доклад. Тезисов в списке трудов нет
+date: 2018-10-09
+lang: ru
+title_ru: Прикладные аспекты разноуровневого моделирования раскрытия плоской трещины гидроразрыва пласта
+title_en: Applied aspects of multilevel modelling of planar hydraulic fracture opening
+translation: auto
+authors:
+  - Головин, С. В.
+  - Байкин, А. Н.
+  - Донцов, Е. В.
+  - Валов, А. В.
+  - Скопинцев, А. М. # TODO: в программе «Скопинцев А. С.», в других докладах — А. М.; проверить
+  - Старовойтова, Б. Н.
+conference: polar-mech
+event_ru: V Всероссийская конференция с международным участием «Полярная механика»
+event_en: The Fifth All-Russian Conference with International Participation “Polar Mechanics”
+city_ru: Новосибирск
+city_en: Novosibirsk
+url: http://conf.nsc.ru/polar-mech2018
+program_url: http://conf.nsc.ru/files/conferences/polar-mech2018/472021/%D0%9F%D0%A0%D0%9E%D0%93%D0%A0%D0%90%D0%9C%D0%9C%D0%901%20-%20%D0%A0%D0%9527092018.pdf
+scope: national-intl
+status: plenary
+speaker: TODO
+tags: [hydraulic-fracturing, planar3d]

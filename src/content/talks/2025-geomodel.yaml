@@ -1,0 +1,27 @@
+# Программа «Геомодели 2025»: 9 сентября, 16:00, секция «Геомеханика и гидродинамика»; докладчик отмечен в программе (*).
+# Доклад признан лучшим в сессии (сертификат); труды — с. 242–245
+date: 2025-09-09
+lang: ru
+title_ru: Совмещенная гидрогеомеханическая модель автоГРП и её практическое применение к анализу системы ППД
+title_en: A coupled hydro-geomechanical model of self-induced fracturing and its practical application to the analysis of a reservoir pressure maintenance system
+translation: auto
+conference: geomodel
+event_ru: «Геомодель 2025» — 27-я научно-практическая конференция по вопросам геологоразведки и разработки месторождений нефти и газа
+event_en: "Geomodel 2025: 27th scientific and practical conference on oil and gas exploration and field development"
+city_ru: Геленджик
+city_en: Gelendzhik
+url: https://geomodel.ru/gm25
+program_url: https://geomodel-files.ru/2025/GM25/Programme_GM25.pdf
+session_ru: Геомеханика и гидродинамика
+session_en: Geomechanics and hydrodynamics
+scope: unknown
+abstract_url: https://geomodel-files.ru/2025/GM25/GM25_Abstracts.pdf
+abstract_pages: 242–245
+status: oral
+speaker: true
+# TODO: тестовая заглушка — замените файл настоящими слайдами (или удалите строку)
+slides_pdf: pdf/talks/2025-geomodel-slides.pdf
+award_ru: Лучший доклад сессии «Геомеханика и гидродинамика»
+award_en: Best talk of the Geomechanics and Hydrodynamics session
+award_pdf: pdf/certificates/2025-geomodel-best-talk.pdf
+publications: [baykin2025sovmeshchennaya]

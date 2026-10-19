@@ -1,0 +1,16 @@
+# SciAct: устный доклад; конференция 22–29 августа 2021 г., Севастополь; тезисы — с. 69
+date: 2021-08-22
+date_end: 2021-08-29
+lang: ru
+title_ru: Анализ мини-ГРП на основе прямого численного моделирования с использованием модели трещины ГРП в пороупругой среде
+title_en: Mini-frac analysis based on direct numerical simulation with a model of a hydraulic fracture in a poroelastic medium
+translation: auto
+conference: tfg
+event_ru: VI Всероссийская научная конференция с элементами школы молодых учёных «Теплофизика и физическая гидродинамика»
+event_en: VI All-Russian Scientific Conference with a School for Young Scientists “Thermophysics and Physical Hydrodynamics”
+scope: national
+city_ru: Севастополь
+city_en: Sevastopol
+status: oral
+speaker: TODO
+publications: [baykin2021analiz]

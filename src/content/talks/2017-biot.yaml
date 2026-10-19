@@ -1,0 +1,18 @@
+# Программа Biot 2017: вторник, 11 июля, 15:20, амфитеатр Cauchy.
+# Охват: на сайте конференции серия названа «the main international conference» по механике пористых сред
+date: 2017-07-11
+lang: en
+title_en: Poroelastic Effects in the Hydraulic Fracturing
+title_ru: Эффекты пороупругости при гидроразрыве пласта
+translation: auto
+conference: biot
+event_en: 6th Biot Conference on Poromechanics
+city_ru: Шан-сюр-Марн (Париж), Франция
+city_en: Champs-sur-Marne (Paris), France
+url: https://biot2017.sciencesconf.org/
+program_url: https://biot2017.sciencesconf.org/data/pages/Biot_Final_3.pdf
+session_en: Fracture propagation and petroleum engineering (session 3/4)
+status: oral
+scope: international
+speaker: TODO
+publications: [golovin2017poroelastic]

@@ -1,0 +1,17 @@
+# CFRAC 2019: 12–14 июня 2019 г., Брауншвейг (программа на сайте конференции). День доклада и формат неизвестны.
+# Докладчик — единственный автор
+date: 2019-06-12
+date_end: 2019-06-14
+lang: en
+title_en: Poroelastic Effects Influence Range for Radial Hydraulic Fracturing Model
+title_ru: Область влияния эффектов пороупругости для модели радиальной трещины гидроразрыва
+translation: auto
+conference: cfrac
+event_en: VI International Conference on Computational Modeling of Fracture and Failure of Materials and Structures (CFRAC 2019)
+city_ru: Брауншвейг, Германия
+city_en: Braunschweig, Germany
+url: https://congress.cimne.com/cfrac2019/
+status: TODO
+scope: international
+speaker: true
+publications: [baykin2019poroelastic]

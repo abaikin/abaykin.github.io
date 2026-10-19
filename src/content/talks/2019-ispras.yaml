@@ -1,0 +1,15 @@
+# Новость ИСП РАН: конференция 5–6 декабря 2019 г. в Москве. День доклада и формат неизвестны
+date: 2019-12-05
+date_end: 2019-12-06
+lang: en
+title_en: "FEMEngine: Finite Element Method C++ Code Based on Functional and Template Metaprogramming"
+title_ru: "FEMEngine: код метода конечных элементов на C++ на основе функционального и шаблонного метапрограммирования"
+translation: auto
+conference: ispras
+event_en: 2019 Ivannikov ISPRAS Open Conference (ISPRAS)
+city_ru: Москва
+city_en: Moscow
+status: TODO
+scope: unknown
+speaker: TODO
+publications: [gurin2019femengine]

@@ -1,0 +1,16 @@
+# Конгресс прошёл 17–20 июля 2017 г. в Монреале (сайт 14.usnccm.org не отвечает; даты — по анонсам участников).
+# День доклада и формат неизвестны
+date: 2017-07-17
+date_end: 2017-07-20
+lang: en
+title_en: Non-Symmetrical Hydraulic Fracture Propagation Due to Poroelastic Effects
+title_ru: Несимметричное распространение трещины гидроразрыва вследствие эффектов пороупругости
+translation: auto
+conference: usnccm
+event_en: 14th U.S. National Congress on Computational Mechanics (USNCCM14)
+city_ru: Монреаль, Канада
+city_en: Montreal, Canada
+status: TODO
+scope: unknown
+speaker: TODO
+publications: [baykin2017nonsymmetrical]

@@ -12,6 +12,7 @@ start: 2019
 tags: [fem, software]
 translation: auto
 # Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
+# Выступления с тезисами или трудами из списка publications показываются сами; в talks — только остальные.
 # Список предложен по названиям работ — проверьте.
 publications: [gurin2019femengine, gurin2019vychislitelnyi]
 talks: []

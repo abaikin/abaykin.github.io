@@ -1,0 +1,280 @@
+---
+// Одно выступление в списке: дата и город, название, авторы, мероприятие, бейджи (охват, формат, докладчик),
+// награда, теги, кнопки (Подробнее, Тезисы, Слайды, Видео, Сертификат, Сайт, Программа, Публикация)
+// и раскрывающаяся панель: секция, встроенные PDF из public/assets, связанные публикации.
+import Icon from './Icon.astro';
+import { type Lang, type UIKey, loc, t } from '../i18n';
+import { asset, assetExists, langHref } from '../lib/site';
+import { type Pub, isOwner, normalize, texHtml, translit, venueLine } from '../lib/publications';
+import { type Conference, type Talk, talkAuthors, talkDate } from '../lib/talks';
+
+interface Props {
+  lang: Lang;
+  talk: Talk;
+  conference: Conference;
+  /** Связанные публикации (тезисы, труды, статьи) в порядке поля publications */
+  pubs: Pub[];
+  tagIds: string[];
+  owners: Set<string>;
+  tagLabels: Map<string, string>;
+}
+
+const { lang, talk, conference, pubs, tagIds, owners, tagLabels } = Astro.props;
+const d = talk.data;
+const id = talk.id;
+const tr = (key: string, vars?: Record<string, string | number>) => t(lang, key as UIKey, vars);
+
+// Название: на языке доклада + перевод на язык страницы
+const title = loc(d, 'title', d.lang)!;
+const other = loc(d, 'title', lang);
+const translatedTitle = other && other.lang === lang && other.lang !== title.lang ? other.text : undefined;
+const auto = d.translation === 'auto';
+
+const event = loc(d, 'event', lang);
+const city = loc(d, 'city', lang);
+const session = loc(d, 'session', lang);
+const award = loc(d, 'award', lang);
+const note = loc(d, 'note', lang);
+const series = loc(conference.data, 'short', lang);
+const when = [talkDate(d, lang), city?.text].filter(Boolean).join(' · ');
+
+// Авторы: длинный список сокращаем, владелец сайта виден всегда
+const names = talkAuthors(d, pubs, lang);
+const LIMIT = 10;
+const ownerIndex = names.findIndex((n) => isOwner(n, owners));
+const shortList =
+  names.length > LIMIT
+    ? [...names.slice(0, 3).map((n, i) => ({ n, i })), ...(ownerIndex >= 3 ? [{ n: names[ownerIndex], i: ownerIndex }] : [])]
+    : names.map((n, i) => ({ n, i }));
+const hiddenCount = names.length - shortList.length;
+
+// Файлы: свои PDF лежат в public/assets (встраиваются в панель), внешние — ссылками
+const local = (rel?: string) => (rel && assetExists(rel) ? asset(rel) : undefined);
+const abstractPdf = local(d.abstract_pdf);
+const slidesPdf = local(d.slides_pdf);
+const certificate = local(d.award_pdf);
+const abstractHref = abstractPdf ?? d.abstract_url;
+const slidesHref = slidesPdf ?? d.slides_url;
+const pages = d.abstract_pages && tr(/[–-]/.test(d.abstract_pages) ? 'talks.pages' : 'talks.page', { pages: d.abstract_pages });
+const abstractLabel = [tr(pubs[0]?.data.kind === 'proceedings' ? 'talks.proceedings' : 'talks.abstract'), pages].filter(Boolean).join(', ');
+const pubHref = (pub: Pub) => langHref(lang, `publications/#${pub.id}`);
+
+const hasDetails = Boolean(session || hiddenCount > 0 || abstractPdf || slidesPdf || pubs.length || note);
+
+// Дополнительный текст для поиска: латиница для кириллических имён, названия на втором языке
+const alt = normalize(
+  [
+    ...names.map((n) => `${translit(n.family)} ${translit(n.given)}`),
+    d.title_ru,
+    d.title_en,
+    d.event_ru,
+    d.event_en,
+    d.city_ru,
+    d.city_en,
+    conference.data.short_ru,
+    conference.data.short_en,
+    conference.data.name_ru,
+    conference.data.name_en,
+  ]
+    .filter(Boolean)
+    .join(' '),
+);
+---
+
+<li
+  class="pub talk"
+  data-item
+  data-f-conf={conference.id}
+  data-f-scope={d.scope}
+  data-f-status={d.status}
+  data-f-tag={tagIds.join(' ')}
+  data-alt={alt}
+>
+  <article>
+    {when && <p class="talk-date">{when}</p>}
+    <h3 id={id} class="pub-title" lang={title.lang}>{title.text}</h3>
+    {
+      translatedTitle && (
+        <p class="pub-subtitle" lang={lang}>
+          {translatedTitle}
+          {auto && <span class="mt-note">{tr('common.autoTranslation')}</span>}
+        </p>
+      )
+    }
+    {
+      names.length > 0 && (
+        <p class="pub-authors">
+          {shortList.map(({ n, i }, k) => (
+            <Fragment>
+              {k > 0 && (i - shortList[k - 1].i > 1 ? ', …, ' : ', ')}
+              {isOwner(n, owners) ? <strong class="pub-owner">{`${n.family} ${n.given}`}</strong> : `${n.family} ${n.given}`}
+            </Fragment>
+          ))}
+          {hiddenCount > 0 && <span class="text-subtle"> {tr('pubs.andMore', { n: hiddenCount })}</span>}
+        </p>
+      )
+    }
+    {
+      event && (
+        <p class="talk-event" lang={event.lang} title={series?.text}>
+          {event.text}
+        </p>
+      )
+    }
+    {
+      award && (
+        <p class="talk-award" lang={award.lang}>
+          <Icon name="lucide:award" size={16} />
+          {award.text}
+        </p>
+      )
+    }
+
+    <ul class="pub-badges">
+      {d.scope !== 'unknown' && <li class="badge">{tr(`talks.scope.${d.scope}`)}</li>}
+      {d.status !== 'TODO' && <li class="badge">{tr(`talks.status.${d.status}`)}</li>}
+      {d.speaker === false && <li class="badge">{tr('talks.speakerCoauthor')}</li>}
+      {d.speaker === 'TODO' && <li class="todo-note">{tr('talks.speakerTodo')}</li>}
+      {
+        tagIds.map((tag) => (
+          <li>
+            <a class="chip chip-sm chip-link" href={`?tag=${tag}`} data-tag={tag}>
+              {tagLabels.get(tag) ?? tag}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="pub-actions">
+      {
+        hasDetails && (
+          <button
+            type="button"
+            class="pub-btn"
+            data-toggle
+            aria-expanded="false"
+            aria-controls={`${id}-details`}
+            data-label-open={tr('pubs.details')}
+            data-label-close={tr('pubs.hide')}
+          >
+            <Icon name="lucide:chevron-down" size={15} class="pub-chevron" />
+            <span data-label>{tr('pubs.details')}</span>
+          </button>
+        )
+      }
+      {
+        abstractHref && (
+          <a class="pub-btn" href={abstractHref}>
+            <Icon name="lucide:file-text" size={14} /> {abstractLabel}
+          </a>
+        )
+      }
+      {
+        slidesHref && (
+          <a class="pub-btn" href={slidesHref}>
+            <Icon name="lucide:presentation" size={14} /> {tr('talks.slides')}
+          </a>
+        )
+      }
+      {
+        d.video && (
+          <button
+            type="button"
+            class="pub-btn"
+            data-toggle
+            aria-expanded="false"
+            aria-controls={`${id}-video`}
+            title={tr('talks.videoNote')}
+          >
+            <Icon name="lucide:circle-play" size={14} /> {tr('talks.video')}
+          </button>
+        )
+      }
+      {
+        certificate && (
+          <a class="pub-btn" href={certificate}>
+            <Icon name="lucide:award" size={14} /> {tr('talks.certificate')}
+          </a>
+        )
+      }
+      {
+        pubs[0] && (
+          <a class="pub-btn" href={pubHref(pubs[0])}>
+            <Icon name="lucide:book-open" size={14} /> {tr('talks.publication')}
+          </a>
+        )
+      }
+      {d.url && <a class="pub-btn" href={d.url}>{tr('talks.site')}</a>}
+      {d.program_url && <a class="pub-btn" href={d.program_url}>{tr('talks.program')}</a>}
+    </div>
+
+    {
+      d.video && (
+        <div id={`${id}-video`} class="talk-panel" hidden>
+          <div class="video-embed" data-embed="youtube" data-id={d.video} data-title={title.text} />
+        </div>
+      )
+    }
+
+    {
+      hasDetails && (
+        <div id={`${id}-details`} class="pub-details" hidden>
+          {session && (
+            <p>
+              <span class="pub-dt">{tr('talks.session')}:</span> <span lang={session.lang}>{session.text}</span>
+            </p>
+          )}
+          {hiddenCount > 0 && (
+            <section>
+              <h4 class="pub-dt">{tr('pubs.authors')}</h4>
+              <p>
+                {names.map((n, i) => (
+                  <Fragment>
+                    {i > 0 && ', '}
+                    {isOwner(n, owners) ? <strong class="pub-owner">{`${n.family} ${n.given}`}</strong> : `${n.family} ${n.given}`}
+                  </Fragment>
+                ))}
+              </p>
+            </section>
+          )}
+          {[
+            { href: abstractPdf, label: abstractLabel },
+            { href: slidesPdf, label: tr('talks.slides') },
+          ]
+            .filter((f) => f.href)
+            .map((f) => (
+              <section>
+                <h4 class="pub-dt">{f.label}</h4>
+                <div class="pdf-embed mt-2" data-embed="pdf" data-src={f.href} data-title={`${f.label}: ${title.text}`}>
+                  <p class="pdf-embed-mobile">{tr('talks.pdfMobile')}</p>
+                  <a class="pub-btn w-fit" href={f.href}>
+                    <Icon name="lucide:download" size={14} /> {tr('talks.open')}
+                  </a>
+                </div>
+              </section>
+            ))}
+          {pubs.length > 0 && (
+            <section>
+              <h4 class="pub-dt">{tr('talks.publications')}</h4>
+              <ul class="pub-related">
+                {pubs.map((pub) => (
+                  <li>
+                    <span class="text-subtle">{tr(`pubs.kind.${pub.data.kind}`)}: </span>
+                    <a href={pubHref(pub)} lang={pub.data.lang} set:html={texHtml(pub.data.title)} />
+                    <span class="text-muted"> — {venueLine(pub.data, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {note && (
+            <p class="text-muted" lang={note.lang}>
+              {note.text}
+            </p>
+          )}
+        </div>
+      )
+    }
+  </article>
+</li>

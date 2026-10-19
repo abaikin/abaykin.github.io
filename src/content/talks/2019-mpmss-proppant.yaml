@@ -1,0 +1,21 @@
+# Программа: 14 мая, короткие устные доклады (с 17:15), № 16 (в программе — «ENHANCEDPSEUDO3D»). Тезисов в списке трудов нет
+date: 2019-05-14
+lang: ru
+title_ru: Численное моделирование совместной динамики трещины гидроразрыва пласта и переноса проппанта (модель EnhancedPseudo3D)
+title_en: Numerical modelling of the coupled dynamics of a hydraulic fracture and proppant transport (EnhancedPseudo3D model)
+translation: auto
+authors:
+  - Скопинцев, А. М.
+  - Байкин, А. Н.
+  - Ковтуненко, П. В.
+  - Донцов, Е. В.
+conference: mpmss
+event_ru: Всероссийская конференция и школа молодых учёных, посвящённые 100-летию академика Л. В. Овсянникова, «Математические проблемы механики сплошных сред»
+event_en: All-Russian Conference and School for Young Scientists “Mathematical Problems of Continuum Mechanics” dedicated to the centenary of Academician L. V. Ovsyannikov
+city_ru: Новосибирск
+city_en: Novosibirsk
+program_url: https://www.sbras.ru/files/news/docs/lvo100_progam.pdf
+scope: national
+status: short
+speaker: TODO
+tags: [proppant-transport, hydraulic-fracturing]

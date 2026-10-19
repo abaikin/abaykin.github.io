@@ -1,0 +1,16 @@
+# SciAct: устный доклад; съезд прошёл 19–24 августа 2019 г. в Уфе. День доклада неизвестен; труды — т. 4, с. 333–335
+date: 2019-08-19
+date_end: 2019-08-24
+lang: ru
+title_ru: Моделирование геометрии плоской трещины гидроразрыва в рамках подхода Planar3D ILSA
+title_en: Modelling the geometry of a planar hydraulic fracture within the Planar3D ILSA approach
+translation: auto
+conference: mech-congress
+event_ru: XII Всероссийский съезд по фундаментальным проблемам теоретической и прикладной механики
+event_en: XII All-Russian Congress on Fundamental Problems of Theoretical and Applied Mechanics
+city_ru: Уфа
+city_en: Ufa
+scope: national
+status: oral
+speaker: TODO
+publications: [valov2019modelirovanie]

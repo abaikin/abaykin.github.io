@@ -1,0 +1,16 @@
+# SciAct: конференция 4–10 сентября 2023 г., Махачкала; тезисы — с. 85. Формат неизвестен. Докладчик — единственный автор
+date: 2023-09-04
+date_end: 2023-09-10
+lang: ru
+title_ru: Моделирование криволинейного распространения трещины автоГРП в пороупругой среде
+title_en: Modelling of curvilinear propagation of a self-induced fracture in a poroelastic medium
+translation: auto
+conference: tfg
+event_ru: VIII Всероссийская научная конференция с элементами школы молодых учёных «Теплофизика и физическая гидродинамика» (ТФГ2023)
+event_en: VIII All-Russian Scientific Conference with a School for Young Scientists “Thermophysics and Physical Hydrodynamics”
+scope: national
+city_ru: Махачкала
+city_en: Makhachkala
+status: TODO
+speaker: true
+publications: [baykin2023modelirovanieb]

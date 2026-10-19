@@ -1,0 +1,196 @@
+---
+// Выступления: src/content/talks/<id>.yaml → список по годам с поиском и фильтрами
+// (мероприятие, охват, формат, темы) и сортировкой. Все записи есть в статическом HTML; скрипт только скрывает и переставляет их.
+// Состояние фильтров хранится в адресе: ?q=…&conf=tfg&scope=national&status=oral&tag=auto-frac&sort=asc
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+import TalkItem from '../../../components/TalkItem.astro';
+import { type Lang, type UIKey, langPaths, loc, t } from '../../../i18n';
+import { ownerFamilies } from '../../../lib/publications';
+import { compareTalks, talkTags, talkYear } from '../../../lib/talks';
+
+export const getStaticPaths = langPaths;
+
+const lang = Astro.params.lang as Lang;
+
+const talks = (await getCollection('talks')).sort(compareTalks);
+const conferences = new Map((await getCollection('conferences')).map((c) => [c.id, c]));
+const pubs = new Map((await getCollection('publications')).map((p) => [p.id, p]));
+const tagEntries = await getCollection('tags');
+const tagLabels = new Map(tagEntries.map((tag) => [tag.id, tag.data[lang]]));
+const profileEntry = await getEntry('profile', 'profile');
+if (!profileEntry) throw new Error('Нет данных src/data/profile.yaml');
+const owners = ownerFamilies([profileEntry.data.name_ru, profileEntry.data.name_en, ...profileEntry.data.alt_names]);
+
+const items = talks.map((talk) => {
+  const linked = talk.data.publications.map((ref) => pubs.get(ref.id)!);
+  return { talk, conference: conferences.get(talk.data.conference.id)!, pubs: linked, tagIds: talkTags(talk.data, linked) };
+});
+const years = [...new Set(items.map(({ talk }) => talkYear(talk.data)))];
+
+// Счётчики для фильтров
+function count<T>(values: T[]) {
+  return values.reduce((m, v) => m.set(v, (m.get(v) ?? 0) + 1), new Map<T, number>());
+}
+const byCount = <T,>(m: Map<T, number>, label: (v: T) => string) =>
+  [...m.entries()].sort((a, b) => b[1] - a[1] || label(a[0]).localeCompare(label(b[0]), lang));
+const confLabel = (id: string) => loc(conferences.get(id)!.data, 'short', lang)!.text;
+const confCounts = byCount(count(items.map((it) => it.conference.id)), confLabel);
+const SCOPES = ['international', 'national-intl', 'national', 'unknown'] as const;
+const scopeCounts = count<string>(items.map((it) => it.talk.data.scope));
+const STATUSES = ['plenary', 'invited', 'oral', 'short', 'poster', 'TODO'] as const;
+const statusCounts = count<string>(items.map((it) => it.talk.data.status));
+const tagCounts = byCount(count(items.flatMap((it) => it.tagIds)), (tag) => tagLabels.get(tag) ?? tag);
+---
+
+<BaseLayout lang={lang} title={t(lang, 'nav.talks')} description={t(lang, 'section.talks')} section="talks">
+  <noscript slot="head">
+    <style>
+      .pub-details[hidden] {
+        display: block !important;
+      }
+    </style>
+  </noscript>
+
+  <div
+    class="wrap py-12 lg:py-16"
+    data-list-root
+    data-msg-count={t(lang, 'talks.count')}
+    data-msg-copied={t(lang, 'pubs.copied')}
+    data-msg-copy-failed={t(lang, 'pubs.copyFailed')}
+  >
+    <SectionHeading icon="lucide:presentation" as="h1">{t(lang, 'nav.talks')}</SectionHeading>
+    <p class="max-w-3xl text-lg text-muted">{t(lang, 'section.talks')}</p>
+
+    <!-- Поиск и фильтры без JavaScript не работают, поэтому их показывает скрипт -->
+    <div class="pub-filters card mt-8" data-filters hidden data-pagefind-ignore>
+      <label for="talk-q" class="sr-only">{t(lang, 'talks.searchLabel')}</label>
+      <div class="relative">
+        <Icon name="lucide:search" size={18} class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-subtle" />
+        <input id="talk-q" type="search" class="field pl-10" placeholder={t(lang, 'talks.searchPlaceholder')} autocomplete="off" data-search />
+      </div>
+
+      <div class="filter-group">
+        <p class="filter-label" id="f-scope">{t(lang, 'talks.filterScope')}</p>
+        <div class="filter-chips" role="group" aria-labelledby="f-scope">
+          {
+            SCOPES.filter((v) => scopeCounts.has(v)).map((v) => (
+              <button type="button" class="filter-chip" aria-pressed="false" data-filter="scope" data-value={v}>
+                {t(lang, `talks.scope.${v}` as UIKey)} <span class="filter-count">{scopeCounts.get(v)}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <p class="filter-label" id="f-status">{t(lang, 'talks.filterStatus')}</p>
+        <div class="filter-chips" role="group" aria-labelledby="f-status">
+          {
+            STATUSES.filter((v) => statusCounts.has(v)).map((v) => (
+              <button type="button" class="filter-chip" aria-pressed="false" data-filter="status" data-value={v}>
+                {t(lang, `talks.status.${v}` as UIKey)} <span class="filter-count">{statusCounts.get(v)}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <details class="filter-group filter-tags" data-filter-group>
+        <summary class="filter-label">
+          {t(lang, 'talks.filterConf')} <span class="filter-count">{confCounts.length}</span>
+        </summary>
+        <div class="filter-chips" role="group" aria-label={t(lang, 'talks.filterConf')}>
+          {
+            confCounts.map(([id, n]) => {
+              const name = loc(conferences.get(id)!.data, 'name', lang);
+              return (
+                <button type="button" class="filter-chip" aria-pressed="false" data-filter="conf" data-value={id} title={name?.text}>
+                  {confLabel(id)} <span class="filter-count">{n}</span>
+                </button>
+              );
+            })
+          }
+        </div>
+      </details>
+
+      <details class="filter-group filter-tags" data-filter-group>
+        <summary class="filter-label">
+          {t(lang, 'pubs.filterTags')} <span class="filter-count">{tagCounts.length}</span>
+        </summary>
+        <div class="filter-chips" role="group" aria-label={t(lang, 'pubs.filterTags')}>
+          {
+            tagCounts.map(([tag, n]) => (
+              <button type="button" class="filter-chip" aria-pressed="false" data-filter="tag" data-value={tag}>
+                {tagLabels.get(tag) ?? tag} <span class="filter-count">{n}</span>
+              </button>
+            ))
+          }
+        </div>
+      </details>
+
+      <div class="filter-footer">
+        <label class="inline-flex items-center gap-2 text-sm">
+          <span class="text-subtle">{t(lang, 'pubs.sortLabel')}</span>
+          <select class="field w-auto py-1.5 text-sm" data-sort>
+            <option value="desc">{t(lang, 'pubs.sortDesc')}</option>
+            <option value="asc">{t(lang, 'pubs.sortAsc')}</option>
+          </select>
+        </label>
+        <p class="text-sm text-subtle" aria-live="polite" data-count></p>
+        <button type="button" class="pub-btn ml-auto" hidden data-reset>
+          <Icon name="lucide:x" size={14} />
+          {t(lang, 'pubs.reset')}
+        </button>
+      </div>
+    </div>
+    <noscript><p class="mt-6 text-sm text-subtle">{t(lang, 'talks.noscript')}</p></noscript>
+
+    <nav class="year-nav" aria-label={t(lang, 'pubs.years')} data-year-nav data-pagefind-ignore>
+      <ul>
+        {
+          years.map((y) => (
+            <li>
+              <a href={`#y${y}`}>{y}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div data-list>
+      {
+        years.map((y) => (
+          <section id={`y${y}`} class="pub-year" aria-labelledby={`y${y}-h`} data-year-section>
+            <h2 id={`y${y}-h`} class="pub-year-heading">
+              {y}
+            </h2>
+            <ol class="pub-items">
+              {items
+                .filter(({ talk }) => talkYear(talk.data) === y)
+                .map((it) => (
+                  <TalkItem
+                    lang={lang}
+                    talk={it.talk}
+                    conference={it.conference}
+                    pubs={it.pubs}
+                    tagIds={it.tagIds}
+                    owners={owners}
+                    tagLabels={tagLabels}
+                  />
+                ))}
+            </ol>
+          </section>
+        ))
+      }
+    </div>
+    <p class="mt-10 text-lg text-muted" hidden data-empty>{t(lang, 'talks.empty')}</p>
+    <p class="sr-only" role="status" aria-live="polite" data-live></p>
+  </div>
+</BaseLayout>
+
+<script>
+  import '../../../scripts/list-page';
+</script>

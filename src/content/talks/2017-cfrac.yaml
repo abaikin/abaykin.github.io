@@ -1,0 +1,19 @@
+# Программа CFRAC 2017: четверг, 15 июня, 10:45, мини-симпозиум MS12 (Room GH); тезисы — с. 303
+date: 2017-06-15
+lang: en
+title_en: Hydraulic Fracture Propagation in Inhomogeneous Poroelastic Medium
+title_ru: Распространение трещины гидроразрыва в неоднородной пороупругой среде
+translation: auto
+conference: cfrac
+event_en: Fifth International Conference on Computational Modeling of Fracture and Failure of Materials and Structures (CFRAC 2017)
+city_ru: Нант, Франция
+city_en: Nantes, France
+url: https://cfrac2017.sciencesconf.org/
+program_url: https://cfrac2017.sciencesconf.org/data/pages/Technical_Program.pdf
+session_en: "MS12: Quasi-brittle cracking in Concrete and Rock, including durability mechanics, coupled processes and hydraulic fracture"
+status: oral
+scope: international
+speaker: TODO
+abstract_url: https://cfrac2017.sciencesconf.org/data/pages/Book_of_Abstracts_CFRAC_2017.pdf
+abstract_pages: 303
+publications: [baykin2017hydraulic]

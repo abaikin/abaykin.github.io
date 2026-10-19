@@ -1,0 +1,22 @@
+# Страница «Abstracts and Materials»: 4 июля, 14:10–14:40; тезисы и слайды выложены на сайте
+date: 2019-07-04
+lang: en
+title_en: Sensitivity of the pressure decline curve during the minifrac to the properties of poroelastic medium
+title_ru: Чувствительность кривой падения давления при мини-ГРП к свойствам пороупругой среды
+translation: auto
+authors:
+  - Baykin, A. N.
+  - Golovin, S. V.
+  - Lgotina, E. V.
+conference: frac-workshop
+event_en: International workshop “Coupled thermo-hydro-mechanical problems of fracture mechanics”
+city_ru: Новосибирск
+city_en: Novosibirsk, Russia
+url: http://conf.nsc.ru/frac2019/en
+program_url: http://conf.nsc.ru/files/conferences/frac2019/526098/FinalProgram.pdf
+scope: international
+status: oral
+speaker: TODO
+abstract_url: http://conf.nsc.ru/files/conferences/frac2019/522894/Lgotina.pdf
+slides_url: http://conf.nsc.ru/files/conferences/frac2019/529228/presentation_for_frac2019.pdf
+tags: [mini-frac, poroelasticity, inverse-problems]

@@ -1,0 +1,24 @@
+# Страница «Abstracts and Materials»: 2 июля, 16:30–17:00; тезисы и слайды выложены на сайте.
+# Связана со статьёй с тем же названием (2020)
+date: 2019-07-02
+lang: en
+title_en: The coupling of an enhanced pseudo-3D model for hydraulic fracturing with a proppant transport model
+title_ru: Сопряжение усовершенствованной псевдотрёхмерной модели гидроразрыва с моделью транспорта проппанта
+translation: auto
+authors:
+  - Skopintsev, A. M.
+  - Dontsov, E. V.
+  - Baykin, A. N.
+  - Kovtunenko, P. V.
+conference: frac-workshop
+event_en: International workshop “Coupled thermo-hydro-mechanical problems of fracture mechanics”
+city_ru: Новосибирск
+city_en: Novosibirsk, Russia
+url: http://conf.nsc.ru/frac2019/en
+program_url: http://conf.nsc.ru/files/conferences/frac2019/526098/FinalProgram.pdf
+scope: international
+status: oral
+speaker: TODO
+abstract_url: http://conf.nsc.ru/files/conferences/frac2019/522887/Skopintsev.pdf
+slides_url: http://conf.nsc.ru/files/conferences/frac2019/529237/2019_07_02-Skopintsev.pdf
+publications: [skopintsev2020coupling]

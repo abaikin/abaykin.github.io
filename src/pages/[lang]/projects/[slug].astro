@@ -7,6 +7,7 @@ import TodoNote from '../../../components/TodoNote.astro';
 import { type Lang, LANGS, loc, t } from '../../../i18n';
 import { langHref } from '../../../lib/site';
 import { comparePubs, displayAuthors, isOwner, ownerFamilies, texHtml, venueLine } from '../../../lib/publications';
+import { compareTalks } from '../../../lib/talks';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -23,9 +24,14 @@ const role = loc(p, 'role', lang);
 const summary = loc(p, 'summary', lang);
 const tags = await getEntries(p.tags);
 
-// Связанные публикации и выступления (ключи из publications.bib и id из src/content/talks/)
+// Связанные публикации и выступления (ключи из publications.bib и id из src/content/talks/).
+// Выступления, связанные с публикациями проекта (тезисы, труды), добавляются автоматически.
 const publications = (await getEntries(p.publications)).sort(comparePubs);
-const talks = await getEntries(p.talks);
+const pubIds = new Set(p.publications.map((ref) => ref.id));
+const talkIds = new Set(p.talks.map((ref) => ref.id));
+const talks = (await getCollection('talks'))
+  .filter((talk) => talkIds.has(talk.id) || talk.data.publications.some((ref) => pubIds.has(ref.id)))
+  .sort(compareTalks);
 const profile = (await getEntry('profile', 'profile'))!.data;
 const owners = ownerFamilies([profile.name_ru, profile.name_en, ...profile.alt_names]);
 
@@ -115,7 +121,7 @@ const period =
           </h2>
           <ul class="mt-3 space-y-2">
             {talks.map((talk) => {
-              const title = loc(talk.data, 'title', lang)!;
+              const title = loc(talk.data, 'title', talk.data.lang)!;
               const event = loc(talk.data, 'event', lang);
               return (
                 <li>

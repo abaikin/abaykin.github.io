@@ -1,0 +1,23 @@
+# Страница «Abstracts and Materials»: 2 июля, 16:00–16:30; тезисы и слайды выложены на сайте
+date: 2019-07-02
+lang: en
+title_en: "Modelling slurry flow in a hydraulic fracture: from mathematical model to deployable software"
+title_ru: "Моделирование течения суспензии в трещине гидроразрыва: от математической модели к готовому программному обеспечению"
+translation: auto
+authors:
+  - Kovtunenko, P. V.
+  - Baykin, A. N.
+  - Skopintsev, A. M.
+  - Ermishina, V.
+conference: frac-workshop
+event_en: International workshop “Coupled thermo-hydro-mechanical problems of fracture mechanics”
+city_ru: Новосибирск
+city_en: Novosibirsk, Russia
+url: http://conf.nsc.ru/frac2019/en
+program_url: http://conf.nsc.ru/files/conferences/frac2019/526098/FinalProgram.pdf
+scope: international
+status: oral
+speaker: TODO
+abstract_url: http://conf.nsc.ru/files/conferences/frac2019/522888/Kovtunenko.pdf
+slides_url: http://conf.nsc.ru/files/conferences/frac2019/529236/Presentation_Kovtunenko.pdf
+tags: [proppant-transport, software]

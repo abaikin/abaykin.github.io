@@ -1,0 +1,16 @@
+# ESMC 2018: 2–6 июля 2018 г., Болонья (страница конференции на сайте EUROMECH). День доклада и формат неизвестны
+date: 2018-07-02
+date_end: 2018-07-06
+lang: en
+title_en: A mini-frac analysis via the direct simulation of a hydraulic fracture in poroelastic medium
+title_ru: Анализ мини-ГРП с помощью прямого моделирования трещины гидроразрыва в пороупругой среде
+translation: auto
+conference: esmc
+event_en: 10th European Solid Mechanics Conference (ESMC 2018)
+city_ru: Болонья, Италия
+city_en: Bologna, Italy
+url: https://euromech.org/conferences/all-events/esmc10/
+status: TODO
+scope: unknown
+speaker: TODO
+publications: [baykin2018minifrac]

@@ -1,0 +1,14 @@
+# TODO: даты, город и формат не найдены; название — по сборнику тезисов из списка трудов (тезисы — с. 37–38).
+# Докладчик — единственный автор
+date: 2023
+lang: ru
+title_ru: Моделирование криволинейного распространения трещины автоГРП в пороупругой среде
+title_en: Modelling of curvilinear propagation of a self-induced fracture in a poroelastic medium
+translation: auto
+conference: rn-digital
+event_ru: "Научно-техническая конференция «Цифровые технологии в добыче углеводородов: цифровая прозрачность»"
+event_en: "Scientific and technical conference “Digital Technologies in Hydrocarbon Production: Digital Transparency”"
+scope: unknown
+status: TODO
+speaker: true
+publications: [baykin2023modelirovanie]
