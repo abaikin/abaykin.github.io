@@ -13,3 +13,6 @@ links:
   - { label: petrowebtools.nsu.ru, url: "https://petrowebtools.nsu.ru/" }
 tags: [hydraulic-fracturing, software]
 translation: auto
+# Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
+publications: []
+talks: []

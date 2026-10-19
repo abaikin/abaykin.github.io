@@ -11,3 +11,7 @@ status: active
 start: TODO
 tags: [auto-frac, waterflooding, software]
 translation: auto
+# Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
+# Список предложен по названиям работ — проверьте.
+publications: [golovin2022programma, baykin2024programma, baykin2023twodimensional, kalinin2022analiz, kopeikin2023modelirovanie, baykin2025sovmeshchennaya, kopeikin2026issledovanie]
+talks: []

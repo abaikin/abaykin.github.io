@@ -13,3 +13,6 @@ links:
   - { label: GitHub, url: "https://github.com/abaikin/Graph_Digitizer_Tool" }
 tags: [software]
 translation: auto
+# Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
+publications: []
+talks: []

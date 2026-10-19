@@ -1,11 +1,12 @@
 ---
-import { getCollection, getEntries } from 'astro:content';
+import { getCollection, getEntries, getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Icon from '../../../components/Icon.astro';
 import TodoNote from '../../../components/TodoNote.astro';
 import { type Lang, LANGS, loc, t } from '../../../i18n';
 import { langHref } from '../../../lib/site';
+import { comparePubs, displayAuthors, isOwner, ownerFamilies, texHtml, venueLine } from '../../../lib/publications';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -21,6 +22,13 @@ const title = loc(p, 'title', lang)!;
 const role = loc(p, 'role', lang);
 const summary = loc(p, 'summary', lang);
 const tags = await getEntries(p.tags);
+
+// Связанные публикации и выступления (ключи из publications.bib и id из src/content/talks/)
+const publications = (await getEntries(p.publications)).sort(comparePubs);
+const talks = await getEntries(p.talks);
+const profile = (await getEntry('profile', 'profile'))!.data;
+const owners = ownerFamilies([profile.name_ru, profile.name_en, ...profile.alt_names]);
+
 const period =
   p.start === undefined || p.start === 'TODO'
     ? undefined
@@ -66,6 +74,66 @@ const period =
     {summary && <p class="mt-8 max-w-3xl text-lg leading-relaxed" lang={summary.lang}>{summary.text}</p>}
 
     <p class="mt-6"><TodoNote lang={lang} text={t(lang, 'projects.detailsTodo')} /></p>
+
+    {
+      publications.length > 0 && (
+        <section class="mt-10 max-w-4xl" aria-labelledby="project-publications">
+          <h2 id="project-publications" class="text-xl font-semibold">
+            {t(lang, 'projects.publications')}
+          </h2>
+          <ul class="mt-3 divide-y divide-border">
+            {publications.map((pub) => (
+              <li class="py-3">
+                <a href={langHref(lang, `publications/#${pub.id}`)} class="font-semibold" lang={pub.data.lang} set:html={texHtml(pub.data.title)} />
+                <p class="mt-0.5 text-sm text-muted">
+                  {displayAuthors(pub.data, lang).map((n, i) => (
+                    <Fragment>
+                      {i > 0 && ', '}
+                      {isOwner(n, owners) ? <strong class="pub-owner">{`${n.family} ${n.given}`}</strong> : `${n.family} ${n.given}`}
+                    </Fragment>
+                  ))}
+                </p>
+                <p class="text-sm text-subtle italic">{venueLine(pub.data, lang)}</p>
+              </li>
+            ))}
+          </ul>
+          <p class="mt-3">
+            <a href={langHref(lang, 'publications/')} class="inline-flex items-center gap-1 text-sm font-semibold">
+              {t(lang, 'projects.allPublications')}
+              <Icon name="lucide:arrow-right" size={15} />
+            </a>
+          </p>
+        </section>
+      )
+    }
+
+    {
+      talks.length > 0 && (
+        <section class="mt-10 max-w-4xl" aria-labelledby="project-talks">
+          <h2 id="project-talks" class="text-xl font-semibold">
+            {t(lang, 'projects.talks')}
+          </h2>
+          <ul class="mt-3 space-y-2">
+            {talks.map((talk) => {
+              const title = loc(talk.data, 'title', lang)!;
+              const event = loc(talk.data, 'event', lang);
+              return (
+                <li>
+                  <a href={langHref(lang, `talks/#${talk.id}`)} lang={title.lang}>
+                    {title.text}
+                  </a>
+                  <span class="text-sm text-subtle">
+                    {' '}
+                    · {talk.data.date.slice(0, 4)}
+                    {event && <span lang={event.lang}> · {event.text}</span>}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )
+    }
 
     {
       p.links.length > 0 && (
