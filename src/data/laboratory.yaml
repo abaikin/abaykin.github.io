@@ -1,0 +1,16 @@
+# Лаборатория — пока заглушка: заголовок, короткое описание и блок «Скоро».
+# Сотрудников не публикуем (решение владельца).
+# TODO: описание лаборатории (продолжение предыдущего проекта) — напишет владелец.
+name_ru: Лаборатория программных систем оптимизации добычи углеводородов
+name_en: Laboratory of Software Systems for Hydrocarbon Production Optimization
+org_ru: Новосибирский государственный университет
+org_en: Novosibirsk State University
+org_url: https://www.nsu.ru/
+since: 2025
+status: coming-soon
+icon: flask-conical
+role_ru: Заведующий лабораторией
+role_en: Head of the laboratory
+short_ru: TODO
+short_en: TODO
+translation: auto

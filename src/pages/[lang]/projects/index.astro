@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ProjectCard from '../../../components/ProjectCard.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+import { type Lang, langPaths, t } from '../../../i18n';
+
+export const getStaticPaths = langPaths;
+
+const lang = Astro.params.lang as Lang;
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout lang={lang} title={t(lang, 'nav.projects')} description={t(lang, 'projects.lead')} section="projects">
+  <div class="wrap py-12 lg:py-16">
+    <SectionHeading icon="lucide:layers" as="h1">{t(lang, 'nav.projects')}</SectionHeading>
+    <p class="max-w-2xl text-lg text-muted">{t(lang, 'projects.lead')}</p>
+    <div class="mt-8 max-w-4xl">
+      {projects.map((project) => <ProjectCard lang={lang} project={project} />)}
+    </div>
+  </div>
+</BaseLayout>

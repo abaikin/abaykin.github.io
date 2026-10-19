@@ -1,0 +1,39 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import TodoNote from '../../../components/TodoNote.astro';
+import { type Lang, langPaths, loc, t } from '../../../i18n';
+
+export const getStaticPaths = langPaths;
+
+const lang = Astro.params.lang as Lang;
+const entry = await getEntry('laboratory', 'laboratory');
+if (!entry) throw new Error('Нет данных src/data/laboratory.yaml');
+const lab = entry.data;
+const name = loc(lab, 'name', lang)!;
+const org = loc(lab, 'org', lang)!;
+const short = loc(lab, 'short', lang);
+---
+
+<BaseLayout lang={lang} title={t(lang, 'nav.lab')} description={name.text} section="lab">
+  <div class="wrap py-12 lg:py-16">
+    <p class="eyebrow">{t(lang, 'nav.lab')}</p>
+    <h1 class="mt-3 max-w-3xl text-3xl font-semibold sm:text-4xl" lang={name.lang}>{name.text}</h1>
+    <p class="mt-3 text-muted">
+      <a href={lab.org_url} lang={org.lang}>{org.text}</a>
+      <span aria-hidden="true"> · </span>
+      {t(lang, 'lab.since', { year: lab.since })}
+    </p>
+    <p class="mt-6 max-w-2xl text-lg">
+      {short ? <span lang={short.lang}>{short.text}</span> : <TodoNote lang={lang} text={t(lang, 'lab.descriptionTodo')} />}
+    </p>
+    <div class="card mt-10 flex max-w-2xl items-start gap-4 p-6">
+      <span class="icon-circle" aria-hidden="true"><Icon name="lucide:clock" size={20} /></span>
+      <div>
+        <p class="font-semibold text-heading">{t(lang, 'lab.soon')}</p>
+        <p class="mt-1 text-muted">{t(lang, 'lab.soonText')}</p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

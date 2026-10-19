@@ -1,0 +1,90 @@
+---
+import { getCollection, getEntries } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import TodoNote from '../../../components/TodoNote.astro';
+import { type Lang, LANGS, loc, t } from '../../../i18n';
+import { langHref } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return LANGS.flatMap((lang) =>
+    projects.map((project) => ({ params: { lang, slug: project.id }, props: { project } })),
+  );
+}
+
+const lang = Astro.params.lang as Lang;
+const { project } = Astro.props as { project: CollectionEntry<'projects'> };
+const p = project.data;
+const title = loc(p, 'title', lang)!;
+const role = loc(p, 'role', lang);
+const summary = loc(p, 'summary', lang);
+const tags = await getEntries(p.tags);
+const period =
+  p.start === undefined || p.start === 'TODO'
+    ? undefined
+    : p.end
+      ? `${p.start}–${p.end}`
+      : p.status === 'active'
+        ? `${p.start} — ${t(lang, 'common.present')}`
+        : String(p.start);
+---
+
+<BaseLayout lang={lang} title={title.text} description={summary?.text} section="projects">
+  <article class="wrap py-12 lg:py-16">
+    <a href={langHref(lang, 'projects/')} class="inline-flex items-center gap-1 text-sm font-semibold">
+      <Icon name="lucide:arrow-left" size={15} />
+      {t(lang, 'projects.all')}
+    </a>
+
+    <div class="mt-6 flex max-w-4xl items-start gap-4">
+      <span class="icon-circle mt-1" aria-hidden="true"><Icon name={`lucide:${p.icon}`} size={20} /></span>
+      <h1 class="text-3xl font-semibold sm:text-4xl" lang={title.lang}>{title.text}</h1>
+    </div>
+
+    <dl class="mt-6 grid max-w-4xl gap-x-6 gap-y-2 sm:grid-cols-[max-content_1fr]">
+      <dt class="text-subtle">{t(lang, 'projects.role')}</dt>
+      <dd>{role ? <span lang={role.lang}>{role.text}</span> : <TodoNote lang={lang} />}</dd>
+      <dt class="text-subtle">{t(lang, 'projects.period')}</dt>
+      <dd>
+        {period ?? <TodoNote lang={lang} />}
+        <span class="text-subtle"> · {t(lang, p.status === 'active' ? 'projects.status.active' : 'projects.status.completed')}</span>
+      </dd>
+    </dl>
+
+    {
+      tags.length > 0 && (
+        <ul class="mt-5 flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <li class="chip chip-sm">{tag.data[lang]}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    {summary && <p class="mt-8 max-w-3xl text-lg leading-relaxed" lang={summary.lang}>{summary.text}</p>}
+
+    <p class="mt-6"><TodoNote lang={lang} text={t(lang, 'projects.detailsTodo')} /></p>
+
+    {
+      p.links.length > 0 && (
+        <section class="mt-10" aria-labelledby="links">
+          <h2 id="links" class="text-xl font-semibold">
+            {t(lang, 'projects.links')}
+          </h2>
+          <ul class="mt-3 space-y-1">
+            {p.links.map((l) => (
+              <li>
+                <a href={l.url} class="inline-flex items-center gap-1.5">
+                  {l.label}
+                  <Icon name="lucide:external-link" size={14} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>

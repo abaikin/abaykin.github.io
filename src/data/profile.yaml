@@ -1,0 +1,66 @@
+# Страница «Обо мне» (Bio). Двуязычные поля: *_ru / *_en.
+# translation: auto — английские тексты переведены машинно, их нужно проверить.
+name_ru: Байкин Алексей Николаевич
+name_en: Aleksei Baikin
+# Другие написания имени: выделение в списках авторов и поисковые системы
+alt_names: [Alexey Baykin, Baykin A. N., Baikin A. N., Байкин А. Н.]
+position_ru: Заведующий лабораторией программных систем оптимизации добычи углеводородов
+position_en: Head of the Laboratory of Software Systems for Hydrocarbon Production Optimization
+affiliation_ru: Новосибирский государственный университет
+affiliation_en: Novosibirsk State University
+affiliation_url: https://www.nsu.ru/
+degree_ru: Кандидат физико-математических наук
+degree_en: Candidate of Sciences (PhD) in Physics and Mathematics
+photo: ../assets/img/profile.jpg
+
+# TODO: биография — временная заглушка, владелец заменит своим текстом
+bio_ru: |
+  Кандидат физико-математических наук, заведующий лабораторией программных систем оптимизации добычи углеводородов Новосибирского государственного университета.
+
+  Занимаюсь математическим моделированием гидроразрыва пласта и связанных с ним процессов фильтрации, разрабатываю численные методы механики сплошных сред и инженерное программное обеспечение для нефтегазовой отрасли.
+bio_en: |
+  Candidate of Sciences (PhD) in Physics and Mathematics, Head of the Laboratory of Software Systems for Hydrocarbon Production Optimization at Novosibirsk State University.
+
+  I work on mathematical modelling of hydraulic fracturing and the related flow in porous media, and develop numerical methods of continuum mechanics and engineering software for the oil and gas industry.
+translation: auto
+
+emails:
+  - { kind: work, address: a.baikin@g.nsu.ru }
+  - { kind: personal, address: alexey.baykin@gmail.com }
+
+# Научные интересы (чипы); tag — ключ из src/data/tags.yaml.
+# Внутри { … } запятая разделяет поля: текст с запятой берите в кавычки.
+interests:
+  - { ru: Математическое моделирование гидроразрыва пласта, en: Mathematical modelling of hydraulic fracturing, tag: hydraulic-fracturing }
+  - { ru: Моделирование процессов фильтрации, en: Modelling of flow in porous media, tag: reservoir-flow }
+  - { ru: Авто-ГРП, en: Self-induced fractures (auto-frac), tag: auto-frac }
+  - { ru: Многофазные течения в трещинах и скважинах, en: Multiphase flow in fractures and wells, tag: multiphase-flow }
+  - { ru: Многофазная фильтрация в пласте, en: Multiphase flow in reservoirs, tag: reservoir-flow }
+  - { ru: "Численные методы механики сплошных сред (МКЭ, МКО)", en: "Numerical methods of continuum mechanics (FEM, FVM)", tag: fem }
+  - { ru: Параллельные вычисления на суперкомпьютере, en: Parallel computing on supercomputers, tag: hpc }
+
+# Профили (иконки); Instagram — только на странице «Увлечения»
+profiles:
+  - { id: researchgate, url: "https://www.researchgate.net/profile/Alexey-Baykin" }
+  - { id: sciact, url: "https://sciact.hydro.nsc.ru/public/profile/28" }
+  - { id: orcid, url: "https://orcid.org/0000-0001-6587-6079" }
+  - { id: elibrary, url: "https://elibrary.ru/author_profile.asp?authorid=941617" }
+  - { id: scopus, url: "https://www.scopus.com/authid/detail.uri?authorId=56572941400" }
+  - { id: wos, url: "https://www.webofscience.com/wos/author/record/L-6663-2017" }
+  - { id: github, url: "https://github.com/abaikin" }
+  - { id: linkedin, url: "https://www.linkedin.com/in/alexey-baykin-6b201781" }
+  - { id: youtube, url: "https://www.youtube.com/@ComputationalMech" }
+  - { id: nsu-pure, url: "https://pure.nsu.ru/portal/ru/persons/--(70fbc267-baa1-4da4-8db8-f24f94269286)/publications.html" }
+
+# CV: пути внутри public/assets/. Пока английского CV нет, кнопка на английской
+# странице ведёт на русскую версию (с пометкой языка).
+cv:
+  ru: cv/baikin-cv-ru.pdf
+  en: TODO
+
+# «Чем занимаюсь»: проекты (папки в src/content/projects/) и страница лаборатории
+doing:
+  - project: cyberfrac-ilsa
+  - project: autofrac-simulator
+  - project: petrowebtools
+  - page: lab

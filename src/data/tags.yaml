@@ -1,0 +1,27 @@
+# Справочник тегов: ключ (латиницей, используется в данных и адресах) → подписи RU/EN.
+# Это стартовое предложение — правьте свободно. Тег, которого нет в справочнике,
+# останавливает сборку с понятной ошибкой.
+# group: topic — тема, method — метод, software — программа, activity — вид деятельности.
+
+hydraulic-fracturing: { ru: ГРП, en: Hydraulic fracturing, group: topic }
+auto-frac: { ru: Авто-ГРП, en: Self-induced fracturing, group: topic }
+poroelasticity: { ru: Пороупругость, en: Poroelasticity, group: topic }
+thermo-poroelasticity: { ru: Термопороупругость, en: Thermo-poroelasticity, group: topic }
+proppant-transport: { ru: Транспорт проппанта, en: Proppant transport, group: topic }
+mini-frac: { ru: Мини-ГРП, en: Mini-frac, group: topic }
+fracture-mechanics: { ru: Механика разрушения, en: Fracture mechanics, group: topic }
+multiphase-flow: { ru: Многофазные течения, en: Multiphase flow, group: topic }
+wellbore-flow: { ru: Течения в скважинах, en: Wellbore flow, group: topic }
+reservoir-flow: { ru: Фильтрация в пласте, en: Reservoir flow, group: topic }
+waterflooding: { ru: Заводнение и ППД, en: Waterflooding, group: topic }
+well-testing: { ru: ГДИС, en: Well testing, group: topic }
+gas-condensate: { ru: Газоконденсат, en: Gas condensate, group: topic }
+planar3d: { ru: Planar3D, en: Planar3D, group: method }
+level-set: { ru: Метод level set, en: Level set method, group: method }
+inverse-problems: { ru: Обратные задачи, en: Inverse problems, group: method }
+fem: { ru: МКЭ, en: FEM, group: method }
+fvm: { ru: МКО, en: FVM, group: method }
+hpc: { ru: Параллельные вычисления, en: HPC, group: method }
+freefem: { ru: FreeFEM, en: FreeFEM, group: software }
+software: { ru: Разработка ПО, en: Software development, group: activity }
+teaching: { ru: Преподавание, en: Teaching, group: activity }

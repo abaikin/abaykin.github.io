@@ -1,0 +1,13 @@
+# Проект (заглушка). Источники: статья ISPRAS 2019 и свидетельство о регистрации программы № 2019664165.
+order: 4
+icon: cpu
+title_ru: FEMEngine
+title_en: FEMEngine
+role_ru: Соавтор (свидетельство о регистрации программы № 2019664165)
+role_en: Co-author (software registration No. 2019664165)
+summary_ru: Вычислительный пакет на C++ для метода конечных элементов, построенный на функциональном и шаблонном метапрограммировании.
+summary_en: A C++ finite element package built on functional and template metaprogramming.
+status: completed
+start: 2019
+tags: [fem, software]
+translation: auto

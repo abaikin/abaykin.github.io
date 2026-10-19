@@ -1,0 +1,73 @@
+# Образование. Ключи (bachelor, master, phd) — идентификаторы записей.
+# Источники: дипломы, страница защиты в ИГиЛ, слова владельца.
+# translation: auto — английские тексты переведены машинно, их нужно проверить.
+
+bachelor:
+  level: bachelor
+  start: TODO
+  end: 2011
+  degree_ru: Бакалавр математики
+  degree_en: Bachelor of Mathematics
+  program_ru: Направление «Математика»
+  program_en: Mathematics
+  org_ru: Новосибирский государственный университет, механико-математический факультет
+  org_en: Novosibirsk State University, Faculty of Mechanics and Mathematics
+  org_short_ru: НГУ, механико-математический факультет
+  org_short_en: Novosibirsk State University
+  org_url: https://www.nsu.ru/
+  honors: true
+  thesis_title_ru: Теоремы типа Лиувилля для функций с ограниченным (p,q)-искажением
+  thesis_title_en: Liouville-type theorems for functions with bounded (p,q)-distortion
+  supervisor_ru: д. ф.-м. н., профессор Сергей Константинович Водопьянов
+  supervisor_en: Prof. Sergey K. Vodopyanov, Dr. Sci. (Phys.-Math.)
+  abstract_ru: TODO
+  abstract_en: TODO
+  translation: auto
+
+master:
+  level: master
+  start: TODO
+  end: 2013
+  degree_ru: Магистр
+  degree_en: Master's degree
+  program_ru: Направление «Механика и математическое моделирование»
+  program_en: Mechanics and Mathematical Modelling
+  org_ru: Новосибирский государственный университет, механико-математический факультет
+  org_en: Novosibirsk State University, Faculty of Mechanics and Mathematics
+  org_short_ru: НГУ, механико-математический факультет
+  org_short_en: Novosibirsk State University
+  org_url: https://www.nsu.ru/
+  honors: true
+  thesis_title_ru: Стационарный цилиндрический вихрь в вязкой электропроводной жидкости
+  thesis_title_en: Stationary cylindrical vortex in a viscous electrically conducting fluid
+  supervisor_ru: д. ф.-м. н., профессор РАН Сергей Валерьевич Головин
+  supervisor_en: Prof. Sergey V. Golovin, Dr. Sci. (Phys.-Math.), Professor of the RAS
+  abstract_ru: TODO
+  abstract_en: TODO
+  translation: auto
+
+phd:
+  level: phd
+  start: TODO
+  end: 2016
+  defense_date: 2016-12-06
+  degree_ru: Кандидат физико-математических наук
+  degree_en: Candidate of Sciences (PhD) in Physics and Mathematics
+  program_ru: 01.02.05 — механика жидкости, газа и плазмы
+  program_en: Mechanics of fluids, gases and plasma (01.02.05)
+  org_ru: Институт гидродинамики им. М. А. Лаврентьева СО РАН (диссертационный совет Д 003.054.04)
+  org_en: Lavrentyev Institute of Hydrodynamics SB RAS (dissertation council D 003.054.04)
+  org_short_ru: ИГиЛ СО РАН
+  org_short_en: Lavrentyev Institute of Hydrodynamics SB RAS
+  org_url: https://www.hydro.nsc.ru/
+  honors: false
+  thesis_title_ru: Динамика трещины гидроразрыва пласта в неоднородной пороупругой среде
+  thesis_title_en: Dynamics of a hydraulic fracture in an inhomogeneous poroelastic medium
+  supervisor_ru: д. ф.-м. н., профессор РАН Сергей Валерьевич Головин
+  supervisor_en: Prof. Sergey V. Golovin, Dr. Sci. (Phys.-Math.), Professor of the RAS
+  defense_url: https://www.hydro.nsc.ru/education/dissertations/baikin.php
+  abstract_ru: TODO
+  abstract_en: TODO
+  # Шаг 4: скопировать диссертацию с сайта ИГиЛ в public/assets/pdf/theses/
+  pdf: TODO
+  translation: auto

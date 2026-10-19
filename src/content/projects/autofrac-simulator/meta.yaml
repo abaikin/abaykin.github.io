@@ -1,0 +1,13 @@
+# Проект (заглушка): подробное описание, период, иллюстрации добавит владелец.
+order: 2
+icon: droplets
+title_ru: Симулятор авто-ГРП
+title_en: Auto-frac simulator
+role_ru: Руководитель разработки симулятора (пользовательский интерфейс и расчётный модуль)
+role_en: Development lead of the simulator (user interface and computational module)
+summary_ru: Симулятор самопроизвольного развития техногенных трещин гидроразрыва на нагнетательных скважинах (авто-ГРП).
+summary_en: A simulator of self-induced hydraulic fracture growth at injection wells (auto-frac).
+status: active
+start: TODO
+tags: [auto-frac, waterflooding, software]
+translation: auto

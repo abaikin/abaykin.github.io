@@ -1,0 +1,65 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getEntries } from 'astro:content';
+import Icon from './Icon.astro';
+import TodoNote from './TodoNote.astro';
+import { type Lang, loc, t } from '../i18n';
+import { langHref } from '../lib/site';
+
+// Компактная карточка проекта (референс 4): заголовок, роль и период, теги, описание, «Подробнее»
+interface Props {
+  lang: Lang;
+  project: CollectionEntry<'projects'>;
+}
+
+const { lang, project } = Astro.props;
+const p = project.data;
+const url = langHref(lang, `projects/${project.id}/`);
+const title = loc(p, 'title', lang);
+const role = loc(p, 'role', lang);
+const summary = loc(p, 'summary', lang);
+const tags = await getEntries(p.tags);
+const period =
+  p.start === undefined || p.start === 'TODO'
+    ? undefined
+    : p.end
+      ? `${p.start}–${p.end}`
+      : p.status === 'active'
+        ? `${p.start} — ${t(lang, 'common.present')}`
+        : String(p.start);
+---
+
+<article class="flex gap-4 border-b border-border py-6 first:pt-2 last:border-b-0">
+  <span class="icon-circle mt-1" aria-hidden="true"><Icon name={`lucide:${p.icon}`} size={20} /></span>
+  <div class="min-w-0 flex-1">
+    <h2 class="text-xl font-semibold">
+      <a href={url} class="text-heading no-underline hover:text-primary hover:underline" lang={title?.lang}>
+        {title?.text}
+      </a>
+    </h2>
+    <p class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-subtle">
+      <span class="inline-flex items-center gap-1.5">
+        <Icon name="lucide:user" size={15} />
+        {role ? <span lang={role.lang}>{role.text}</span> : <TodoNote lang={lang} />}
+      </span>
+      <span class="inline-flex items-center gap-1.5">
+        <Icon name="lucide:calendar" size={15} />
+        {period ?? <TodoNote lang={lang} />}
+      </span>
+    </p>
+    {
+      tags.length > 0 && (
+        <ul class="mt-2.5 flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <li class="chip chip-sm">{tag.data[lang]}</li>
+          ))}
+        </ul>
+      )
+    }
+    {summary && <p class="mt-2.5 line-clamp-2 text-muted" lang={summary.lang}>{summary.text}</p>}
+    <a href={url} class="mt-2 inline-flex items-center gap-1 text-sm font-semibold">
+      {t(lang, 'common.more')}
+      <Icon name="lucide:arrow-right" size={15} />
+    </a>
+  </div>
+</article>

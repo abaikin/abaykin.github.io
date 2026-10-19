@@ -1,0 +1,15 @@
+# Проект (заглушка): подробное описание, период, иллюстрации добавит владелец.
+order: 3
+icon: globe
+title_ru: PetroWebTools
+title_en: PetroWebTools
+role_ru: Основатель и владелец продукта
+role_en: Founder and product owner
+summary_ru: Онлайн-сервис быстрых инженерных расчётов для нефтегазовой отрасли — расчёт трещин ГРП прямо в браузере (ILSA, UFD, ExpressFrac).
+summary_en: An online service for fast engineering calculations in the oil and gas industry — hydraulic fracture calculations right in the browser (ILSA, UFD, ExpressFrac).
+status: active
+start: TODO
+links:
+  - { label: petrowebtools.nsu.ru, url: "https://petrowebtools.nsu.ru/" }
+tags: [hydraulic-fracturing, software]
+translation: auto

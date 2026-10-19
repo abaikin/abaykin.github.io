@@ -1,0 +1,14 @@
+# Проект (заглушка): подробное описание, роль, период, иллюстрации добавит владелец.
+# Подробный текст можно положить рядом: ru.mdx / en.mdx.
+order: 1
+icon: layers
+title_ru: Модуль Planar3D ILSA в симуляторе «КиберГРП»
+title_en: Planar3D ILSA module in the CyberFrac simulator
+role_ru: Руководитель разработки модуля расчёта развития трещины ГРП по модели Planar3D ILSA
+role_en: Development lead of the Planar3D ILSA hydraulic fracture propagation module
+summary_ru: Модуль расчёта развития плоской трещины гидроразрыва в слоистой по напряжениям среде по модели Planar3D ILSA для симулятора ГРП «КиберГРП» (CyberFrac).
+summary_en: A module that computes planar hydraulic fracture growth in stress-layered formations with the Planar3D ILSA model for the CyberFrac hydraulic fracturing simulator.
+status: active
+start: TODO
+tags: [hydraulic-fracturing, planar3d, software]
+translation: auto
