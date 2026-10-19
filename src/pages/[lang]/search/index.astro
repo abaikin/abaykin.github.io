@@ -1,0 +1,117 @@
+---
+// Результаты поиска по сайту (Pagefind). Индекс строится после сборки: npm run build.
+// Pagefind сам выбирает индекс по <html lang>, поэтому на /ru/ ищутся только русские страницы.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+import { type Lang, langPaths, t } from '../../../i18n';
+import { langHref } from '../../../lib/site';
+
+export const getStaticPaths = langPaths;
+
+const lang = Astro.params.lang as Lang;
+---
+
+<BaseLayout lang={lang} title={t(lang, 'search.title')} description={t(lang, 'search.lead')} searchable={false}>
+  <div
+    class="wrap py-12 lg:py-16"
+    id="search-root"
+    data-base={import.meta.env.BASE_URL}
+    data-msg-idle={t(lang, 'search.idle')}
+    data-msg-loading={t(lang, 'search.loading')}
+    data-msg-empty={t(lang, 'search.empty')}
+    data-msg-count={t(lang, 'search.count')}
+    data-msg-unavailable={t(lang, 'search.unavailable')}
+  >
+    <SectionHeading icon="lucide:search" as="h1">{t(lang, 'search.title')}</SectionHeading>
+    <p class="max-w-2xl text-muted">{t(lang, 'search.lead')}</p>
+
+    <form id="search-form" class="mt-6 flex max-w-2xl gap-2" action={langHref(lang, 'search/')} method="get" role="search">
+      <label for="search-q" class="sr-only">{t(lang, 'search.label')}</label>
+      <input id="search-q" name="q" type="search" class="field" autocomplete="off" />
+      <button type="submit" class="btn-primary">{t(lang, 'search.submit')}</button>
+    </form>
+
+    <p id="search-status" class="mt-6 text-muted" aria-live="polite">{t(lang, 'search.idle')}</p>
+    <ol id="search-results" class="mt-4 max-w-3xl divide-y divide-border"></ol>
+  </div>
+</BaseLayout>
+
+<script>
+  interface PagefindResultData {
+    url: string;
+    excerpt: string;
+    meta: { title?: string };
+  }
+  interface Pagefind {
+    options: (o: Record<string, unknown>) => Promise<void>;
+    search: (q: string) => Promise<{ results: { data: () => Promise<PagefindResultData> }[] }>;
+  }
+
+  const root = document.getElementById('search-root') as HTMLElement;
+  const form = document.getElementById('search-form') as HTMLFormElement;
+  const input = document.getElementById('search-q') as HTMLInputElement;
+  const status = document.getElementById('search-status') as HTMLElement;
+  const list = document.getElementById('search-results') as HTMLOListElement;
+  const msg = root.dataset;
+  const base = msg.base ?? '/';
+
+  let pagefind: Pagefind | undefined;
+  async function loadPagefind(): Promise<Pagefind> {
+    if (!pagefind) {
+      const url = `${base}pagefind/pagefind.js`;
+      pagefind = (await import(/* @vite-ignore */ url)) as Pagefind;
+      await pagefind.options({ baseUrl: base });
+    }
+    return pagefind;
+  }
+
+  // Номер последнего запроса: результаты устаревшего запроса не показываем
+  let current = 0;
+
+  async function run(query: string) {
+    const id = ++current;
+    list.replaceChildren();
+    if (!query.trim()) {
+      status.textContent = msg.msgIdle ?? '';
+      return;
+    }
+    status.textContent = msg.msgLoading ?? '';
+    try {
+      const pf = await loadPagefind();
+      const res = await pf.search(query);
+      const items = await Promise.all(res.results.slice(0, 30).map((r) => r.data()));
+      if (id !== current) return;
+      list.replaceChildren();
+      status.textContent = items.length ? (msg.msgCount ?? '').replace('{n}', String(res.results.length)) : (msg.msgEmpty ?? '');
+      for (const item of items) {
+        const li = document.createElement('li');
+        li.className = 'py-4';
+        const a = document.createElement('a');
+        a.href = item.url;
+        a.className = 'font-serif text-lg font-semibold';
+        a.textContent = item.meta.title ?? item.url;
+        const p = document.createElement('p');
+        p.className = 'mt-1 text-muted';
+        p.innerHTML = item.excerpt; // Pagefind отдаёт экранированный текст с <mark>
+        li.append(a, p);
+        list.append(li);
+      }
+    } catch {
+      if (id === current) status.textContent = msg.msgUnavailable ?? '';
+    }
+  }
+
+  const initial = new URLSearchParams(location.search).get('q') ?? '';
+  input.value = initial;
+  run(initial);
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = input.value;
+    const url = new URL(location.href);
+    if (q) url.searchParams.set('q', q);
+    else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+    run(q);
+  });
+</script>
