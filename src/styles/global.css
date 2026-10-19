@@ -130,7 +130,9 @@
   --color-primary-tint: var(--c-primary-tint);
   --color-secondary: var(--c-secondary);
   --font-sans: var(--font-source-sans), system-ui, sans-serif;
-  --font-serif: var(--font-plex-serif), Georgia, serif;
+  /* Заголовки и имя в шапке. Чтобы сменить шрифт заголовков, подключите его в astro.config.mjs
+     и поправьте эту строку. */
+  --font-heading: var(--font-source-sans), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
@@ -162,7 +164,7 @@
   h2,
   h3,
   h4 {
-    font-family: var(--font-serif);
+    font-family: var(--font-heading);
     color: var(--c-heading);
     line-height: 1.25;
     text-wrap: balance;

@@ -9,10 +9,10 @@ export const SITE_REPO = 'https://github.com/abaikin/abaikin.github.io';
 /** Путь внутри сайта с учётом base: href('/ru/') */
 export const href = (path: string) => `${BASE}${path.startsWith('/') ? path : `/${path}`}`;
 
-/** Страница на языке: langHref('ru', 'papers/') → '/ru/papers/' */
+/** Страница на языке: langHref('ru', 'talks/') → '/ru/talks/' */
 export const langHref = (lang: Lang, path = '') => href(`/${lang}/${path}`.replace(/\/{2,}/g, '/'));
 
-/** Путь страницы без base и языкового префикса: '/ru/papers/' → 'papers/' */
+/** Путь страницы без base и языкового префикса: '/ru/talks/' → 'talks/' */
 export function pagePath(pathname: string): string {
   const p = BASE && pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname;
   return p.replace(/^\/(?:ru|en)(?:\/|$)/, '');

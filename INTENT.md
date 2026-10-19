@@ -29,7 +29,7 @@
 
 ## Навигация
 
-Bio · Papers · Talks · Experience · Projects · Courses · Laboratory · Blog · Hobby
+Bio · Publications · Talks · Experience · Projects · Courses · Laboratory · Blog · Hobby
 (Обо мне · Публикации · Выступления · Опыт · Проекты · Курсы · Лаборатория · Блог · Увлечения)
 
 ## Разделы
@@ -101,7 +101,7 @@ Bio · Papers · Talks · Experience · Projects · Courses · Laboratory · Blo
 2. https://sajalsharma.com/posts/
    - Взять шрифты для английского языка (определить по CSS сайта; для русского подобрать подходящие кириллические аналоги и согласовать со мной).
    - Нравится список статей; для блога сделать нечто подобное, но с картинкой.
-   - Для списка публикаций (Papers) нужен другой вид, не как здесь.
+   - Для списка публикаций (Publications) нужен другой вид, не как здесь.
 3. https://github.com/NicolasMeseguer/nicolasmeseguer.github.io
    - Нравится оформление списков статей и кнопка BibTeX. Там возможно на самом гите лежит какой-то другой сайт, но вот раньше было как на картинке ForCLAUDE/frame_0069.png - по каждой статье оформление неплохое. Можно с него начать, но потом добавить еще элементов, если потребует тахническое задание. Автор мог поменять сайт: смотри исходный код и историю репозитория.
 4. https://astro.build/themes/details/academic-portfolio-astro
@@ -113,7 +113,7 @@ Bio · Papers · Talks · Experience · Projects · Courses · Laboratory · Blo
 
 0. **Разведка (без кода).** Прочитать резюме и `ForCLAUDE/`, изучить референсы. Выдать: стек и структуру репозитория, схему данных каждого раздела, реализацию i18n, BibTeX-пайплайна и фильтров по тегам, список пробелов и вопросов ко мне. Остановиться и ждать подтверждения.
 1. Каркас: Astro, i18n, темы, шрифты, навигация, деплой на GitHub Pages (Actions). Страница Bio.
-2. Papers (BibTeX, поиск, фильтры, теги, кнопка BibTeX).
+2. Publications (BibTeX, поиск, фильтры, теги, кнопка BibTeX).
 3. Talks.
 4. Experience (работа, проекты и гранты, образование, студенты, достижения, skills).
 5. Projects (отдельные страницы), Laboratory (заглушка), Courses.

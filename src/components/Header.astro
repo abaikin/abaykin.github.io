@@ -16,7 +16,7 @@ const switchHref = langHref(target, alternate ? current : '');
 
 const NAV: { key: UIKey; path: string }[] = [
   { key: 'nav.bio', path: '' },
-  { key: 'nav.papers', path: 'papers/' },
+  { key: 'nav.publications', path: 'publications/' },
   { key: 'nav.talks', path: 'talks/' },
   { key: 'nav.experience', path: 'experience/' },
   { key: 'nav.projects', path: 'projects/' },
@@ -41,7 +41,7 @@ const isActive = (path: string) => (path === '' ? current === '' : current.start
     >
       <Icon name="lucide:search" size={20} />
     </a>
-    <a href={langHref(lang)} class="brand whitespace-nowrap font-serif text-lg font-semibold">
+    <a href={langHref(lang)} class="brand whitespace-nowrap font-heading text-lg font-semibold">
       {t(lang, 'site.name')}
     </a>
 

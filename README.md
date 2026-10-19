@@ -69,4 +69,4 @@ Push в `main` → GitHub Actions (`.github/workflows/deploy.yml`) собира�
 ## Сторонние ресурсы
 
 - Иконки: [Lucide](https://lucide.dev) (ISC), [Simple Icons](https://simpleicons.org) (CC0).
-- Шрифты: Source Sans 3, IBM Plex Serif, IBM Plex Mono (SIL Open Font License); скачиваются из Fontsource при сборке и хранятся на сайте.
+- Шрифты: Source Sans 3, IBM Plex Mono (SIL Open Font License); скачиваются из Fontsource при сборке и хранятся на сайте.

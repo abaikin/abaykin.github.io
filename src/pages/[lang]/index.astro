@@ -116,7 +116,7 @@ const emailLabel = { work: t(lang, 'bio.emailWork'), personal: t(lang, 'bio.emai
           }
 
           <div class="mt-8">
-            <h3 class="flex items-center gap-2 font-sans text-base font-semibold text-heading">
+            <h3 class="flex items-center gap-2 text-base font-semibold text-heading">
               <Icon name="lucide:mail" size={18} />
               {t(lang, 'bio.contacts')}
             </h3>
@@ -154,7 +154,7 @@ const emailLabel = { work: t(lang, 'bio.emailWork'), personal: t(lang, 'bio.emai
                 <Icon name={`lucide:${d.icon}`} size={20} />
               </span>
               <span class="min-w-0">
-                <span class="block font-serif text-lg font-semibold text-heading group-hover:text-primary" lang={d.title.lang}>
+                <span class="block font-heading text-lg font-semibold text-heading group-hover:text-primary" lang={d.title.lang}>
                   {d.title.text}
                 </span>
                 {d.text && (

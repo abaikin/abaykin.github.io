@@ -31,7 +31,8 @@ export default defineConfig({
       i18n: { defaultLocale: 'ru', locales: { ru: 'ru-RU', en: 'en-US' } },
     }),
   ],
-  // Шрифты из референса 2 (sajalsharma.com); у всех есть кириллица
+  // Source Sans 3 — текст и заголовки (без засечек), IBM Plex Mono — код и служебные подписи.
+  // У обоих есть кириллица. Шрифт заголовков задаётся токеном --font-heading в global.css.
   fonts: [
     {
       provider: fontProviders.fontsource(),
@@ -41,15 +42,6 @@ export default defineConfig({
       styles: ['normal', 'italic'],
       subsets: ['latin', 'cyrillic'],
       fallbacks: ['system-ui', 'sans-serif'],
-    },
-    {
-      provider: fontProviders.fontsource(),
-      name: 'IBM Plex Serif',
-      cssVariable: '--font-plex-serif',
-      weights: [400, 600],
-      styles: ['normal', 'italic'],
-      subsets: ['latin', 'cyrillic'],
-      fallbacks: ['Georgia', 'serif'],
     },
     {
       provider: fontProviders.fontsource(),
