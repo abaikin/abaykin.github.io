@@ -1,0 +1,18 @@
+# Личные материалы и черновики владельца — не коммитить
+ForCLAUDE/
+DRAFT.MD
+proposal.md
+
+# ОС
+.DS_Store
+
+# Зависимости и сборка
+node_modules/
+dist/
+.astro/
+
+# Логи и окружение
+npm-debug.log*
+.env
+.env.*
+!.env.example
