@@ -11,6 +11,8 @@
     "dev": "astro dev",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
+    "local": "npm run build && astro preview",
+    "stop": "astro dev stop && astro preview stop",
     "check": "astro check",
     "validate": "node scripts/validate.mjs",
     "todo": "node scripts/todo-report.mjs",
