@@ -2,6 +2,7 @@
 // Публикации: src/data/publications.bib → список по годам с поиском, фильтрами (тип, индексация, темы)
 // и сортировкой. Все записи есть в статическом HTML; скрипт только скрывает и переставляет их.
 // Состояние фильтров хранится в адресе: ?q=…&type=journal,rid&index=scopus&tag=poroelasticity&sort=asc
+// Пара «оригинал — перевод» показывается одной записью: на странице каждого языка — версия на этом языке.
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Icon from '../../../components/Icon.astro';
@@ -9,7 +10,7 @@ import SectionHeading from '../../../components/SectionHeading.astro';
 import PublicationItem, { type RelatedLink } from '../../../components/PublicationItem.astro';
 import { type Lang, type UIKey, langPaths, loc, t } from '../../../i18n';
 import { href, langHref } from '../../../lib/site';
-import { comparePubs, findJournal, ownerFamilies } from '../../../lib/publications';
+import { comparePubs, findJournal, isMainVersion, ownerFamilies, translationPartners } from '../../../lib/publications';
 
 export const getStaticPaths = langPaths;
 
@@ -22,6 +23,7 @@ const tagLabels = new Map(tagEntries.map((tag) => [tag.id, tag.data[lang]]));
 const profileEntry = await getEntry('profile', 'profile');
 if (!profileEntry) throw new Error('Нет данных src/data/profile.yaml');
 const owners = ownerFamilies([profileEntry.data.name_ru, profileEntry.data.name_en, ...profileEntry.data.alt_names]);
+const sources = (await getCollection('pubsources')).sort((a, b) => a.data.order - b.data.order);
 
 // Обратные связи: проекты и выступления, которые ссылаются на публикацию
 const related = (pairs: [string, RelatedLink][]) => {
@@ -38,7 +40,7 @@ const projectsByPub = related(
     ]);
   }),
 );
-// Раздел «Выступления» наполняется на шаге 3; пока файлов нет, коллекцию не запрашиваем (иначе предупреждение)
+// Пока в src/content/talks/ нет файлов, коллекцию не запрашиваем (иначе Astro предупреждает о пустой коллекции)
 const hasTalks = Object.keys(import.meta.glob('/src/content/talks/*.yaml')).length > 0;
 const talksByPub = related(
   (hasTalks ? await getCollection('talks') : []).flatMap((talk) => {
@@ -50,22 +52,40 @@ const talksByPub = related(
   }),
 );
 
-const items = pubs.map((pub) => ({ pub, journal: findJournal(pub.data, journals) }));
-const years = [...new Set(pubs.map((p) => p.data.year))];
+// Переводные версии: показываем одну запись на пару
+const partners = translationPartners(pubs);
+const items = pubs
+  .filter((pub) => isMainVersion(pub, partners.get(pub.id), lang))
+  .map((pub) => {
+    const partner = partners.get(pub.id);
+    const ids = [pub.id, ...(partner ? [partner.other.id] : [])];
+    return {
+      pub,
+      journal: findJournal(pub.data, journals),
+      alternate: partner
+        ? { pub: partner.other, journal: findJournal(partner.other.data, journals), isTranslation: partner.otherIsTranslation }
+        : undefined,
+      projects: ids.flatMap((id) => projectsByPub.get(id) ?? []),
+      talks: ids.flatMap((id) => talksByPub.get(id) ?? []),
+    };
+  });
+const years = [...new Set(items.map(({ pub }) => pub.data.year))];
 
-// Счётчики для фильтров
+// Счётчики для фильтров (пара «оригинал — перевод» считается одной работой)
 function count<T>(values: T[]) {
   return values.reduce((m, v) => m.set(v, (m.get(v) ?? 0) + 1), new Map<T, number>());
 }
 const TYPES = ['journal', 'conference', 'rid', 'other'] as const;
-const typeCounts = count<string>(pubs.map((p) => p.data.category));
-const INDEX = ['wos', 'scopus', 'rinc', 'rsci', 'vak', 'wl'] as const;
-const indexCounts = count<string>(
-  items.flatMap(({ pub, journal }) => [...pub.data.indexing, ...(journal?.vak ? ['vak'] : []), ...(journal?.white_list ? ['wl'] : [])]),
-);
-const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) => tag.id))).entries()].sort(
-  (a, b) => b[1] - a[1] || (tagLabels.get(a[0]) ?? a[0]).localeCompare(tagLabels.get(b[0]) ?? b[0]),
-);
+const typeCounts = count<string>(items.map(({ pub }) => pub.data.category));
+const INDEX = ['wos', 'scopus', 'rinc', 'rinc-core', 'rsci', 'vak', 'wl'] as const;
+const indexOf = (it: (typeof items)[number]) => {
+  const versions = [{ d: it.pub.data, j: it.journal }, ...(it.alternate ? [{ d: it.alternate.pub.data, j: it.alternate.journal }] : [])];
+  return [...new Set(versions.flatMap(({ d, j }) => [...d.indexing, ...(j?.vak ? ['vak'] : []), ...(j?.white_list ? ['wl'] : [])]))];
+};
+const indexCounts = count<string>(items.flatMap(indexOf));
+const tagCounts = [
+  ...count<string>(items.flatMap((it) => [...new Set([...it.pub.data.tags, ...(it.alternate?.pub.data.tags ?? [])].map((tag) => tag.id))])).entries(),
+].sort((a, b) => b[1] - a[1] || (tagLabels.get(a[0]) ?? a[0]).localeCompare(tagLabels.get(b[0]) ?? b[0]));
 ---
 
 <BaseLayout lang={lang} title={t(lang, 'nav.publications')} description={t(lang, 'section.publications')} section="publications">
@@ -79,26 +99,47 @@ const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) =>
 
   <div
     class="wrap py-12 lg:py-16"
-    id="pub-root"
+    data-list-root
     data-msg-count={t(lang, 'pubs.count')}
     data-msg-copied={t(lang, 'pubs.copied')}
     data-msg-copy-failed={t(lang, 'pubs.copyFailed')}
   >
     <SectionHeading icon="lucide:file-text" as="h1">{t(lang, 'nav.publications')}</SectionHeading>
     <p class="max-w-3xl text-lg text-muted">{t(lang, 'section.publications')}</p>
-    <p class="mt-5">
+    <div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-3">
       <a class="btn-primary" href={href('/publications.bib')} download="baikin-publications.bib">
         <Icon name="lucide:download" size={18} />
         {t(lang, 'pubs.downloadBib')}
       </a>
-    </p>
+      <!-- Источники данных: неприметная кнопка, по нажатию раскрывается список сервисов -->
+      <details class="sources-panel" data-pagefind-ignore>
+        <summary class="sources-toggle">
+          <Icon name="lucide:info" size={15} />
+          {t(lang, 'pubs.sources')}
+        </summary>
+        <div class="sources-body">
+          <p>{t(lang, 'pubs.sourcesLead')}</p>
+          <ul>
+            {
+              sources.map((s) => (
+                <li>
+                  <a href={s.data.url}>{s.data[`name_${lang}`]}</a>
+                  <span class="text-muted"> — {s.data[`what_${lang}`]}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="text-subtle">{t(lang, 'pubs.sourcesNote')}</p>
+        </div>
+      </details>
+    </div>
 
     <!-- Поиск и фильтры без JavaScript не работают, поэтому их показывает скрипт -->
-    <div id="pub-filters" class="pub-filters card mt-8" hidden data-pagefind-ignore>
+    <div class="pub-filters card mt-8" data-filters hidden data-pagefind-ignore>
       <label for="pub-q" class="sr-only">{t(lang, 'pubs.searchLabel')}</label>
       <div class="relative">
         <Icon name="lucide:search" size={18} class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-subtle" />
-        <input id="pub-q" type="search" class="field pl-10" placeholder={t(lang, 'pubs.searchPlaceholder')} autocomplete="off" />
+        <input id="pub-q" type="search" class="field pl-10" placeholder={t(lang, 'pubs.searchPlaceholder')} autocomplete="off" data-search />
       </div>
 
       <div class="filter-group">
@@ -127,7 +168,7 @@ const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) =>
         </div>
       </div>
 
-      <details class="filter-group filter-tags" id="pub-tags">
+      <details class="filter-group filter-tags" data-filter-group>
         <summary class="filter-label">
           {t(lang, 'pubs.filterTags')} <span class="filter-count">{tagCounts.length}</span>
         </summary>
@@ -145,13 +186,13 @@ const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) =>
       <div class="filter-footer">
         <label class="inline-flex items-center gap-2 text-sm">
           <span class="text-subtle">{t(lang, 'pubs.sortLabel')}</span>
-          <select id="pub-sort" class="field w-auto py-1.5 text-sm">
+          <select class="field w-auto py-1.5 text-sm" data-sort>
             <option value="desc">{t(lang, 'pubs.sortDesc')}</option>
             <option value="asc">{t(lang, 'pubs.sortAsc')}</option>
           </select>
         </label>
-        <p id="pub-count" class="text-sm text-subtle" aria-live="polite"></p>
-        <button type="button" id="pub-reset" class="pub-btn ml-auto" hidden>
+        <p class="text-sm text-subtle" aria-live="polite" data-count></p>
+        <button type="button" class="pub-btn ml-auto" hidden data-reset>
           <Icon name="lucide:x" size={14} />
           {t(lang, 'pubs.reset')}
         </button>
@@ -159,7 +200,7 @@ const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) =>
     </div>
     <noscript><p class="mt-6 text-sm text-subtle">{t(lang, 'pubs.noscript')}</p></noscript>
 
-    <nav class="year-nav" aria-label={t(lang, 'pubs.years')} data-pagefind-ignore>
+    <nav class="year-nav" aria-label={t(lang, 'pubs.years')} data-year-nav data-pagefind-ignore>
       <ul>
         {
           years.map((y) => (
@@ -171,25 +212,26 @@ const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) =>
       </ul>
     </nav>
 
-    <div id="pub-list">
+    <div data-list>
       {
         years.map((y) => (
-          <section id={`y${y}`} class="pub-year" aria-labelledby={`y${y}-h`}>
+          <section id={`y${y}`} class="pub-year" aria-labelledby={`y${y}-h`} data-year-section>
             <h2 id={`y${y}-h`} class="pub-year-heading">
               {y}
             </h2>
             <ol class="pub-items">
               {items
                 .filter(({ pub }) => pub.data.year === y)
-                .map(({ pub, journal }) => (
+                .map((it) => (
                   <PublicationItem
                     lang={lang}
-                    pub={pub}
-                    journal={journal}
+                    pub={it.pub}
+                    journal={it.journal}
                     owners={owners}
                     tagLabels={tagLabels}
-                    projects={projectsByPub.get(pub.id)}
-                    talks={talksByPub.get(pub.id)}
+                    projects={it.projects}
+                    talks={it.talks}
+                    alternate={it.alternate}
                   />
                 ))}
             </ol>
@@ -197,11 +239,11 @@ const tagCounts = [...count<string>(pubs.flatMap((p) => p.data.tags.map((tag) =>
         ))
       }
     </div>
-    <p id="pub-empty" class="mt-10 text-lg text-muted" hidden>{t(lang, 'pubs.empty')}</p>
+    <p class="mt-10 text-lg text-muted" hidden data-empty>{t(lang, 'pubs.empty')}</p>
+    <p class="sr-only" role="status" aria-live="polite" data-live></p>
   </div>
-  <div id="pub-toast" class="toast" role="status" aria-live="polite" hidden></div>
 </BaseLayout>
 
 <script>
-  import '../../../scripts/publications';
+  import '../../../scripts/list-page';
 </script>

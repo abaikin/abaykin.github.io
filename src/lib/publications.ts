@@ -109,6 +109,78 @@ export function findJournal(d: PubData, journals: Journal[]): Journal | undefine
   return journals.find((j) => [j.name_ru, j.name_en].some((n) => n && normalize(n) === name));
 }
 
+export interface Badge {
+  /** Значение для фильтра «Индексация»: wos, scopus, rinc, rinc-core, rsci, vak, wl */
+  key: string;
+  label: string;
+  title: string;
+  href?: string;
+}
+
+type Translate = (key: string, vars?: Record<string, string | number>) => string;
+
+/** Значки индексации: из записи (WoS, Scopus, РИНЦ, ядро РИНЦ) и из журнала (ВАК, уровень «Белого списка») */
+export function indexBadges(d: PubData, journal: Journal | undefined, lang: Lang, t: Translate): Badge[] {
+  const out: Badge[] = d.indexing.map((v) => ({
+    key: v,
+    label: t(`pubs.index.${v}`),
+    title: t(`pubs.tip.${v}`),
+    href: (v === 'rinc' || v === 'rinc-core') && d.elibrary ? `https://elibrary.ru/item.asp?id=${d.elibrary}` : undefined,
+  }));
+  if (journal?.vak) {
+    const cat = lang === 'ru' ? journal.vak.replace('K', 'К') : journal.vak;
+    out.push({
+      key: 'vak',
+      label: t('pubs.badge.vak', { cat }),
+      title: t(journal.vak_basis === 'equated' ? 'pubs.tip.vakEquated' : 'pubs.tip.vakList', { cat }),
+    });
+  }
+  if (journal?.white_list)
+    out.push({
+      key: 'wl',
+      label: t('pubs.badge.wl', { level: journal.white_list }),
+      title: t('pubs.tip.wl', { level: journal.white_list, year: journal.white_list_year ?? '' }),
+    });
+  return out;
+}
+
+// ---------- Переводные версии (оригинал ↔ перевод) ----------
+
+export interface Partner {
+  /** Вторая версия статьи */
+  other: Pub;
+  /** true — вторая версия является переводом этой; false — вторая версия — оригинал */
+  otherIsTranslation: boolean;
+}
+
+/**
+ * Пары «оригинал — перевод» по полям BibLaTeX: у переводной версии related = {ключ оригинала},
+ * relatedtype = {translationof}; или у оригинала relatedtype = {translationas}. Связь указывается один раз.
+ */
+export function translationPartners(pubs: Pub[]): Map<string, Partner> {
+  const byId = new Map(pubs.map((p) => [p.id, p]));
+  const out = new Map<string, Partner>();
+  for (const p of pubs) {
+    if (p.data.relatedtype !== 'translationof' && p.data.relatedtype !== 'translationas') continue;
+    for (const ref of p.data.related) {
+      const other = byId.get(ref.id);
+      if (!other) throw new Error(`publications.bib «${p.id}»: related = {${ref.id}} — такой записи нет`);
+      const pIsTranslation = p.data.relatedtype === 'translationof';
+      out.set(p.id, { other, otherIsTranslation: !pIsTranslation });
+      out.set(other.id, { other: p, otherIsTranslation: pIsTranslation });
+    }
+  }
+  return out;
+}
+
+/** Какую версию пары показывать на странице языка lang: на языке страницы, иначе оригинал */
+export function isMainVersion(pub: Pub, partner: Partner | undefined, lang: Lang): boolean {
+  if (!partner) return true;
+  if (pub.data.lang === lang) return true;
+  if (partner.other.data.lang === lang) return false;
+  return partner.otherIsTranslation;
+}
+
 // ---------- Даты ----------
 
 export function formatDate(iso: string, lang: Lang): string {

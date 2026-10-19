@@ -700,20 +700,137 @@
     list-style: disc;
     padding-inline-start: 1.25rem;
   }
-  /* Уведомление «Скопировано» */
-  .toast {
-    position: fixed;
-    bottom: 1.5rem;
+  /* Якорь второй версии статьи (ссылка …/publications/#ключ ведёт на запись пары) */
+  .pub-anchor {
+    display: block;
+    height: 0;
+    scroll-margin-top: 7.5rem;
+  }
+  .pub:has(.pub-anchor:target) {
+    margin-inline: -0.75rem;
+    padding-inline: 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--c-primary-soft);
+  }
+  /* Переводная версия (или оригинал) под выходными данными */
+  .pub-alt {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.45rem 0.7rem;
+    border-left: 2px solid var(--c-secondary-line);
+    border-radius: 0 0.4rem 0.4rem 0;
+    background: var(--c-surface-alt);
+    font-size: 0.875rem;
+  }
+  .pub-alt-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-secondary);
+  }
+  .pub-alt-title {
+    font-weight: 600;
+    color: var(--c-heading);
+  }
+  .pub-alt-venue {
+    font-style: italic;
+    color: var(--c-muted);
+  }
+  .pub-alt-meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .pub-btn-sm {
+    padding: 0.05rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  /* «Скопировано»: маленькая плашка над кнопкой — появляется, держится и плавно исчезает */
+  .pub-btn {
+    position: relative;
+  }
+  .copy-bubble {
+    position: absolute;
+    bottom: calc(100% + 9px);
     left: 50%;
-    z-index: 60;
-    transform: translateX(-50%);
-    padding: 0.55rem 1.1rem;
-    border-radius: 0.6rem;
+    z-index: 20;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.32rem 0.7rem;
+    border-radius: 0.65rem;
     background: var(--c-heading);
     color: var(--c-bg);
-    font-size: 0.9375rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    box-shadow: 0 10px 25px -5px rgb(var(--c-shadow) / 0.3);
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 8px 20px -6px rgb(var(--c-shadow) / 0.35);
+    transform: translateX(-50%);
+    animation: copy-bubble 1.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+  .copy-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 0 0 0.15rem 0;
+    background: inherit;
+    transform: translate(-50%, -55%) rotate(45deg);
+  }
+  .copy-bubble svg {
+    color: var(--c-secondary-line);
+  }
+  .copy-bubble-error {
+    background: #b42318;
+    color: #fff;
+  }
+  /* Источники данных: неприметная кнопка и раскрывающийся список */
+  .sources-panel[open] {
+    flex-basis: 100%;
+  }
+  .sources-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: fit-content;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.4rem;
+    color: var(--c-subtle);
+    font-size: 0.875rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  .sources-toggle::-webkit-details-marker {
+    display: none;
+  }
+  .sources-toggle:hover {
+    color: var(--c-primary);
+  }
+  .sources-body {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 48rem;
+    margin-top: 0.5rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--c-border);
+    border-radius: 0.6rem;
+    background: var(--c-surface-alt);
+    font-size: 0.875rem;
+  }
+  .sources-body ul {
+    display: grid;
+    gap: 0.25rem;
+    list-style: disc;
+    padding-inline-start: 1.1rem;
   }
 
   /* Цвета плагина typography берём из палитры */
@@ -759,6 +876,40 @@
   animation: fade-in 0.3s ease-out both;
 }
 
+/* «Скопировано»: всплывает над кнопкой, держится и плавно исчезает */
+@keyframes copy-bubble {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 6px) scale(0.92);
+  }
+  14% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  78% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -4px) scale(0.98);
+  }
+}
+@keyframes copy-bubble-fade {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -767,5 +918,10 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  /* Без движения: плашка только проявляется и гаснет */
+  .copy-bubble {
+    animation-name: copy-bubble-fade !important;
+    animation-duration: 1.7s !important;
   }
 }

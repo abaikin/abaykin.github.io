@@ -1,6 +1,7 @@
 ---
 // Одна публикация в списке: название, авторы, выходные данные, индексация, теги,
-// кнопки (Подробнее, DOI, arXiv, PDF, BibTeX, Цитировать) и раскрывающаяся аннотация.
+// кнопки (Подробнее, DOI, arXiv, PDF, Доклад, BibTeX, Цитировать) и раскрывающаяся аннотация.
+// Если у статьи есть переводная версия (или оригинал), она показывается отдельной строкой под выходными данными.
 import Icon from './Icon.astro';
 import { type Lang, type UIKey, t } from '../i18n';
 import { asset, assetExists } from '../lib/site';
@@ -9,6 +10,7 @@ import {
   type Pub,
   citation,
   displayAuthors,
+  indexBadges,
   isOwner,
   normalize,
   texHtml,
@@ -30,15 +32,18 @@ interface Props {
   tagLabels: Map<string, string>;
   projects?: RelatedLink[];
   talks?: RelatedLink[];
+  /** Вторая версия статьи: перевод (isTranslation) или оригинал */
+  alternate?: { pub: Pub; journal?: Journal; isTranslation: boolean };
 }
 
-const { lang, pub, journal, owners, tagLabels, projects = [], talks = [] } = Astro.props;
+const { lang, pub, journal, owners, tagLabels, projects = [], talks = [], alternate } = Astro.props;
 const d = pub.data;
 const id = pub.id;
 const auto = d.translation === 'auto';
+const tr = (key: string, vars?: Record<string, string | number>) => t(lang, key as UIKey, vars);
 
-// Название: оригинал + перевод на язык страницы
-const translatedTitle = d.lang !== lang ? (lang === 'ru' ? d.title_ru : d.title_en) : undefined;
+// Название: оригинал + перевод на язык страницы (если вторая версия на языке страницы не показана отдельно)
+const translatedTitle = d.lang !== lang && !alternate ? (lang === 'ru' ? d.title_ru : d.title_en) : undefined;
 
 // Авторы: длинный список сокращаем, владелец сайта виден всегда
 const names = displayAuthors(d, lang);
@@ -50,37 +55,11 @@ const shortList =
     : names.map((n, i) => ({ n, i }));
 const hiddenCount = names.length - shortList.length;
 
-// Индексация: из записи (WoS, Scopus, РИНЦ) и из справочника журналов (ВАК, «Белый список»)
-const vakCat = journal?.vak ? (lang === 'ru' ? journal.vak.replace('K', 'К') : journal.vak) : undefined;
-const badges = [
-  ...d.indexing.map((v) => ({
-    key: v,
-    label: t(lang, `pubs.index.${v}` as UIKey),
-    title: t(lang, `pubs.tip.${v}` as UIKey),
-    href: v === 'rinc' && d.elibrary ? `https://elibrary.ru/item.asp?id=${d.elibrary}` : undefined,
-  })),
-  ...(vakCat
-    ? [
-        {
-          key: 'vak',
-          label: t(lang, 'pubs.badge.vak', { cat: vakCat }),
-          title: t(lang, journal?.vak_basis === 'equated' ? 'pubs.tip.vakEquated' : 'pubs.tip.vakList', { cat: vakCat }),
-          href: undefined,
-        },
-      ]
-    : []),
-  ...(journal?.white_list
-    ? [
-        {
-          key: 'wl',
-          label: t(lang, 'pubs.badge.wl', { level: journal.white_list }),
-          title: t(lang, 'pubs.tip.wl', { level: journal.white_list, year: journal.white_list_year ?? '' }),
-          href: undefined,
-        },
-      ]
-    : []),
-];
-const indexKeys = badges.map((b) => b.key);
+// Индексация: у записи и у её второй версии (для фильтра учитываются обе)
+const badges = indexBadges(d, journal, lang, tr);
+const altBadges = alternate ? indexBadges(alternate.pub.data, alternate.journal, lang, tr) : [];
+const indexKeys = [...new Set([...badges, ...altBadges].map((b) => b.key))];
+const tagIds = [...new Set([...d.tags, ...(alternate?.pub.data.tags ?? [])].map((tag) => tag.id))];
 
 // Ссылки
 const fipsLink = d.url?.includes('fips.ru');
@@ -98,24 +77,25 @@ const hasDetails = Boolean(abstract || hiddenCount > 0 || note || projects.lengt
 
 // Дополнительный текст для поиска: латиница для кириллических авторов и название на втором языке
 const alt = normalize(
-  [...d.authors.map((a) => translit(a)), ...d.authors_en, lang === 'ru' ? d.title_en : d.title_ru, d.journal_en, d.doi]
+  [...d.authors.map((a) => translit(a)), ...d.authors_en, lang === 'ru' ? d.title_en : d.title_ru, d.journal_en, d.doi, alternate?.pub.data.doi]
     .filter(Boolean)
     .join(' '),
 );
 ---
 
-<li class="pub" data-type={d.category} data-index={indexKeys.join(' ')} data-tags={d.tags.map((tag) => tag.id).join(' ')} data-alt={alt}>
+<li class="pub" data-item data-f-type={d.category} data-f-index={indexKeys.join(' ')} data-f-tag={tagIds.join(' ')} data-alt={alt}>
   <article>
+    {alternate && <span id={alternate.pub.id} class="pub-anchor" aria-hidden="true" />}
     <p class="pub-kind">
-      {t(lang, `pubs.kind.${d.kind}` as UIKey)}
-      {d.author_order_todo && <span class="todo-note ml-2">{t(lang, 'pubs.authorOrderTodo')}</span>}
+      {tr(`pubs.kind.${d.kind}`)}
+      {d.author_order_todo && <span class="todo-note ml-2">{tr('pubs.authorOrderTodo')}</span>}
     </p>
     <h3 id={id} class="pub-title" lang={d.lang} set:html={texHtml(d.title)} />
     {
       translatedTitle && (
         <p class="pub-subtitle" lang={lang}>
           <span set:html={texHtml(translatedTitle)} />
-          {auto && <span class="mt-note">{t(lang, 'common.autoTranslation')}</span>}
+          {auto && <span class="mt-note">{tr('common.autoTranslation')}</span>}
         </p>
       )
     }
@@ -128,9 +108,45 @@ const alt = normalize(
           </Fragment>
         ))
       }
-      {hiddenCount > 0 && <span class="text-subtle"> {t(lang, 'pubs.andMore', { n: hiddenCount })}</span>}
+      {hiddenCount > 0 && <span class="text-subtle"> {tr('pubs.andMore', { n: hiddenCount })}</span>}
     </p>
     <p class="pub-venue">{venueLine(d, lang)}</p>
+
+    {
+      alternate && (
+        <div class="pub-alt">
+          <span class="pub-alt-label">{tr(alternate.isTranslation ? 'pubs.altTranslation' : 'pubs.altOriginal')}</span>
+          <span class="pub-alt-title" lang={alternate.pub.data.lang} set:html={texHtml(alternate.pub.data.title)} />
+          <span class="pub-alt-venue">{venueLine(alternate.pub.data, lang)}</span>
+          <span class="pub-alt-meta">
+            {altBadges.map((b) =>
+              b.href ? (
+                <a class="badge badge-link" href={b.href} title={b.title}>
+                  {b.label}
+                </a>
+              ) : (
+                <span class="badge" title={b.title}>
+                  {b.label}
+                </span>
+              ),
+            )}
+            {alternate.pub.data.doi && (
+              <a class="pub-btn pub-btn-sm" href={`https://doi.org/${alternate.pub.data.doi}`}>
+                DOI
+              </a>
+            )}
+            {!alternate.pub.data.doi && alternate.pub.data.url && (
+              <a class="pub-btn pub-btn-sm" href={alternate.pub.data.url}>
+                {tr('pubs.webPage')}
+              </a>
+            )}
+            <button type="button" class="pub-btn pub-btn-sm" data-copy-text={alternate.pub.data.bibtex} title={tr('pubs.copyBibtex')}>
+              {tr('pubs.bibtex')}
+            </button>
+          </span>
+        </div>
+      )
+    }
 
     {
       (badges.length > 0 || d.tags.length > 0) && (
@@ -168,61 +184,49 @@ const alt = normalize(
             data-toggle
             aria-expanded="false"
             aria-controls={`${id}-details`}
-            data-label-open={t(lang, 'pubs.details')}
-            data-label-close={t(lang, 'pubs.hide')}
+            data-label-open={tr('pubs.details')}
+            data-label-close={tr('pubs.hide')}
           >
             <Icon name="lucide:chevron-down" size={15} class="pub-chevron" />
-            <span>{t(lang, 'pubs.details')}</span>
+            <span data-label>{tr('pubs.details')}</span>
           </button>
         )
       }
-      {
-        d.doi && (
-          <a class="pub-btn" href={`https://doi.org/${d.doi}`}>
-            DOI
-          </a>
-        )
-      }
+      {d.doi && <a class="pub-btn" href={`https://doi.org/${d.doi}`}>DOI</a>}
       {
         d.url && !d.doi && (
           <a class="pub-btn" href={d.url}>
-            {fipsLink ? (lang === 'ru' ? 'ФИПС' : 'FIPS') : lang === 'ru' ? 'Страница' : 'Web page'}
-           
+            {fipsLink ? tr('pubs.fips') : tr('pubs.webPage')}
           </a>
         )
       }
-      {
-        d.eprint && d.eprinttype === 'arxiv' && (
-          <a class="pub-btn" href={`https://arxiv.org/abs/${d.eprint}`}>
-            arXiv
-          </a>
-        )
-      }
-      {
-        d.eprint && d.eprinttype === 'ssrn' && (
-          <a class="pub-btn" href={`https://ssrn.com/abstract=${d.eprint}`}>
-            SSRN
-          </a>
-        )
-      }
+      {d.eprint && d.eprinttype === 'arxiv' && <a class="pub-btn" href={`https://arxiv.org/abs/${d.eprint}`}>arXiv</a>}
+      {d.eprint && d.eprinttype === 'ssrn' && <a class="pub-btn" href={`https://ssrn.com/abstract=${d.eprint}`}>SSRN</a>}
       {
         pdf && (
           <a class="pub-btn" href={pdf}>
-            <Icon name="lucide:file-text" size={14} /> {t(lang, 'pubs.pdf')}
+            <Icon name="lucide:file-text" size={14} /> {tr('pubs.pdf')}
           </a>
         )
       }
-      <button type="button" class="pub-btn" data-copy-text={d.bibtex} title={t(lang, 'pubs.copyBibtex')}>
-        <Icon name="lucide:braces" size={14} /> {t(lang, 'pubs.bibtex')}
+      {
+        talks.length > 0 && (
+          <a class="pub-btn" href={talks[0].href}>
+            <Icon name="lucide:presentation" size={14} /> {tr('pubs.talk')}
+          </a>
+        )
+      }
+      <button type="button" class="pub-btn" data-copy-text={d.bibtex} title={tr('pubs.copyBibtex')}>
+        <Icon name="lucide:braces" size={14} /> {tr('pubs.bibtex')}
       </button>
       <button
         type="button"
         class="pub-btn"
         data-copy-text={cite.text}
         data-copy-html={cite.html.includes('<') ? cite.html : undefined}
-        title={t(lang, 'pubs.copyCite')}
+        title={tr('pubs.copyCite')}
       >
-        <Icon name="lucide:quote" size={14} /> {t(lang, 'pubs.cite')}
+        <Icon name="lucide:quote" size={14} /> {tr('pubs.cite')}
       </button>
     </div>
 
@@ -232,14 +236,14 @@ const alt = normalize(
           {abstract && (
             <section>
               <h4 class="pub-dt">
-                {t(lang, 'pubs.abstract')}
-                {isTranslation && auto && <span class="mt-note">{t(lang, 'common.autoTranslation')}</span>}
-                {!ownAbstract && <span class="mt-note">{t(lang, 'common.textInOtherLang')}</span>}
+                {tr('pubs.abstract')}
+                {isTranslation && auto && <span class="mt-note">{tr('common.autoTranslation')}</span>}
+                {!ownAbstract && <span class="mt-note">{tr('common.textInOtherLang')}</span>}
               </h4>
               <div class="pub-abstract" lang={abstractLang} set:html={texHtml(abstract, true)} />
               {isTranslation && d.abstract && (
                 <details class="pub-original">
-                  <summary>{t(lang, 'pubs.abstractOriginal')}</summary>
+                  <summary>{tr('pubs.abstractOriginal')}</summary>
                   <div class="pub-abstract" lang={d.lang} set:html={texHtml(d.abstract, true)} />
                 </details>
               )}
@@ -247,7 +251,7 @@ const alt = normalize(
           )}
           {hiddenCount > 0 && (
             <section>
-              <h4 class="pub-dt">{t(lang, 'pubs.authors')}</h4>
+              <h4 class="pub-dt">{tr('pubs.authors')}</h4>
               <p>
                 {names.map((n, i) => (
                   <Fragment>
@@ -261,7 +265,7 @@ const alt = normalize(
           {note && <p class="text-muted">{note}</p>}
           {projects.length > 0 && (
             <section>
-              <h4 class="pub-dt">{t(lang, 'pubs.projects')}</h4>
+              <h4 class="pub-dt">{tr('pubs.projects')}</h4>
               <ul class="pub-related">
                 {projects.map((p) => (
                   <li>
@@ -275,7 +279,7 @@ const alt = normalize(
           )}
           {talks.length > 0 && (
             <section>
-              <h4 class="pub-dt">{t(lang, 'pubs.talks')}</h4>
+              <h4 class="pub-dt">{tr('pubs.talks')}</h4>
               <ul class="pub-related">
                 {talks.map((p) => (
                   <li>

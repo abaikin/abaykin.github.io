@@ -174,12 +174,14 @@ const publications = defineCollection({
     url: z.url().optional(),
     eprint: optText,
     eprinttype: z.enum(['arxiv', 'ssrn']).optional(),
+    related: z.array(reference('publications')).default([]),
+    relatedtype: z.enum(['translationof', 'translationas']).optional(),
     abstract: optText,
     abstract_ru: optText,
     abstract_en: optText,
     translation,
     tags: z.array(reference('tags')).default([]),
-    indexing: z.array(z.enum(['wos', 'scopus', 'rinc', 'rsci'])).default([]),
+    indexing: z.array(z.enum(['wos', 'scopus', 'rinc', 'rinc-core', 'rsci'])).default([]),
     elibrary: z.string().regex(/^\d+$/, 'elibrary: номер статьи в eLibrary (цифры)').optional(),
     fulltext: optText,
     citation_ru: optText,
@@ -202,6 +204,19 @@ const journals = defineCollection({
       white_list_year: year.optional(),
     })
     .refine((j) => j.issn.length > 0 || j.name_ru || j.name_en, 'нужен issn или название журнала'),
+});
+
+/** Источники данных о публикациях (кнопка «Источники данных»): src/data/publication-sources.yaml */
+const pubsources = defineCollection({
+  loader: file('src/data/publication-sources.yaml'),
+  schema: z.strictObject({
+    order: z.number().int(),
+    name_ru: text,
+    name_en: text,
+    url: z.url(),
+    what_ru: text,
+    what_en: text,
+  }),
 });
 
 /**
@@ -234,4 +249,4 @@ const talks = defineCollection({
     .refine((t) => t.title_ru || t.title_en, 'нужно title_ru или title_en'),
 });
 
-export const collections = { profile, education, projects, laboratory, tags, publications, journals, talks };
+export const collections = { profile, education, projects, laboratory, tags, publications, journals, pubsources, talks };

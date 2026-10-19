@@ -21,6 +21,7 @@ const STANDARD = new Set([
   'month', 'volume', 'number', 'issue', 'pages', 'eid', 'publisher', 'address', 'location', 'institution', 'school',
   'organization', 'series', 'edition', 'type', 'holder', 'note', 'issn', 'isbn', 'doi', 'url', 'urldate', 'eprint',
   'eprinttype', 'eprintclass', 'archiveprefix', 'primaryclass', 'langid', 'language', 'pagetotal', 'howpublished',
+  'related', 'relatedtype',
 ]);
 
 const LANGID: Record<string, 'ru' | 'en'> = { russian: 'ru', english: 'en' };
@@ -94,6 +95,9 @@ export function normalize(e: BibEntry) {
     url: opt(f.url),
     eprint: opt(f.eprint),
     eprinttype: opt(f.eprinttype)?.toLowerCase(),
+    // Переводные версии: related = {ключ}, relatedtype = {translationof | translationas}
+    related: list(f.related),
+    relatedtype: opt(f.relatedtype)?.toLowerCase(),
     abstract: opt(f.abstract),
     abstract_ru: opt(f.abstract_ru),
     abstract_en: opt(f.abstract_en),

@@ -1,0 +1,108 @@
+# Внешние источники, по которым собраны и сверяются данные о публикациях.
+# На странице «Публикации» — неприметная кнопка «Источники данных»: она раскрывает этот список.
+# Сверка с источниками и любые правки данных по её итогам — только по команде владельца (см. CLAUDE.md).
+# Ключ — идентификатор; order — порядок в списке; what_* — что берётся из источника.
+
+orcid:
+  order: 1
+  name_ru: ORCID
+  name_en: ORCID
+  url: https://orcid.org/0000-0001-6587-6079
+  what_ru: профиль и список работ
+  what_en: profile and list of works
+
+elibrary:
+  order: 2
+  name_ru: eLibrary (РИНЦ)
+  name_en: eLibrary (RISC)
+  url: https://elibrary.ru/author_profile.asp?authorid=941617
+  what_ru: РИНЦ, ядро РИНЦ, выходные данные российских изданий
+  what_en: RISC and RISC core, data on Russian publications
+
+sciact:
+  order: 3
+  name_ru: SciAct ИГиЛ СО РАН
+  name_en: SciAct (Lavrentyev Institute)
+  url: https://sciact.hydro.nsc.ru/public/profile/28
+  what_ru: индексация WoS, Scopus, РИНЦ; доклады на конференциях
+  what_en: WoS, Scopus and RISC indexing; conference talks
+
+scopus:
+  order: 4
+  name_ru: Scopus
+  name_en: Scopus
+  url: https://www.scopus.com/authid/detail.uri?authorId=56572941400
+  what_ru: индексация Scopus
+  what_en: Scopus indexing
+
+wos:
+  order: 5
+  name_ru: Web of Science
+  name_en: Web of Science
+  url: https://www.webofscience.com/wos/author/record/L-6663-2017
+  what_ru: индексация Web of Science
+  what_en: Web of Science indexing
+
+crossref:
+  order: 6
+  name_ru: Crossref
+  name_en: Crossref
+  url: https://search.crossref.org/
+  what_ru: DOI и выходные данные статей
+  what_en: DOIs and bibliographic records
+
+openalex:
+  order: 7
+  name_ru: OpenAlex
+  name_en: OpenAlex
+  url: https://openalex.org/authors/A5049398563
+  what_ru: открытый каталог работ, аннотации
+  what_en: open catalogue of works, abstracts
+
+mathnet:
+  order: 8
+  name_ru: Math-Net.Ru
+  name_en: Math-Net.Ru
+  url: https://www.mathnet.ru/php/person.phtml?personid=110371&option_lang=rus
+  what_ru: русские оригиналы статей и их переводные версии
+  what_en: Russian originals of papers and their translated versions
+
+nsu-pure:
+  order: 9
+  name_ru: Исследовательский портал НГУ
+  name_en: NSU research portal
+  url: https://pure.nsu.ru/portal/ru/persons/--(70fbc267-baa1-4da4-8db8-f24f94269286)/publications.html
+  what_ru: публикации и программы для ЭВМ
+  what_en: publications and software registrations
+
+arxiv:
+  order: 10
+  name_ru: arXiv
+  name_en: arXiv
+  url: https://arxiv.org/
+  what_ru: препринты
+  what_en: preprints
+
+fips:
+  order: 11
+  name_ru: ФИПС (Роспатент)
+  name_en: FIPS (Rospatent)
+  url: https://new.fips.ru/
+  what_ru: реестры патентов и программ для ЭВМ — авторы, правообладатели, рефераты
+  what_en: patent and software registers — authors, rights holders, abstracts
+
+rcsi:
+  order: 12
+  name_ru: «Белый список» (РЦНИ)
+  name_en: White List (RCSI)
+  url: https://journalrank.rcsi.science/ru/record-sources/
+  what_ru: уровни журналов в «Белом списке»
+  what_en: journal levels in the Russian White List
+
+vak:
+  order: 13
+  name_ru: ВАК Минобрнауки России
+  name_en: Higher Attestation Commission (VAK)
+  url: https://vak.minobrnauki.gov.ru/
+  what_ru: Перечень рецензируемых изданий и категории журналов К1–К3
+  what_en: list of peer-reviewed journals and categories K1–K3

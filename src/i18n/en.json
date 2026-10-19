@@ -106,7 +106,7 @@
   "pubs.tip.rsci": "Indexed in the Russian Science Citation Index",
   "pubs.tip.vakList": "VAK list of peer-reviewed journals, category {cat} (categorization of 1 January 2024)",
   "pubs.tip.vakEquated": "Category {cat}: the journal is indexed in international databases and is treated as K1 (VAK letter No. 02-1198 of 6 December 2022)",
-  "pubs.tip.wl": "Russian White List of scientific journals, level {level} ({year})",
+  "pubs.tip.wl": "Russian White List of journals: level {level} ({year})",
   "pubs.sortLabel": "Order",
   "pubs.sortDesc": "Newest first",
   "pubs.sortAsc": "Oldest first",
@@ -135,5 +135,15 @@
   "pubs.noscript": "Search and filters need JavaScript.",
   "projects.publications": "Project publications",
   "projects.talks": "Project talks",
-  "projects.allPublications": "All publications"
+  "projects.allPublications": "All publications",
+  "pubs.altTranslation": "Translated version",
+  "pubs.altOriginal": "Original version",
+  "pubs.index.rinc-core": "RISC core",
+  "pubs.tip.rinc-core": "Included in the RISC core (eLibrary)",
+  "pubs.talk": "Talk",
+  "pubs.webPage": "Web page",
+  "pubs.fips": "FIPS",
+  "pubs.sources": "Data sources",
+  "pubs.sourcesLead": "Bibliographic data, indexing and abstracts come from public sources and journal websites:",
+  "pubs.sourcesNote": "The data are checked against these sources manually when the site is updated."
 }
