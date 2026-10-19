@@ -74,10 +74,27 @@ kachestvo-i-zhizn:
   white_list_year: 2025
 
 nauka-i-biznes:
-  # В «Белом списке» не найден. ISSN не известен (TODO), поэтому журнал ищется по названию.
+  # В «Белом списке» нет (поиск по ISSN на journalrank.rcsi.science)
   name_ru: "Наука и бизнес: пути развития"
+  issn: [2221-5182]
   vak: K3
   vak_basis: list
+
+russkiy-inzhener:
+  # В «Белом списке» нет (поиск по ISSN на journalrank.rcsi.science)
+  name_ru: Русский инженер
+  issn: [2074-9252]
+  vak: K3
+  vak_basis: list
+
+smzh:
+  # Русская версия; переводная — Siberian Mathematical Journal (ниже). К1 — через MathSciNet, WoS, Scopus
+  name_ru: Сибирский математический журнал
+  issn: [0037-4474]
+  vak: K1
+  vak_basis: equated
+  white_list: 1
+  white_list_year: 2025
 
 # ---------- Зарубежные журналы и переводные версии ----------
 engineering-fracture-mechanics:
