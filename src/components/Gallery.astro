@@ -1,0 +1,36 @@
+---
+// Иллюстрации: сетка картинок с подписями; нажатие открывает картинку целиком
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import { type Lang, loc } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  items: { src: ImageMetadata; alt_ru: string; alt_en?: string; caption_ru?: string; caption_en?: string }[];
+}
+
+const { lang, items } = Astro.props;
+---
+
+<ul class="gallery">
+  {
+    items.map((g) => {
+      const alt = loc(g, 'alt', lang)!;
+      const caption = loc(g, 'caption', lang);
+      return (
+        <li>
+          <figure>
+            <a href={g.src.src} class="gallery-link">
+              <Image src={g.src} alt={alt.text} widths={[480, 960]} sizes="(min-width: 768px) 50vw, 100vw" loading="lazy" />
+            </a>
+            {caption && (
+              <figcaption class="mt-2 text-sm text-subtle" lang={caption.lang}>
+                {caption.text}
+              </figcaption>
+            )}
+          </figure>
+        </li>
+      );
+    })
+  }
+</ul>

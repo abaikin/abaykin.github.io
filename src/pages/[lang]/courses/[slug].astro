@@ -1,0 +1,253 @@
+---
+// Страница курса: src/content/courses/<slug>/meta.yaml + необязательный подробный текст ru.mdx / en.mdx
+// (аннотация, программа, литература). Поля владельца: для кого, когда читался, часы, программа, соавторы, язык,
+// форма контроля; пропуски (TODO) видны на странице как «будет добавлено».
+import { getCollection, getEntries, getEntry, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import LinkList from '../../../components/LinkList.astro';
+import MaterialList from '../../../components/MaterialList.astro';
+import PanelButton from '../../../components/PanelButton.astro';
+import RelatedPubs from '../../../components/RelatedPubs.astro';
+import TodoNote from '../../../components/TodoNote.astro';
+import VideoList from '../../../components/VideoList.astro';
+import { type Lang, type Localized, type UIKey, LANGS, loc, t } from '../../../i18n';
+import { formatPartialDate, locList } from '../../../lib/experience';
+import { entryPeriod, entryText, hoursLabel } from '../../../lib/projects';
+import { comparePubs, ownerFamilies } from '../../../lib/publications';
+import { asset, assetExists, langHref } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const courses = await getCollection('courses');
+  return LANGS.flatMap((lang) => courses.map((course) => ({ params: { lang, slug: course.id }, props: { course } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const { course } = Astro.props as { course: CollectionEntry<'courses'> };
+const c = course.data;
+const tr = (key: UIKey, vars?: Record<string, string | number>) => t(lang, key, vars);
+const title = loc(c, 'title', lang)!;
+const summary = loc(c, 'summary', lang);
+const org = loc(c, 'org', lang)!;
+const unit = loc(c, 'unit', lang);
+const role = loc(c, 'role', lang);
+const schedule = loc(c, 'schedule', lang);
+const period = entryPeriod(c, lang);
+const hours = hoursLabel(c.hours, lang);
+const coLecturers = locList(c, 'co_lecturers', lang);
+const coTodo = c.co_lecturers_ru.includes('TODO') || c.co_lecturers_en.includes('TODO');
+
+/** Двуязычное поле: заполнено — текст; пусто или TODO — undefined (на странице «будет добавлено») */
+const field = (name: string): Localized | undefined => loc(c, name, lang);
+const audience = field('audience');
+const assessment = field('assessment');
+const programmeNote = field('programme_note');
+
+const text = await entryText('courseTexts', course.id, lang);
+const Body = text ? (await render(text.entry)).Content : undefined;
+const publications = (await getEntries(c.publications)).sort(comparePubs);
+const profile = (await getEntry('profile', 'profile'))!.data;
+const owners = ownerFamilies([profile.name_ru, profile.name_en, ...profile.alt_names]);
+const tags = await getEntries(c.tags);
+
+/** Файл из public/assets/ или внешняя ссылка; файла ещё нет — undefined */
+const fileHref = (v: string | undefined) => (!v ? undefined : /^https?:\/\//.test(v) ? v : assetExists(v) ? asset(v) : undefined);
+---
+
+<BaseLayout lang={lang} title={title.text} description={summary?.text} section="courses">
+  <noscript slot="head">
+    <style>
+      .talk-panel[hidden] {
+        display: block !important;
+      }
+    </style>
+  </noscript>
+
+  <article class="wrap py-12 lg:py-16" data-panels>
+    <a href={langHref(lang, 'courses/')} class="inline-flex items-center gap-1 text-sm font-semibold">
+      <Icon name="lucide:arrow-left" size={15} />
+      {tr('courses.all')}
+    </a>
+
+    <header class="mt-6 max-w-4xl">
+      <p class="eyebrow">{tr(`courses.kind.${c.kind}` as UIKey)}</p>
+      <div class="mt-3 flex items-start gap-4">
+        <span class="icon-circle mt-1" aria-hidden="true"><Icon name={`lucide:${c.icon}`} size={20} /></span>
+        <h1 class="text-3xl font-semibold sm:text-4xl" lang={title.lang}>{title.text}</h1>
+      </div>
+      {summary && <p class="mt-5 max-w-3xl text-lg leading-relaxed text-muted" lang={summary.lang}>{summary.text}</p>}
+    </header>
+
+    <dl class="page-facts mt-6 max-w-4xl">
+      <dt>{tr('courses.org')}</dt>
+      <dd>
+        {c.org_url ? <a href={c.org_url} lang={org.lang}>{org.text}</a> : <span lang={org.lang}>{org.text}</span>}{unit && <span class="text-subtle" lang={unit.lang}>{`, ${unit.text}`}</span>}
+      </dd>
+      <dt>{tr('courses.role')}</dt>
+      <dd>{role ? <span lang={role.lang}>{role.text}</span> : <TodoNote lang={lang} />}</dd>
+      <dt>{tr('courses.audience')}</dt>
+      <dd>{audience ? <span lang={audience.lang}>{audience.text}</span> : <TodoNote lang={lang} />}</dd>
+      <dt>{tr('courses.period')}</dt>
+      <dd>
+        {period ?? <TodoNote lang={lang} />}
+        {schedule && <span class="text-subtle" lang={schedule.lang}>{` · ${schedule.text}`}</span>}
+      </dd>
+      <dt>{tr('courses.hours')}</dt>
+      <dd>{hours ?? <TodoNote lang={lang} />}</dd>
+      <dt>{tr('courses.language')}</dt>
+      <dd>{tr(`courses.lang.${c.language}` as UIKey)}</dd>
+      {
+        (coLecturers.items.length > 0 || coTodo) && (
+          <Fragment>
+            <dt>{tr('courses.coLecturers')}</dt>
+            <dd>{coLecturers.items.length > 0 ? <span lang={coLecturers.lang}>{coLecturers.items.join(', ')}</span> : <TodoNote lang={lang} />}</dd>
+          </Fragment>
+        )
+      }
+      <dt>{tr('courses.assessment')}</dt>
+      <dd>{assessment ? <span lang={assessment.lang}>{assessment.text}</span> : <TodoNote lang={lang} />}</dd>
+    </dl>
+
+    {
+      tags.length > 0 && (
+        <ul class="mt-5 flex flex-wrap gap-1.5" aria-label={tr('pubs.filterTags')}>
+          {tags.map((tag) => (
+            <li class="chip chip-sm">{tag.data[lang]}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <section class="page-section" aria-labelledby="course-about">
+      <h2 id="course-about">{tr('courses.about')}</h2>
+      {
+        Body ? (
+          <div class="prose mt-4 max-w-3xl" lang={text!.lang}>
+            {text!.fallback && <p class="lang-mark">{tr('common.textInOtherLang')}</p>}
+            <Body />
+          </div>
+        ) : (
+          <p class="mt-3">
+            <TodoNote lang={lang} text={tr('courses.detailsTodo')} />
+          </p>
+        )
+      }
+    </section>
+
+    {
+      c.lectures.length > 0 && (
+        <section class="page-section" aria-labelledby="course-programme">
+          <h2 id="course-programme">{tr('courses.programme')}</h2>
+          {programmeNote && (
+            <p class="mt-1 text-sm text-subtle" lang={programmeNote.lang}>
+              {programmeNote.text}
+            </p>
+          )}
+          <ol class="mt-3 divide-y divide-border">
+            {c.lectures.map((l, i) => {
+              const name = loc(l, 'title', lang)!;
+              const lecturer = loc(l, 'lecturer', lang);
+              const panel = `lecture-${i + 1}-video`;
+              const slides = fileHref(l.slides);
+              const notebook = fileHref(l.notebook);
+              return (
+                <li class="py-3">
+                  <p class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    {l.n && <span class="text-sm font-semibold text-subtle">{tr('courses.lecture', { n: l.n })}</span>}
+                    <span class="font-semibold text-heading" lang={name.lang}>
+                      {name.text}
+                    </span>
+                    {l.date && <span class="text-sm text-subtle">{formatPartialDate(l.date, lang)}</span>}
+                    {lecturer && (
+                      <span class="text-sm text-subtle" lang={lecturer.lang}>
+                        {lecturer.text}
+                      </span>
+                    )}
+                  </p>
+                  {(l.video || slides || notebook || l.code) && (
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      {l.video && <PanelButton controls={panel} label={tr('talks.video')} icon="lucide:circle-play" />}
+                      {l.video && (
+                        <a class="pub-btn" href={`https://www.youtube.com/watch?v=${l.video}`}>
+                          <Icon name="si:youtube" size={14} />
+                          YouTube
+                        </a>
+                      )}
+                      {slides && (
+                        <a class="pub-btn" href={slides}>
+                          <Icon name="lucide:presentation" size={14} />
+                          {tr('courses.slides')}
+                        </a>
+                      )}
+                      {notebook && (
+                        <a class="pub-btn" href={notebook}>
+                          <Icon name="lucide:notebook-pen" size={14} />
+                          {tr('courses.notebook')}
+                        </a>
+                      )}
+                      {l.code && (
+                        <a class="pub-btn" href={l.code}>
+                          <Icon name="lucide:code" size={14} />
+                          {tr('courses.code')}
+                        </a>
+                      )}
+                    </div>
+                  )}
+                  {l.video && (
+                    <div id={panel} class="talk-panel" hidden>
+                      <div class="video-embed" data-embed="youtube" data-id={l.video} data-title={name.text} />
+                      <p class="mt-1 text-xs text-subtle">{tr('talks.videoNote')}</p>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      )
+    }
+
+    {
+      c.videos.length > 0 && (
+        <section class="page-section" aria-labelledby="course-videos">
+          <h2 id="course-videos">{tr('courses.videos')}</h2>
+          <VideoList lang={lang} id="course" videos={c.videos} fallback={title.text} />
+        </section>
+      )
+    }
+
+    {
+      c.materials.length > 0 && (
+        <section class="page-section" aria-labelledby="course-materials">
+          <h2 id="course-materials">{tr('courses.materials')}</h2>
+          <MaterialList lang={lang} id="course" items={c.materials} />
+        </section>
+      )
+    }
+
+    {
+      publications.length > 0 && (
+        <section class="page-section" aria-labelledby="course-publications">
+          <h2 id="course-publications">{tr('courses.publications')}</h2>
+          <RelatedPubs lang={lang} pubs={publications} owners={owners} />
+        </section>
+      )
+    }
+
+    {
+      c.links.length > 0 && (
+        <section class="page-section" aria-labelledby="course-links">
+          <h2 id="course-links">{tr('courses.links')}</h2>
+          <LinkList lang={lang} links={c.links} />
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<script>
+  import { bindPanels } from '../../../scripts/panels';
+  const root = document.querySelector<HTMLElement>('[data-panels]');
+  if (root) bindPanels(root);
+</script>

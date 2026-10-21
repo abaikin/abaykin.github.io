@@ -1069,6 +1069,65 @@
     }
   }
 
+  /* ===== Проекты, курсы, лаборатория ===== */
+  .project-list > li {
+    border-bottom: 1px solid var(--c-border);
+    padding-block: 1.5rem;
+  }
+  .project-list > li:first-child {
+    padding-top: 0.5rem;
+  }
+  .project-list > li:last-child {
+    border-bottom: 0;
+  }
+  /* Факты на странице проекта или курса: «Роль», «Период», «Для кого»… */
+  .page-facts {
+    display: grid;
+    gap: 0.45rem 1.5rem;
+  }
+  .page-facts dt {
+    color: var(--c-subtle);
+  }
+  .page-section {
+    margin-top: 2.75rem;
+    max-width: 56rem;
+    scroll-margin-top: 6rem;
+  }
+  .page-section > h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--c-heading);
+  }
+  .project-cover {
+    width: 100%;
+    max-width: 56rem;
+    height: auto;
+    border: 1px solid var(--c-border);
+    border-radius: 0.75rem;
+  }
+  .gallery {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .gallery img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--c-border);
+    border-radius: 0.5rem;
+  }
+  .gallery-link {
+    display: block;
+  }
+  @media (min-width: 640px) {
+    .page-facts {
+      grid-template-columns: max-content 1fr;
+    }
+    .gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   /* Цвета плагина typography берём из палитры */
   .prose {
     --tw-prose-body: var(--c-fg);

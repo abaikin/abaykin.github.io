@@ -1,14 +1,24 @@
-# Проект (заглушка): подробное описание, период, иллюстрации добавит владелец.
+# Проект: симулятор авто-ГРП. Роль — INTENT.md и резюме («руководство группой по разработке симулятора авто-ГРП»);
+# методы — аннотации свидетельств и статей в publications.bib. Подробный текст — ru.mdx / en.mdx рядом.
 order: 2
 icon: droplets
 title_ru: Симулятор авто-ГРП
 title_en: Auto-frac simulator
 role_ru: Руководитель разработки симулятора (пользовательский интерфейс и расчётный модуль)
 role_en: Development lead of the simulator (user interface and computational module)
-summary_ru: Симулятор самопроизвольного развития техногенных трещин гидроразрыва на нагнетательных скважинах (авто-ГРП).
-summary_en: A simulator of self-induced hydraulic fracture growth at injection wells (auto-frac).
+summary_ru: Симулятор самопроизвольного развития техногенных трещин гидроразрыва на нагнетательных скважинах (авто-ГРП) в пороупругой среде.
+summary_en: A simulator of self-induced hydraulic fracture growth at injection wells (auto-frac) in a poroelastic medium.
 status: active
+# TODO: год начала и публичное название симулятора. По работам: статьи с 2022 г., свидетельства 2022 и 2024 гг.,
+# стипендия Президента 2022–2024 гг. (связь с проектом — в src/data/experience/funding.yaml, поле projects)
 start: TODO
+technologies:
+  - ru: Метод конечных элементов (уравнения Био)
+    en: Finite element method (Biot equations)
+  - ru: Метод разрывных смещений
+    en: Displacement discontinuity method
+  - ru: Расширенный метод конечных элементов (XFEM)
+    en: Extended finite element method (XFEM)
 tags: [auto-frac, waterflooding, software]
 translation: auto
 # Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).

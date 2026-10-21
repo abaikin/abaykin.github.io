@@ -1,22 +1,90 @@
 ---
+// Проекты: src/content/projects/<slug>/meta.yaml → карточки с поиском и фильтрами (статус, темы).
+// Все карточки есть в статическом HTML; scripts/list-page.ts только скрывает их. Фильтры в адресе: ?q=…&status=active&tag=auto-frac
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
 import ProjectCard from '../../../components/ProjectCard.astro';
 import SectionHeading from '../../../components/SectionHeading.astro';
-import { type Lang, langPaths, t } from '../../../i18n';
+import { type Lang, type UIKey, langPaths, t } from '../../../i18n';
 
 export const getStaticPaths = langPaths;
 
 const lang = Astro.params.lang as Lang;
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const tagLabels = new Map((await getCollection('tags')).map((tag) => [tag.id, tag.data[lang]]));
+
+const count = <T,>(values: T[]) => values.reduce((m, v) => m.set(v, (m.get(v) ?? 0) + 1), new Map<T, number>());
+const STATUSES = ['active', 'completed'] as const;
+const statusCounts = count<string>(projects.map((p) => p.data.status));
+const label = (tag: string) => tagLabels.get(tag) ?? tag;
+const tagCounts = [...count(projects.flatMap((p) => p.data.tags.map((ref) => ref.id))).entries()].sort(
+  (a, b) => b[1] - a[1] || label(a[0]).localeCompare(label(b[0]), lang),
+);
 ---
 
 <BaseLayout lang={lang} title={t(lang, 'nav.projects')} description={t(lang, 'projects.lead')} section="projects">
-  <div class="wrap py-12 lg:py-16">
+  <div class="wrap py-12 lg:py-16" data-list-root data-msg-count={t(lang, 'projects.count')}>
     <SectionHeading icon="lucide:layers" as="h1">{t(lang, 'nav.projects')}</SectionHeading>
     <p class="max-w-2xl text-lg text-muted">{t(lang, 'projects.lead')}</p>
-    <div class="mt-8 max-w-4xl">
-      {projects.map((project) => <ProjectCard lang={lang} project={project} />)}
+
+    <!-- Поиск и фильтры без JavaScript не работают, поэтому их показывает скрипт -->
+    <div class="pub-filters card mt-8 max-w-4xl" data-filters hidden data-pagefind-ignore>
+      <label for="project-q" class="sr-only">{t(lang, 'projects.searchLabel')}</label>
+      <div class="relative">
+        <Icon name="lucide:search" size={18} class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-subtle" />
+        <input id="project-q" type="search" class="field pl-10" placeholder={t(lang, 'projects.searchPlaceholder')} autocomplete="off" data-search />
+      </div>
+
+      <div class="filter-group">
+        <p class="filter-label" id="f-status">{t(lang, 'projects.filterStatus')}</p>
+        <div class="filter-chips" role="group" aria-labelledby="f-status">
+          {
+            STATUSES.filter((v) => statusCounts.has(v)).map((v) => (
+              <button type="button" class="filter-chip" aria-pressed="false" data-filter="status" data-value={v}>
+                {t(lang, `projects.state.${v}` as UIKey)} <span class="filter-count">{statusCounts.get(v)}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      {
+        tagCounts.length > 0 && (
+          <div class="filter-group">
+            <p class="filter-label" id="f-tag">{t(lang, 'pubs.filterTags')}</p>
+            <div class="filter-chips" role="group" aria-labelledby="f-tag">
+              {tagCounts.map(([tag, n]) => (
+                <button type="button" class="filter-chip" aria-pressed="false" data-filter="tag" data-value={tag}>
+                  {label(tag)} <span class="filter-count">{n}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      <div class="filter-footer">
+        <p class="text-sm text-subtle" aria-live="polite" data-count></p>
+        <button type="button" class="pub-btn ml-auto" hidden data-reset>
+          <Icon name="lucide:x" size={14} />
+          {t(lang, 'pubs.reset')}
+        </button>
+      </div>
     </div>
+
+    <div class="mt-6 max-w-4xl" data-list>
+      <section data-year-section aria-label={t(lang, 'nav.projects')}>
+        <ol class="project-list">
+          {projects.map((project) => <ProjectCard lang={lang} project={project} tagLabels={tagLabels} />)}
+        </ol>
+      </section>
+    </div>
+    <p class="mt-10 text-lg text-muted" hidden data-empty>{t(lang, 'projects.empty')}</p>
+    <p class="sr-only" role="status" aria-live="polite" data-live></p>
   </div>
 </BaseLayout>
+
+<script>
+  import '../../../scripts/list-page';
+</script>

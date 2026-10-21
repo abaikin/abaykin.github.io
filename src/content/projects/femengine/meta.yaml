@@ -1,18 +1,22 @@
-# Проект (заглушка). Источники: статья ISPRAS 2019 и свидетельство о регистрации программы № 2019664165.
+# Проект: FEMEngine. Источники: статья ISPRAS 2019 (gurin2019femengine) и свидетельство № 2019664165 (gurin2019vychislitelnyi).
 order: 4
 icon: cpu
 title_ru: FEMEngine
 title_en: FEMEngine
-role_ru: Соавтор (свидетельство о регистрации программы № 2019664165)
-role_en: Co-author (software registration No. 2019664165)
+role_ru: Соавтор (статья ISPRAS 2019, свидетельство о регистрации программы № 2019664165)
+role_en: Co-author (ISPRAS 2019 paper, software registration No. 2019664165)
 summary_ru: Вычислительный пакет на C++ для метода конечных элементов, построенный на функциональном и шаблонном метапрограммировании.
 summary_en: A C++ finite element package built on functional and template metaprogramming.
 status: completed
 start: 2019
+technologies:
+  - C++
+  - ru: Функциональное программирование и шаблонное метапрограммирование
+    en: Functional programming and template metaprogramming
+  - ru: Метод конечных элементов
+    en: Finite element method
 tags: [fem, software]
 translation: auto
 # Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
-# Выступления с тезисами или трудами из списка publications показываются сами; в talks — только остальные.
-# Список предложен по названиям работ — проверьте.
 publications: [gurin2019femengine, gurin2019vychislitelnyi]
 talks: []

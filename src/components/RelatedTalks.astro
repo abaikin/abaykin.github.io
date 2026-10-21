@@ -1,0 +1,34 @@
+---
+// Связанные выступления: название — ссылка на запись в «Выступлениях», год, мероприятие
+import { type Lang, loc } from '../i18n';
+import { langHref } from '../lib/site';
+import type { Talk } from '../lib/talks';
+
+interface Props {
+  lang: Lang;
+  talks: Talk[];
+}
+
+const { lang, talks } = Astro.props;
+---
+
+<ul class="mt-3 space-y-2">
+  {
+    talks.map((talk) => {
+      const title = loc(talk.data, 'title', talk.data.lang)!;
+      const event = loc(talk.data, 'event', lang);
+      return (
+        <li>
+          <a href={langHref(lang, `talks/#${talk.id}`)} lang={title.lang}>
+            {title.text}
+          </a>
+          <span class="text-sm text-subtle">
+            {' '}
+            · {talk.data.date.slice(0, 4)}
+            {event && <span lang={event.lang}> · {event.text}</span>}
+          </span>
+        </li>
+      );
+    })
+  }
+</ul>

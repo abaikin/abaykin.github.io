@@ -1,19 +1,25 @@
-# Проект (заглушка): подробное описание, период, иллюстрации добавит владелец.
+# Проект: PetroWebTools (https://petrowebtools.nsu.ru/). Роль — INTENT.md; состав сервиса — страница входа и подвал сайта
+# (сам сервис открывается после регистрации). Подробный текст — ru.mdx / en.mdx рядом.
 order: 3
 icon: globe
 title_ru: PetroWebTools
 title_en: PetroWebTools
 role_ru: Основатель и владелец продукта
 role_en: Founder and product owner
-summary_ru: Онлайн-сервис быстрых инженерных расчётов для нефтегазовой отрасли — расчёт трещин ГРП прямо в браузере (ILSA, UFD, ExpressFrac).
-summary_en: An online service for fast engineering calculations in the oil and gas industry — hydraulic fracture calculations right in the browser (ILSA, UFD, ExpressFrac).
+summary_ru: "Онлайн-сервис быстрых инженерных расчётов для нефтегазовой отрасли: расчёт трещин ГРП прямо в браузере (модуль ILSA 1D; модуль UFD в разработке)."
+summary_en: "An online service for fast engineering calculations in the oil and gas industry: hydraulic fracture calculations right in the browser (ILSA 1D module; UFD module under development)."
 status: active
+# TODO: год запуска (на сайте не указан)
 start: TODO
+# По подвалу сайта: «Создано в Лаборатории программных систем оптимизации добычи углеводородов НГУ»
+org_ru: Лаборатория программных систем оптимизации добычи углеводородов НГУ
+org_en: Laboratory of Software Systems for Hydrocarbon Production Optimization, NSU
+# По коду страницы (интерфейс). TODO: серверная часть и расчётное ядро — уточните
+technologies: [React, Recharts]
 links:
   - { label: petrowebtools.nsu.ru, url: "https://petrowebtools.nsu.ru/" }
 tags: [hydraulic-fracturing, software]
 translation: auto
 # Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
-# Выступления с тезисами или трудами из списка publications показываются сами; в talks — только остальные.
 publications: []
 talks: []

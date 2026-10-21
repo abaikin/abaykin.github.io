@@ -1,0 +1,56 @@
+# Курс «Прикладной пакет для численного счета FreeFEM++». Источники: резюме («Лекционно-практический курс»;
+# старший преподаватель НГУ с 2020 г.), решения владельца (группа «FreeFEM в НГУ»), плейлист FreeFem++ на YouTube.
+# TODO: книга «Быстрое прототипирование в пакете FreeFEM. Часть 1» (2022) — выходные данные и PDF, в materials.
+order: 2
+icon: code
+title_ru: Прикладной пакет для численного счёта FreeFEM++
+title_en: FreeFEM++, an Applied Package for Numerical Computing
+kind: lectures-practice
+role_ru: Разработчик курса и преподаватель
+role_en: Course developer and instructor
+org_ru: Новосибирский государственный университет
+org_en: Novosibirsk State University
+org_url: https://www.nsu.ru/
+unit_ru: TODO
+audience_ru: TODO
+start: 2020
+hours: TODO
+language: ru
+assessment_ru: TODO
+summary_ru: Лекции и практические занятия по FreeFEM++ — пакету для численного решения уравнений в частных производных методом конечных элементов.
+summary_en: Lectures and hands-on classes on FreeFEM++, a package for solving partial differential equations by the finite element method.
+# Видеоуроки из плейлиста FreeFem++ на канале «Вычислительная механика» (даты — публикации на YouTube)
+videos:
+  - youtube: P7VM3Q0Dnwc
+    title_ru: Установка FreeFem++ на виртуальную машину с Ubuntu 20.04 (Е. В. Льготина)
+    title_en: Installing FreeFem++ on an Ubuntu 20.04 virtual machine (E. V. Lgotina)
+    date: 2020-12-10
+  - youtube: X_XxdGumbqQ
+    title_ru: Распараллеливание задач на FreeFem++ с помощью DDM PETSc (А. Н. Байкин)
+    title_en: Parallel computing in FreeFem++ with DDM PETSc (A. N. Baikin)
+    date: 2020-12-11
+  - youtube: _3Q_0vu5UCY
+    title_ru: Установка FreeFem и настройка VS Code (А. Н. Байкин)
+    title_en: Installing FreeFem and setting up VS Code (A. N. Baikin)
+    date: 2021-09-12
+  - youtube: SsOai-k-Opo
+    title_ru: Написание внешних модулей для FreeFem++ (А. Н. Байкин)
+    title_en: Writing external modules for FreeFem++ (A. N. Baikin)
+    date: 2021-12-20
+  - youtube: eefitS32On0
+    title_ru: Установка FreeFEM на Windows 10 и упрощённая настройка VS Code
+    title_en: Installing FreeFEM on Windows 10 and a simplified VS Code setup
+    date: 2022-11-04
+  - youtube: 3zMpMPHIG6Q
+    title_ru: Подготовка WSL для работы с FreeFEM
+    title_en: Preparing WSL for FreeFEM
+    date: 2022-12-11
+links:
+  - label_ru: Группа «FreeFEM в НГУ» во ВКонтакте
+    label_en: “FreeFEM at NSU” community on VK
+    url: https://vk.ru/nsu_freefem
+  - label_ru: Плейлист FreeFem++ на YouTube
+    label_en: FreeFem++ playlist on YouTube
+    url: https://www.youtube.com/playlist?list=PLipUmK_65GXGY8GKG8gFlj2tXseq_RA07
+tags: [freefem, fem, teaching]
+translation: auto

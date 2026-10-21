@@ -1,0 +1,137 @@
+# Курс «Гидроразрыв пласта». Источники: резюме («Разработанные курсы», старший преподаватель НГУ с 2020 г.),
+# решения владельца в TODO.md (соавторы Е. В. Донцов и А. В. Валов), плейлист курса на YouTube (темы и даты лекций).
+# Подробный текст (аннотация, программа, литература) — ru.mdx / en.mdx рядом. Пропуск — TODO.
+order: 1
+icon: layers
+title_ru: Гидроразрыв пласта
+title_en: Hydraulic Fracturing
+kind: lectures
+role_ru: Разработчик курса и лектор
+role_en: Course developer and lecturer
+org_ru: Новосибирский государственный университет
+org_en: Novosibirsk State University
+org_url: https://www.nsu.ru/
+# TODO: факультет, кафедра, программа
+unit_ru: TODO
+audience_ru: TODO
+start: 2020
+# TODO: семестр (записи лекций — весной: февраль — май)
+hours: TODO
+language: ru
+co_lecturers_ru: [Е. В. Донцов, А. В. Валов]
+co_lecturers_en: [E. V. Dontsov, A. V. Valov]
+assessment_ru: TODO
+summary_ru: Лекционный курс о математических моделях гидроразрыва пласта — от базовых моделей трещины (радиальная, PKN, EP3D) до моделей Planar3D ILSA и Planar3D Biot, переноса проппанта и течения в скважине.
+summary_en: A lecture course on mathematical models of hydraulic fracturing — from basic fracture models (radial, PKN, EP3D) to the Planar3D ILSA and Planar3D Biot models, proppant transport and wellbore flow.
+programme_note_ru: Лекции 2021 года по записям на YouTube; лекций 1–2 в записи нет.
+programme_note_en: The 2021 lectures as recorded on YouTube; lectures 1–2 were not recorded.
+lectures:
+  - n: 3
+    title_ru: Из чего состоит любая модель ГРП
+    title_en: What any hydraulic fracturing model consists of
+    date: 2021-02-16
+    lecturer_ru: Е. В. Донцов
+    lecturer_en: E. V. Dontsov
+    video: iIqwxwTVV0k
+  - n: 4
+    title_ru: Уравнение упругости, закон сохранения массы. Задача для полубесконечной трещины
+    title_en: Elasticity equation, mass conservation. The semi-infinite fracture problem
+    date: 2021-03-02
+    lecturer_ru: Е. В. Донцов
+    lecturer_en: E. V. Dontsov
+    video: lGypIk-VzYE
+  - n: 5
+    title_ru: Задача для полубесконечной трещины (продолжение), плоская трещина
+    title_en: The semi-infinite fracture problem (continued), planar fracture
+    date: 2021-03-09
+    lecturer_ru: Е. В. Донцов
+    lecturer_en: E. V. Dontsov
+    video: Q_en5biDXIs
+  - n: 6
+    title_ru: Модель радиальной трещины и модель PKN
+    title_en: Radial fracture model and PKN model
+    date: 2021-03-16
+    lecturer_ru: Е. В. Донцов
+    lecturer_en: E. V. Dontsov
+    video: DNqxq_FotIY
+  - n: 7
+    title_ru: Модель EP3D
+    title_en: EP3D model
+    date: 2021-03-23
+    lecturer_ru: Е. В. Донцов
+    lecturer_en: E. V. Dontsov
+    video: FBqI3YLKnYg
+  - n: 8
+    title_ru: "Модель Planar3D ILSA: основные уравнения, классификация элементов"
+    title_en: "Planar3D ILSA model: governing equations, element classification"
+    date: 2021-04-02
+    lecturer_ru: А. В. Валов
+    lecturer_en: A. V. Valov
+    video: 0CuJIKeoSmQ
+  - n: 9
+    title_ru: "Модель Planar3D ILSA: дискретизация, поиск фронта, алгоритм"
+    title_en: "Planar3D ILSA model: discretization, front tracking, algorithm"
+    date: 2021-04-08
+    lecturer_ru: А. В. Валов
+    lecturer_en: A. V. Valov
+    video: wfcLfD6nnug
+  - n: 10
+    title_ru: "Модель Planar3D Biot: постановка задачи, перенос граничных условий"
+    title_en: "Planar3D Biot model: problem statement, transfer of boundary conditions"
+    date: 2021-04-13
+    lecturer_ru: А. Н. Байкин
+    lecturer_en: A. N. Baikin
+    video: pw80SzkzdGM
+  - n: 11
+    title_ru: "Модель Planar3D Biot: слабая постановка, штраф, пороупругие эффекты"
+    title_en: "Planar3D Biot model: weak formulation, penalty, poroelastic effects"
+    date: 2021-04-20
+    lecturer_ru: А. Н. Байкин
+    lecturer_en: A. N. Baikin
+    video: ERNPsQQ6srs
+  - n: 12
+    title_ru: "Перенос проппанта: постановка задачи, обезразмеривание, оседание"
+    title_en: "Proppant transport: problem statement, scaling, settling"
+    date: 2021-04-27
+    lecturer_ru: А. Н. Байкин
+    lecturer_en: A. N. Baikin
+    video: xtZVtP6PwrY
+  - n: 13
+    title_ru: "Перенос проппанта: осреднение, численный алгоритм, бриджинг"
+    title_en: "Proppant transport: averaging, numerical algorithm, bridging"
+    date: 2021-04-30
+    lecturer_ru: А. Н. Байкин
+    lecturer_en: A. N. Baikin
+    video: u2wQKAEBzgE
+# Другие записи на канале «Вычислительная механика» (2020 и 2023 гг.); лекции 2022 г. (Е. В. Донцов) не добавлены — TODO
+videos:
+  - youtube: Nof-qqhkACg
+    title_ru: "Лекция 11 (2020). Модель Planar3D Biot: окончание лекции о пороупругих эффектах (А. Н. Байкин)"
+    title_en: "Lecture 11 (2020). Planar3D Biot model: end of the lecture on poroelastic effects (A. N. Baikin)"
+    date: 2020-04-17
+  - youtube: XYHmpWmppaw
+    title_ru: "Лекция 13 (2020). Перенос проппанта: осреднение, численный алгоритм, бриджинг (А. Н. Байкин)"
+    title_en: "Lecture 13 (2020). Proppant transport: averaging, numerical algorithm, bridging (A. N. Baikin)"
+    date: 2020-04-24
+  - youtube: b-BUwS14Yno
+    title_ru: Моделирование течения в скважине
+    title_en: Wellbore flow modelling
+    date: 2020-05-08
+  - youtube: 8xUA1_ZZGmc
+    title_ru: Инициация трещины ГРП
+    title_en: Hydraulic fracture initiation
+    date: 2020-05-15
+  - youtube: olHzDucH3pc
+    title_ru: Классический анализ мини-ГРП
+    title_en: Classical mini-frac analysis
+    date: 2023-05-04
+  - youtube: dkkfluAUSZs
+    title_ru: Моделирование течения в скважине, хамер-эффект, разделение потоков (А. Н. Байкин)
+    title_en: Wellbore flow modelling, water hammer, flow splitting (A. N. Baikin)
+    date: 2023-05-25
+links:
+  - label_ru: Плейлист курса на YouTube
+    label_en: Course playlist on YouTube
+    url: https://www.youtube.com/playlist?list=PLipUmK_65GXEpFTHhfJBaiiv7XiwMg-PM
+tags: [hydraulic-fracturing, planar3d, proppant-transport, teaching]
+translation: auto

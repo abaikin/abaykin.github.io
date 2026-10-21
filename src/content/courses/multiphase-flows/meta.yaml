@@ -1,0 +1,24 @@
+# Мини-курс «Multiphase Flows in Pipes and Wells» — для магистрантов Сколтеха, ежегодно с 2024 года, оригинал на английском
+# (решения владельца в TODO.md). Русское название и тексты — перевод.
+order: 4
+icon: waves
+title_ru: Многофазные течения в трубах и скважинах
+title_en: Multiphase Flows in Pipes and Wells
+kind: mini-course
+role_ru: Лектор
+role_en: Lecturer
+org_ru: Сколковский институт науки и технологий (Сколтех)
+org_en: Skolkovo Institute of Science and Technology (Skoltech)
+org_url: https://www.skoltech.ru/
+audience_ru: Магистранты Сколтеха
+audience_en: Skoltech master's students
+start: 2024
+schedule_ru: ежегодно
+schedule_en: every year
+hours: TODO
+language: en
+assessment_ru: TODO
+summary_ru: Мини-курс о многофазных течениях в трубах и скважинах для магистрантов Сколтеха.
+summary_en: A mini-course on multiphase flows in pipes and wells for Skoltech master's students.
+tags: [multiphase-flow, wellbore-flow, teaching]
+translation: auto

@@ -1,0 +1,26 @@
+# Программа ДПО «Быстрое прототипирование в пакете FreeFEM++» — курс для организаций (решение владельца в TODO.md).
+order: 3
+icon: graduation-cap
+title_ru: Быстрое прототипирование в пакете FreeFEM++
+title_en: Rapid Prototyping with FreeFEM++
+kind: continuing-education
+# TODO: ваша роль (автор программы, преподаватель)
+role_ru: TODO
+role_en: TODO
+org_ru: Новосибирский государственный университет, Передовая инженерная школа
+org_en: Novosibirsk State University, Advanced Engineering School
+org_url: https://www.nsu.ru/n/research/school-of-advanced-engineering/programs.php
+audience_ru: Сотрудники организаций (программа дополнительного профессионального образования)
+audience_en: Company employees (continuing professional education)
+start: TODO
+hours: TODO
+language: ru
+assessment_ru: TODO
+summary_ru: Программа дополнительного профессионального образования для организаций — быстрое прототипирование численных моделей в пакете FreeFEM++.
+summary_en: A continuing professional education programme for companies on rapid prototyping of numerical models with FreeFEM++.
+links:
+  - label_ru: Программы Передовой инженерной школы НГУ
+    label_en: Programmes of the NSU Advanced Engineering School
+    url: https://www.nsu.ru/n/research/school-of-advanced-engineering/programs.php
+tags: [freefem, teaching]
+translation: auto

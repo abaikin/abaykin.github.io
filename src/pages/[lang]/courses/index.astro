@@ -1,0 +1,53 @@
+---
+// Курсы: src/content/courses/<slug>/meta.yaml → карточки; страница курса — courses/<slug>/.
+// status: archived — курс больше не читается (отдельная группа «Курсы прошлых лет»).
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CourseCard from '../../../components/CourseCard.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+import TodoNote from '../../../components/TodoNote.astro';
+import { type Lang, langPaths, t } from '../../../i18n';
+
+export const getStaticPaths = langPaths;
+
+const lang = Astro.params.lang as Lang;
+const courses = (await getCollection('courses')).sort((a, b) => a.data.order - b.data.order);
+const active = courses.filter((c) => c.data.status === 'active');
+const archived = courses.filter((c) => c.data.status === 'archived');
+---
+
+<BaseLayout lang={lang} title={t(lang, 'nav.courses')} description={t(lang, 'section.courses')} section="courses">
+  <div class="wrap py-12 lg:py-16">
+    <SectionHeading icon="lucide:book-open" as="h1">{t(lang, 'nav.courses')}</SectionHeading>
+    <p class="max-w-2xl text-lg text-muted">{t(lang, 'section.courses')}</p>
+
+    {
+      courses.length === 0 && (
+        <p class="mt-8">
+          <TodoNote lang={lang} text={t(lang, 'courses.empty')} />
+        </p>
+      )
+    }
+    {
+      active.length > 0 && (
+        <ul class="mt-8 grid max-w-5xl gap-6 md:grid-cols-2">
+          {active.map((course) => (
+            <CourseCard lang={lang} course={course} />
+          ))}
+        </ul>
+      )
+    }
+    {
+      archived.length > 0 && (
+        <section class="page-section max-w-5xl" aria-labelledby="courses-archived">
+          <h2 id="courses-archived">{t(lang, 'courses.archived')}</h2>
+          <ul class="mt-4 grid gap-6 md:grid-cols-2">
+            {archived.map((course) => (
+              <CourseCard lang={lang} course={course} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

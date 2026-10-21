@@ -19,6 +19,8 @@ president-sp-1703-2022-1:
   end: 2024
   role: leader
   publications: [kopeikin2025metodika, astafyev2024razvitie, gimazov2024reshenie, kopeikin2024proektirovanie, sibin2024ispolzovanie, baykin2023twodimensional, baykin2023modelirovanieb, kalinin2022analiz]
+  # Проект по теме стипендии (симулятор авто-ГРП) — связь предложена по теме, проверьте
+  projects: [autofrac-simulator]
   translation: auto
 
 rfbr-18-31-00410:

@@ -1,31 +1,49 @@
 ---
-import { getCollection, getEntries, getEntry } from 'astro:content';
+// Страница проекта: src/content/projects/<slug>/meta.yaml + необязательный подробный текст ru.mdx / en.mdx.
+// Роль, период, организация, технологии, текст, иллюстрации, видео, документы; должности и гранты, которые ссылаются
+// на проект (поле projects в work.yaml и funding.yaml); связанные публикации и выступления; ссылки.
+import { getCollection, getEntries, getEntry, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Gallery from '../../../components/Gallery.astro';
 import Icon from '../../../components/Icon.astro';
+import LinkList from '../../../components/LinkList.astro';
+import MaterialList from '../../../components/MaterialList.astro';
+import RelatedPubs from '../../../components/RelatedPubs.astro';
+import RelatedTalks from '../../../components/RelatedTalks.astro';
 import TodoNote from '../../../components/TodoNote.astro';
-import { type Lang, LANGS, loc, t } from '../../../i18n';
+import VideoList from '../../../components/VideoList.astro';
+import { type Lang, type UIKey, LANGS, loc, t } from '../../../i18n';
+import { formatPeriod } from '../../../lib/experience';
+import { entryPeriod, entryText, techLabel } from '../../../lib/projects';
+import { comparePubs, ownerFamilies } from '../../../lib/publications';
 import { langHref } from '../../../lib/site';
-import { comparePubs, displayAuthors, isOwner, ownerFamilies, texHtml, venueLine } from '../../../lib/publications';
 import { compareTalks } from '../../../lib/talks';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-  return LANGS.flatMap((lang) =>
-    projects.map((project) => ({ params: { lang, slug: project.id }, props: { project } })),
-  );
+  return LANGS.flatMap((lang) => projects.map((project) => ({ params: { lang, slug: project.id }, props: { project } })));
 }
 
 const lang = Astro.params.lang as Lang;
 const { project } = Astro.props as { project: CollectionEntry<'projects'> };
 const p = project.data;
+const tr = (key: UIKey, vars?: Record<string, string | number>) => t(lang, key, vars);
 const title = loc(p, 'title', lang)!;
 const role = loc(p, 'role', lang);
 const summary = loc(p, 'summary', lang);
+const org = loc(p, 'org', lang);
+const coverAlt = loc(p, 'cover_alt', lang);
+const period = entryPeriod(p, lang);
 const tags = await getEntries(p.tags);
+const techs = p.technologies.map((x) => techLabel(x, lang));
 
-// Связанные публикации и выступления (ключи из publications.bib и id из src/content/talks/).
-// Выступления, связанные с публикациями проекта (тезисы, труды), добавляются автоматически.
+// Подробный текст на языке страницы (или на другом языке, если перевода нет)
+const text = await entryText('projectTexts', project.id, lang);
+const Body = text ? (await render(text.entry)).Content : undefined;
+
+// Связанные публикации и выступления; выступления с тезисами или трудами из publications проекта добавляются сами
 const publications = (await getEntries(p.publications)).sort(comparePubs);
 const pubIds = new Set(p.publications.map((ref) => ref.id));
 const talkIds = new Set(p.talks.map((ref) => ref.id));
@@ -35,103 +53,166 @@ const talks = (await getCollection('talks'))
 const profile = (await getEntry('profile', 'profile'))!.data;
 const owners = ownerFamilies([profile.name_ru, profile.name_en, ...profile.alt_names]);
 
-const period =
-  p.start === undefined || p.start === 'TODO'
-    ? undefined
-    : p.end
-      ? `${p.start}–${p.end}`
-      : p.status === 'active'
-        ? `${p.start} — ${t(lang, 'common.present')}`
-        : String(p.start);
+// Должности и гранты, которые ссылаются на проект
+const linksHere = (refs: { id: string }[]) => refs.some((ref) => ref.id === project.id);
+const work = (await getCollection('work')).filter((w) => linksHere(w.data.projects));
+const funding = (await getCollection('funding')).filter((f) => linksHere(f.data.projects));
+const present = tr('common.present');
 ---
 
 <BaseLayout lang={lang} title={title.text} description={summary?.text} section="projects">
-  <article class="wrap py-12 lg:py-16">
+  <noscript slot="head">
+    <style>
+      .talk-panel[hidden] {
+        display: block !important;
+      }
+    </style>
+  </noscript>
+
+  <article class="wrap py-12 lg:py-16" data-panels>
     <a href={langHref(lang, 'projects/')} class="inline-flex items-center gap-1 text-sm font-semibold">
       <Icon name="lucide:arrow-left" size={15} />
-      {t(lang, 'projects.all')}
+      {tr('projects.all')}
     </a>
 
-    <div class="mt-6 flex max-w-4xl items-start gap-4">
-      <span class="icon-circle mt-1" aria-hidden="true"><Icon name={`lucide:${p.icon}`} size={20} /></span>
-      <h1 class="text-3xl font-semibold sm:text-4xl" lang={title.lang}>{title.text}</h1>
-    </div>
+    <header class="mt-6 max-w-4xl">
+      <div class="flex items-start gap-4">
+        <span class="icon-circle mt-1" aria-hidden="true"><Icon name={`lucide:${p.icon}`} size={20} /></span>
+        <h1 class="text-3xl font-semibold sm:text-4xl" lang={title.lang}>{title.text}</h1>
+      </div>
+      {summary && <p class="mt-5 max-w-3xl text-lg leading-relaxed text-muted" lang={summary.lang}>{summary.text}</p>}
+    </header>
 
-    <dl class="mt-6 grid max-w-4xl gap-x-6 gap-y-2 sm:grid-cols-[max-content_1fr]">
-      <dt class="text-subtle">{t(lang, 'projects.role')}</dt>
+    <dl class="page-facts mt-6 max-w-4xl">
+      <dt>{tr('projects.role')}</dt>
       <dd>{role ? <span lang={role.lang}>{role.text}</span> : <TodoNote lang={lang} />}</dd>
-      <dt class="text-subtle">{t(lang, 'projects.period')}</dt>
+      <dt>{tr('projects.period')}</dt>
       <dd>
         {period ?? <TodoNote lang={lang} />}
-        <span class="text-subtle"> · {t(lang, p.status === 'active' ? 'projects.status.active' : 'projects.status.completed')}</span>
+        <span class="text-subtle"> · {tr(p.status === 'active' ? 'projects.status.active' : 'projects.status.completed')}</span>
       </dd>
+      {
+        org && (
+          <Fragment>
+            <dt>{tr('projects.org')}</dt>
+            <dd>
+              {p.org_url ? (
+                <a href={p.org_url} lang={org.lang}>
+                  {org.text}
+                </a>
+              ) : (
+                <span lang={org.lang}>{org.text}</span>
+              )}
+            </dd>
+          </Fragment>
+        )
+      }
+      {
+        techs.length > 0 && (
+          <Fragment>
+            <dt>{tr('projects.technologies')}</dt>
+            <dd>
+              <ul class="flex flex-wrap gap-1.5">
+                {techs.map((x) => (
+                  <li class="chip chip-sm">{x}</li>
+                ))}
+              </ul>
+            </dd>
+          </Fragment>
+        )
+      }
     </dl>
 
     {
       tags.length > 0 && (
-        <ul class="mt-5 flex flex-wrap gap-1.5">
+        <ul class="mt-5 flex flex-wrap gap-1.5" aria-label={tr('pubs.filterTags')}>
           {tags.map((tag) => (
-            <li class="chip chip-sm">{tag.data[lang]}</li>
+            <li>
+              <a class="chip chip-sm chip-link" href={`${langHref(lang, 'projects/')}?tag=${tag.id}`}>
+                {tag.data[lang]}
+              </a>
+            </li>
           ))}
         </ul>
       )
     }
 
-    {summary && <p class="mt-8 max-w-3xl text-lg leading-relaxed" lang={summary.lang}>{summary.text}</p>}
+    {p.cover && <Image src={p.cover} alt={coverAlt?.text ?? ''} widths={[640, 960, 1280]} sizes="(min-width: 1024px) 896px, 100vw" class="project-cover mt-8" />}
 
-    <p class="mt-6"><TodoNote lang={lang} text={t(lang, 'projects.detailsTodo')} /></p>
+    <section class="page-section" aria-labelledby="project-about">
+      <h2 id="project-about">{tr('projects.about')}</h2>
+      {
+        Body ? (
+          <div class="prose mt-4 max-w-3xl" lang={text!.lang}>
+            {text!.fallback && <p class="lang-mark">{tr('common.textInOtherLang')}</p>}
+            <Body />
+          </div>
+        ) : (
+          <p class="mt-3">
+            <TodoNote lang={lang} text={tr('projects.detailsTodo')} />
+          </p>
+        )
+      }
+    </section>
 
     {
-      publications.length > 0 && (
-        <section class="mt-10 max-w-4xl" aria-labelledby="project-publications">
-          <h2 id="project-publications" class="text-xl font-semibold">
-            {t(lang, 'projects.publications')}
-          </h2>
-          <ul class="mt-3 divide-y divide-border">
-            {publications.map((pub) => (
-              <li class="py-3">
-                <a href={langHref(lang, `publications/#${pub.id}`)} class="font-semibold" lang={pub.data.lang} set:html={texHtml(pub.data.title)} />
-                <p class="mt-0.5 text-sm text-muted">
-                  {displayAuthors(pub.data, lang).map((n, i) => (
-                    <Fragment>
-                      {i > 0 && ', '}
-                      {isOwner(n, owners) ? <strong class="pub-owner">{`${n.family} ${n.given}`}</strong> : `${n.family} ${n.given}`}
-                    </Fragment>
-                  ))}
-                </p>
-                <p class="text-sm text-subtle italic">{venueLine(pub.data, lang)}</p>
-              </li>
-            ))}
-          </ul>
-          <p class="mt-3">
-            <a href={langHref(lang, 'publications/')} class="inline-flex items-center gap-1 text-sm font-semibold">
-              {t(lang, 'projects.allPublications')}
-              <Icon name="lucide:arrow-right" size={15} />
-            </a>
-          </p>
+      p.gallery.length > 0 && (
+        <section class="page-section" aria-labelledby="project-gallery">
+          <h2 id="project-gallery">{tr('projects.gallery')}</h2>
+          <Gallery lang={lang} items={p.gallery} />
         </section>
       )
     }
 
     {
-      talks.length > 0 && (
-        <section class="mt-10 max-w-4xl" aria-labelledby="project-talks">
-          <h2 id="project-talks" class="text-xl font-semibold">
-            {t(lang, 'projects.talks')}
-          </h2>
+      p.videos.length > 0 && (
+        <section class="page-section" aria-labelledby="project-videos">
+          <h2 id="project-videos">{tr('projects.videos')}</h2>
+          <VideoList lang={lang} id="project" videos={p.videos} fallback={title.text} />
+        </section>
+      )
+    }
+
+    {
+      p.documents.length > 0 && (
+        <section class="page-section" aria-labelledby="project-documents">
+          <h2 id="project-documents">{tr('projects.documents')}</h2>
+          <MaterialList lang={lang} id="project" items={p.documents} />
+        </section>
+      )
+    }
+
+    {
+      (work.length > 0 || funding.length > 0) && (
+        <section class="page-section" aria-labelledby="project-experience">
+          <h2 id="project-experience">{tr('projects.experience')}</h2>
           <ul class="mt-3 space-y-2">
-            {talks.map((talk) => {
-              const title = loc(talk.data, 'title', talk.data.lang)!;
-              const event = loc(talk.data, 'event', lang);
+            {work.map((w) => {
+              const position = loc(w.data, 'position', lang)!;
+              const where = loc(w.data, 'org', lang)!;
               return (
                 <li>
-                  <a href={langHref(lang, `talks/#${talk.id}`)} lang={title.lang}>
-                    {title.text}
+                  <a href={langHref(lang, `experience/#work-${w.id}`)} lang={position.lang}>
+                    {position.text}
                   </a>
                   <span class="text-sm text-subtle">
-                    {' '}
-                    · {talk.data.date.slice(0, 4)}
-                    {event && <span lang={event.lang}> · {event.text}</span>}
+                    {' · '}
+                    <span lang={where.lang}>{where.text}</span> · {formatPeriod(w.data.start, w.data.end, lang, present)}
+                  </span>
+                </li>
+              );
+            })}
+            {funding.map((f) => {
+              const name = loc(f.data, 'title', lang)!;
+              const funder = loc(f.data, 'funder', lang)!;
+              return (
+                <li>
+                  <a href={langHref(lang, `experience/#funding-${f.id}`)} lang={name.lang}>
+                    {name.text}
+                  </a>
+                  <span class="text-sm text-subtle">
+                    {' · '}
+                    <span lang={funder.lang}>{funder.text}</span> · {formatPeriod(f.data.start, f.data.end, lang, present)}
                   </span>
                 </li>
               );
@@ -142,23 +223,42 @@ const period =
     }
 
     {
+      publications.length > 0 && (
+        <section class="page-section" aria-labelledby="project-publications">
+          <h2 id="project-publications">{tr('projects.publications')}</h2>
+          <RelatedPubs lang={lang} pubs={publications} owners={owners} />
+          <p class="mt-3">
+            <a href={langHref(lang, 'publications/')} class="inline-flex items-center gap-1 text-sm font-semibold">
+              {tr('projects.allPublications')}
+              <Icon name="lucide:arrow-right" size={15} />
+            </a>
+          </p>
+        </section>
+      )
+    }
+
+    {
+      talks.length > 0 && (
+        <section class="page-section" aria-labelledby="project-talks">
+          <h2 id="project-talks">{tr('projects.talks')}</h2>
+          <RelatedTalks lang={lang} talks={talks} />
+        </section>
+      )
+    }
+
+    {
       p.links.length > 0 && (
-        <section class="mt-10" aria-labelledby="links">
-          <h2 id="links" class="text-xl font-semibold">
-            {t(lang, 'projects.links')}
-          </h2>
-          <ul class="mt-3 space-y-1">
-            {p.links.map((l) => (
-              <li>
-                <a href={l.url} class="inline-flex items-center gap-1.5">
-                  {l.label}
-                  <Icon name="lucide:external-link" size={14} />
-                </a>
-              </li>
-            ))}
-          </ul>
+        <section class="page-section" aria-labelledby="project-links">
+          <h2 id="project-links">{tr('projects.links')}</h2>
+          <LinkList lang={lang} links={p.links} />
         </section>
       )
     }
   </article>
 </BaseLayout>
+
+<script>
+  import { bindPanels } from '../../../scripts/panels';
+  const root = document.querySelector<HTMLElement>('[data-panels]');
+  if (root) bindPanels(root);
+</script>

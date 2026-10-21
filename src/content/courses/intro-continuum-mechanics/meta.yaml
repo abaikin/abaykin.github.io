@@ -1,0 +1,28 @@
+# Семинары по курсу «Введение в механику сплошных сред» (ассистент, 2015–2020; резюме, src/data/experience/work.yaml).
+order: 5
+icon: book-open
+title_ru: Введение в механику сплошных сред (семинары)
+title_en: Introduction to Continuum Mechanics (seminars)
+kind: seminars
+status: archived
+role_ru: Ассистент, семинарские занятия
+role_en: Teaching assistant, seminars
+org_ru: Новосибирский государственный университет
+org_en: Novosibirsk State University
+org_url: https://www.nsu.ru/
+unit_ru: механико-математический факультет
+unit_en: Faculty of Mechanics and Mathematics
+audience_ru: TODO
+start: 2015
+end: 2020
+hours: TODO
+language: ru
+assessment_ru: TODO
+summary_ru: Семинарские занятия по курсу «Введение в механику сплошных сред» на механико-математическом факультете НГУ.
+summary_en: Seminars for the course “Introduction to Continuum Mechanics” at the NSU Faculty of Mechanics and Mathematics.
+links:
+  - label_ru: Группа курса во ВКонтакте
+    label_en: Course community on VK
+    url: https://vk.ru/intro2mcm
+tags: [teaching]
+translation: auto

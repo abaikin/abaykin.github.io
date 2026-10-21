@@ -92,7 +92,38 @@ const education = defineCollection({
   }),
 });
 
-/** Проекты: src/content/projects/<slug>/meta.yaml (+ необязательные ru.mdx / en.mdx) */
+// ---------- Общие поля проектов, курсов и лаборатории ----------
+
+/** Ссылка: общая подпись label или подписи на двух языках label_ru / label_en */
+const link = z
+  .strictObject({ label: text.optional(), label_ru: text.optional(), label_en: text.optional(), url: z.url() })
+  .refine((l) => l.label || l.label_ru || l.label_en, 'ссылка: нужна подпись label (или label_ru / label_en)');
+const youtubeId = z.string().regex(/^[A-Za-z0-9_-]{11}$/, 'идентификатор ролика YouTube (11 символов)');
+/** Ролик YouTube (встраивается с youtube-nocookie.com по нажатию) */
+const video = z.strictObject({
+  youtube: youtubeId,
+  title_ru: text.optional(),
+  title_en: text.optional(),
+  date: anyDate('date').optional(),
+});
+/** Документ или материал: файл внутри public/assets/ (file: pdf/…) или внешняя ссылка (url) */
+const material = z
+  .strictObject({
+    title_ru: text.optional(),
+    title_en: text.optional(),
+    kind: z.enum(['pdf', 'slides', 'book', 'code', 'notebook', 'data', 'link']).default('pdf'),
+    file: text.optional(),
+    url: z.url().optional(),
+    translation,
+  })
+  .refine((m) => m.title_ru || m.title_en, 'материал: нужно title_ru или title_en')
+  .refine((m) => m.file || m.url, 'материал: нужен file (внутри public/assets/) или url');
+/** Технология: общее название («C++», «FreeFEM») или пара { ru, en } («Метод конечных элементов») */
+const technology = z.union([text, z.strictObject({ ru: text, en: text })]);
+/** Начало периода: 2019, 2019-09, 2019-09-01 или TODO */
+const startDate = z.union([z.literal('TODO'), anyDate('start')]);
+
+/** Проекты: src/content/projects/<slug>/meta.yaml; подробный текст — рядом, ru.mdx и/или en.mdx (коллекция projectTexts) */
 const projects = defineCollection({
   loader: glob({
     pattern: '*/meta.yaml',
@@ -100,7 +131,7 @@ const projects = defineCollection({
     generateId: ({ entry }) => entry.split('/')[0],
   }),
   schema: ({ image }) =>
-    z.object({
+    z.strictObject({
       order: z.number().int().default(100),
       icon: text.default('folder'),
       title_ru: text,
@@ -110,27 +141,56 @@ const projects = defineCollection({
       summary_ru: text,
       summary_en: text,
       status: z.enum(['active', 'completed']).default('active'),
-      start: yearOrTodo.optional(),
-      end: year.optional(),
-      links: z.array(z.strictObject({ label: text, url: z.url() })).default([]),
+      start: startDate.optional(),
+      end: anyDate('end').optional(),
+      // Организация: заказчик, правообладатель или площадка проекта
+      org_ru: text.optional(),
+      org_en: text.optional(),
+      org_url: z.url().optional(),
+      technologies: z.array(technology).default([]),
+      links: z.array(link).default([]),
       cover: image().optional(),
+      cover_alt_ru: text.optional(),
+      cover_alt_en: text.optional(),
+      gallery: z
+        .array(
+          z.strictObject({
+            src: image(),
+            alt_ru: text,
+            alt_en: text.optional(),
+            caption_ru: text.optional(),
+            caption_en: text.optional(),
+          }),
+        )
+        .default([]),
+      videos: z.array(video).default([]),
+      documents: z.array(material).default([]),
       tags: z.array(reference('tags')).default([]),
       // Связанные работы: ключи из publications.bib и id выступлений (имя файла в src/content/talks/)
       publications: z.array(reference('publications')).default([]),
       talks: z.array(reference('talks')).default([]),
+      // Опыт работы и гранты ссылаются на проект сами (поле projects в work.yaml и funding.yaml)
       translation,
     }),
 });
 
-/** Лаборатория: src/data/laboratory.yaml (пока заглушка, сотрудников не публикуем) */
+/** Подробные тексты проектов: src/content/projects/<slug>/ru.mdx, en.mdx (id: '<slug>/ru'). Формулы, картинки, видео */
+const projectTexts = defineCollection({
+  loader: optionalGlob({ base: './src/content/projects', pattern: '*/{ru,en}.{md,mdx}', match: /^(ru|en)\.mdx?$/ }),
+  schema: z.object({ translation }),
+});
+
+/** Лаборатория: src/data/laboratory.yaml. status: coming-soon — заглушка («Скоро»), active — полная страница */
 const laboratory = defineCollection({
   loader: glob({ pattern: 'laboratory.yaml', base: './src/data' }),
-  schema: z.object({
+  schema: z.strictObject({
     name_ru: text,
     name_en: text,
     org_ru: text,
     org_en: text,
     org_url: z.url(),
+    unit_ru: text.optional(),
+    unit_en: text.optional(),
     since: year,
     status: z.enum(['coming-soon', 'active']),
     icon: text.default('flask-conical'),
@@ -138,6 +198,36 @@ const laboratory = defineCollection({
     role_en: text,
     short_ru: text,
     short_en: text,
+    // Полное описание: абзацы через пустую строку
+    description_ru: text.optional(),
+    description_en: text.optional(),
+    directions: z
+      .array(
+        z.strictObject({
+          title_ru: text,
+          title_en: text,
+          text_ru: text.optional(),
+          text_en: text.optional(),
+          icon: text.optional(),
+          tags: z.array(reference('tags')).default([]),
+        }),
+      )
+      .default([]),
+    projects: z.array(reference('projects')).default([]),
+    partners: z.array(z.strictObject({ name_ru: text, name_en: text, url: z.url().optional() })).default([]),
+    // Сотрудники — только с их согласия (решение владельца: пока не публикуем)
+    people: z
+      .array(
+        z.strictObject({
+          name_ru: text,
+          name_en: text,
+          role_ru: text.optional(),
+          role_en: text.optional(),
+          url: z.url().optional(),
+        }),
+      )
+      .default([]),
+    links: z.array(link).default([]),
     translation,
   }),
 });
@@ -446,6 +536,94 @@ const students = defineCollection({
   }),
 });
 
+// ---------- Курсы: src/content/courses/<slug>/meta.yaml (+ ru.mdx / en.mdx — аннотация, программа, литература) ----------
+
+/** Часы: число, { total, lectures, practice } или TODO */
+const hours = z.union([
+  z.literal('TODO'),
+  z.number().int().positive(),
+  z.strictObject({
+    total: z.number().int().positive().optional(),
+    lectures: z.number().int().positive().optional(),
+    practice: z.number().int().positive().optional(),
+  }),
+]);
+/** Лекция программы: номер, тема, дата, лектор, видео YouTube, слайды и ноутбук (файлы внутри public/assets/), код */
+const lecture = z
+  .strictObject({
+    n: z.number().int().positive().optional(),
+    title_ru: optText,
+    title_en: optText,
+    date: anyDate('date').optional(),
+    lecturer_ru: optText,
+    lecturer_en: optText,
+    video: youtubeId.optional(),
+    slides: optText,
+    notebook: optText,
+    code: z.url().optional(),
+  })
+  .refine((l) => l.title_ru || l.title_en, 'лекция: нужно title_ru или title_en');
+
+/**
+ * kind: lectures — лекционный курс, lectures-practice — лекции и практика, seminars — семинары,
+ * mini-course — мини-курс, continuing-education — программа ДПО. language — язык преподавания.
+ * Поля по решению владельца: аннотация (summary + текст), для кого (audience), когда читался (start / end / schedule),
+ * часы (hours), программа (lectures или текст), соавторы (co_lecturers), язык (language), форма контроля (assessment).
+ */
+const courses = defineCollection({
+  loader: optionalGlob({
+    base: './src/content/courses',
+    pattern: '*/meta.yaml',
+    match: /^meta\.yaml$/,
+    generateId: ({ entry }) => entry.split('/')[0],
+  }),
+  schema: z.strictObject({
+    order: z.number().int().default(100),
+    icon: text.default('book-open'),
+    title_ru: text,
+    title_en: text,
+    kind: z.enum(['lectures', 'lectures-practice', 'seminars', 'mini-course', 'continuing-education']),
+    status: z.enum(['active', 'archived']).default('active'),
+    role_ru: text,
+    role_en: text,
+    org_ru: text,
+    org_en: text,
+    org_url: z.url().optional(),
+    unit_ru: optText,
+    unit_en: optText,
+    audience_ru: optText,
+    audience_en: optText,
+    start: startDate.optional(),
+    end: anyDate('end').optional(),
+    schedule_ru: optText,
+    schedule_en: optText,
+    hours: hours.optional(),
+    language: z.enum(['ru', 'en']),
+    co_lecturers_ru: z.array(text).default([]),
+    co_lecturers_en: z.array(text).default([]),
+    assessment_ru: optText,
+    assessment_en: optText,
+    summary_ru: text,
+    summary_en: text,
+    // Пояснение под заголовком «Программа»: какой год, чего нет в записи
+    programme_note_ru: optText,
+    programme_note_en: optText,
+    lectures: z.array(lecture).default([]),
+    materials: z.array(material).default([]),
+    videos: z.array(video).default([]),
+    links: z.array(link).default([]),
+    tags: z.array(reference('tags')).default([]),
+    publications: z.array(reference('publications')).default([]),
+    translation,
+  }),
+});
+
+/** Подробные тексты курсов: src/content/courses/<slug>/ru.mdx, en.mdx (id: '<slug>/ru') */
+const courseTexts = defineCollection({
+  loader: optionalGlob({ base: './src/content/courses', pattern: '*/{ru,en}.{md,mdx}', match: /^(ru|en)\.mdx?$/ }),
+  schema: z.object({ translation }),
+});
+
 export const collections = {
   profile,
   education,
@@ -456,6 +634,9 @@ export const collections = {
   achievements,
   students,
   projects,
+  projectTexts,
+  courses,
+  courseTexts,
   laboratory,
   tags,
   publications,

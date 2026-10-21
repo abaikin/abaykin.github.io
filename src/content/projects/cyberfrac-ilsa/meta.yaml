@@ -1,5 +1,5 @@
-# Проект (заглушка): подробное описание, роль, период, иллюстрации добавит владелец.
-# Подробный текст можно положить рядом: ru.mdx / en.mdx.
+# Проект: модуль Planar3D ILSA симулятора «КиберГРП». Роль — INTENT.md; свидетельства 2020 г. и статьи — publications.bib;
+# о «КиберГРП» — официальная страница (techpartners.gazprom-neft.ru). Подробный текст — ru.mdx / en.mdx рядом.
 order: 1
 icon: layers
 title_ru: Модуль Planar3D ILSA в симуляторе «КиберГРП»
@@ -9,11 +9,29 @@ role_en: Development lead of the Planar3D ILSA hydraulic fracture propagation mo
 summary_ru: Модуль расчёта развития плоской трещины гидроразрыва в слоистой по напряжениям среде по модели Planar3D ILSA для симулятора ГРП «КиберГРП» (CyberFrac).
 summary_en: A module that computes planar hydraulic fracture growth in stress-layered formations with the Planar3D ILSA model for the CyberFrac hydraulic fracturing simulator.
 status: active
+# TODO: годы вашего участия. По работам: доклады с 2019 г., свидетельства 2020 г., статьи 2023 и 2026 гг.
 start: TODO
+# Правообладатель модулей по свидетельствам № 2020611608 и № 2020611805
+org_ru: ООО «Газпромнефть НТЦ» (правообладатель модулей)
+org_en: Gazpromneft STC LLC (rights holder of the modules)
+# Методы и библиотеки — из аннотаций свидетельств и описания функциональных характеристик модуля
+technologies:
+  - ru: Неявный алгоритм level set (ILSA)
+    en: Implicit level set algorithm (ILSA)
+  - ru: Метод быстрого марша (FMM)
+    en: Fast marching method (FMM)
+  - Eigen
+  - HDF5
+links:
+  - label_ru: «КиберГРП» на сайте «Газпромнефть – Технологические партнерства»
+    label_en: CyberFrac on the Gazpromneft Technology Partnerships website
+    url: https://techpartners.gazprom-neft.ru/kibergrp/
+  - label_ru: Список модулей «КиберГРП»
+    label_en: CyberFrac module list
+    url: https://techpartners.gazprom-neft.ru/kibergrp/spisok-moduley/
 tags: [hydraulic-fracturing, planar3d, software]
 translation: auto
 # Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
 # Выступления с тезисами или трудами из списка publications показываются сами; в talks — только остальные.
-# Список предложен по названиям работ — проверьте.
 publications: [erofeev2019kiber, valov2019modelirovanie, valov2019modelirovanieb, golovin2020modul, golovin2020modulb, valov2023implicit, shukalo2026acceleration]
 talks: [2019-frac-workshop-planar3d]

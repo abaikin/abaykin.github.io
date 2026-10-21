@@ -1,0 +1,26 @@
+---
+// Внешние ссылки проекта, курса или лаборатории
+import Icon from './Icon.astro';
+import { type Lang } from '../i18n';
+import { linkLabel } from '../lib/projects';
+
+interface Props {
+  lang: Lang;
+  links: { label?: string; label_ru?: string; label_en?: string; url: string }[];
+}
+
+const { lang, links } = Astro.props;
+---
+
+<ul class="mt-3 space-y-1.5">
+  {
+    links.map((l) => (
+      <li>
+        <a href={l.url} class="inline-flex items-center gap-1.5">
+          {linkLabel(l, lang)}
+          <Icon name="lucide:external-link" size={14} />
+        </a>
+      </li>
+    ))
+  }
+</ul>

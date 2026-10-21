@@ -1,0 +1,50 @@
+---
+// Ролики YouTube: кнопка «Видео» раскрывает панель, плеер с youtube-nocookie.com загружается только по нажатию
+// (обработчик — scripts/panels.ts, на странице нужен bindPanels). Ссылка «YouTube» открывает ролик на сайте YouTube.
+import Icon from './Icon.astro';
+import PanelButton from './PanelButton.astro';
+import { type Lang, loc, t } from '../i18n';
+import { formatPartialDate } from '../lib/experience';
+
+interface Props {
+  lang: Lang;
+  /** Префикс id панелей (уникальный на странице) */
+  id: string;
+  videos: { youtube: string; title_ru?: string; title_en?: string; date?: string }[];
+  /** Подпись ролика без названия: «<fallback>, видео N» */
+  fallback: string;
+}
+
+const { lang, id, videos, fallback } = Astro.props;
+---
+
+<ul class="mt-3 divide-y divide-border">
+  {
+    videos.map((v, i) => {
+      const title = loc(v, 'title', lang);
+      const name = title?.text ?? t(lang, 'projects.videoN', { name: fallback, n: i + 1 });
+      const panel = `${id}-video-${i + 1}`;
+      return (
+        <li class="py-3">
+          <p class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-semibold text-heading" lang={title?.lang}>
+              {name}
+            </span>
+            {v.date && <span class="text-sm text-subtle">{formatPartialDate(v.date, lang)}</span>}
+          </p>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <PanelButton controls={panel} label={t(lang, 'talks.video')} icon="lucide:circle-play" />
+            <a class="pub-btn" href={`https://www.youtube.com/watch?v=${v.youtube}`}>
+              <Icon name="si:youtube" size={14} />
+              YouTube
+            </a>
+          </div>
+          <div id={panel} class="talk-panel" hidden>
+            <div class="video-embed" data-embed="youtube" data-id={v.youtube} data-title={name} />
+            <p class="mt-1 text-xs text-subtle">{t(lang, 'talks.videoNote')}</p>
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>

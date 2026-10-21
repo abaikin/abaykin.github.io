@@ -1,0 +1,67 @@
+---
+// Документы и материалы: PDF внутри public/assets/ — встроенный просмотр (кнопка «Посмотреть») и «Открыть / скачать»;
+// другие файлы и внешние ресурсы — ссылкой. Файла ещё нет — пометка «будет добавлено».
+import Icon from './Icon.astro';
+import PanelButton from './PanelButton.astro';
+import PdfEmbed from './PdfEmbed.astro';
+import TodoNote from './TodoNote.astro';
+import { type Lang, loc, t } from '../i18n';
+import { asset, assetExists } from '../lib/site';
+
+interface Props {
+  lang: Lang;
+  /** Префикс id панелей (уникальный на странице) */
+  id: string;
+  items: { title_ru?: string; title_en?: string; kind: string; file?: string; url?: string; translation?: string }[];
+}
+
+const ICONS: Record<string, string> = {
+  pdf: 'lucide:file-text',
+  slides: 'lucide:presentation',
+  book: 'lucide:book-open',
+  code: 'lucide:code',
+  notebook: 'lucide:notebook-pen',
+  data: 'lucide:database',
+  link: 'lucide:link',
+};
+
+const { lang, id, items } = Astro.props;
+---
+
+<ul class="mt-3 divide-y divide-border">
+  {
+    items.map((m, i) => {
+      const title = loc(m, 'title', lang)!;
+      const local = m.file !== undefined && assetExists(m.file);
+      const href = m.file ? (local ? asset(m.file) : undefined) : m.url;
+      const pdf = local && m.file!.toLowerCase().endsWith('.pdf');
+      const panel = `${id}-doc-${i + 1}`;
+      return (
+        <li class="flex items-start gap-3 py-3">
+          <Icon name={ICONS[m.kind] ?? 'lucide:file'} size={18} class="mt-0.5 shrink-0 text-subtle" />
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold text-heading" lang={title.lang}>
+              {title.text}
+            </p>
+            <div class="mt-2 flex flex-wrap gap-2">
+              {pdf && <PanelButton controls={panel} label={t(lang, 'projects.preview')} labelClose={t(lang, 'projects.previewClose')} />}
+              {pdf ? null : href ? (
+                <a class="pub-btn" href={href}>
+                  <Icon name="lucide:external-link" size={14} />
+                  {t(lang, 'projects.open')}
+                </a>
+              ) : (
+                <TodoNote lang={lang} />
+              )}
+            </div>
+            {pdf && (
+              <div id={panel} class="talk-panel" hidden>
+                <PdfEmbed lang={lang} href={href!} title={title.text} />
+              </div>
+            )}
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>

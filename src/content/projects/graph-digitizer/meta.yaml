@@ -1,19 +1,20 @@
-# Проект (заглушка). Источник: описание репозитория на GitHub. Роль уточнит владелец.
+# Проект: Graph Digitizer Tool. Источник: README репозитория https://github.com/abaikin/Graph_Digitizer_Tool (создан в мае 2026 г.).
 order: 5
 icon: chart-line
 title_ru: Graph Digitizer Tool
 title_en: Graph Digitizer Tool
+# TODO: ваша роль в проекте
 role_ru: TODO
 role_en: TODO
 summary_ru: Интерактивный инструмент для автоматической оцифровки кривых с изображений графиков — графический интерфейс на PySide6, распознавание подписей легенды (OCR), экспорт в Excel.
 summary_en: An interactive tool that automatically digitizes curves from plot images — PySide6 GUI, OCR of legend labels, export to Excel.
 status: active
 start: 2026
+technologies: [Python, PySide6, NumPy, pandas, matplotlib, RapidOCR]
 links:
   - { label: GitHub, url: "https://github.com/abaikin/Graph_Digitizer_Tool" }
 tags: [software]
 translation: auto
 # Связанные работы: ключи из src/data/publications.bib и id выступлений (src/content/talks/<id>.yaml).
-# Выступления с тезисами или трудами из списка publications показываются сами; в talks — только остальные.
 publications: []
 talks: []
