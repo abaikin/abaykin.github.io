@@ -2,7 +2,7 @@
 // Проверки перед коммитом и деплоем (npm run validate):
 //  1) номера телефонов — в файлах репозитория и в собранном сайте dist/
 //     (текст PDF — через pdftotext, если он установлен);
-//  2) приватные файлы (ForCLAUDE/, DRAFT.MD, proposal.md) не попали в git;
+//  2) приватные файлы (ForCLAUDE/, FromClaude/, DRAFT.MD, proposal.md) не попали в git;
 //  3) в src/i18n/ru.json и en.json одинаковые ключи.
 // Сами номера здесь не хранятся: поиск идёт по шаблону российского номера.
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -86,9 +86,12 @@ if (hasPdftotext) {
 ok(`на номера телефонов проверено: ${textCount} текстовых файлов, ${pdfCount} PDF`);
 
 // 2. Приватные файлы не в git
-const leaked = git('ls-files').filter((f) => f.startsWith('ForCLAUDE/') || f === 'DRAFT.MD' || f === 'proposal.md');
+// FromClaude/ — оригиналы документов до затирания подписей и номеров (см. CLAUDE.md)
+const leaked = git('ls-files').filter(
+  (f) => f.startsWith('ForCLAUDE/') || f.startsWith('FromClaude/') || f === 'DRAFT.MD' || f === 'proposal.md',
+);
 if (leaked.length) fail(`в git попали приватные файлы: ${leaked.join(', ')}`);
-else ok('приватные файлы (ForCLAUDE/, DRAFT.MD, proposal.md) не в git');
+else ok('приватные файлы (ForCLAUDE/, FromClaude/, DRAFT.MD, proposal.md) не в git');
 
 // 3. Ключи словарей интерфейса
 const ru = JSON.parse(readFileSync('src/i18n/ru.json', 'utf8'));
