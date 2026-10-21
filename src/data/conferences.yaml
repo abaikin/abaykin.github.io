@@ -62,6 +62,39 @@ mech-congress:
   name_en: All-Russian Congress on Fundamental Problems of Theoretical and Applied Mechanics
   translation: auto
 
+nmm:
+  short_ru: Новые математические модели механики сплошных сред
+  short_en: New Mathematical Models of Continuum Mechanics
+  name_ru: "Всероссийская конференция «Новые математические модели механики сплошных сред: построение и изучение»"
+  name_en: "All-Russian Conference “New Mathematical Models of Continuum Mechanics: Construction and Study”"
+  translation: auto
+
+lavrentyev:
+  short_ru: Лаврентьевские чтения
+  short_en: Lavrentyev Readings
+  name_ru: Международная конференция «Лаврентьевские чтения по математике, механике и физике»
+  name_en: International Conference “Lavrentyev Readings on Mathematics, Mechanics and Physics”
+  translation: auto
+
+nonlinear-waves:
+  short_ru: Нелинейные волны
+  short_en: Nonlinear Waves
+  name_ru: "Всероссийская конференция «Нелинейные волны: теория и новые приложения»"
+  name_en: "All-Russian Conference “Nonlinear Waves: Theory and New Applications”"
+  translation: auto
+
+apm:
+  short_ru: Advanced Problems in Mechanics
+  short_en: Advanced Problems in Mechanics
+  name_en: International Conference “Advanced Problems in Mechanics”
+
+sidorov:
+  short_ru: Актуальные проблемы прикладной математики и механики
+  short_en: Actual Problems of Applied Mathematics and Mechanics
+  name_ru: Всероссийская конференция «Актуальные проблемы прикладной математики и механики», посвящённая памяти академика А. Ф. Сидорова
+  name_en: All-Russian Conference “Actual Problems of Applied Mathematics and Mechanics” in memory of Academician A. F. Sidorov
+  translation: auto
+
 ispras:
   short_ru: Ivannikov ISPRAS Open Conference
   short_en: Ivannikov ISPRAS Open Conference

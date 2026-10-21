@@ -1,0 +1,18 @@
+# eLibrary: конференция прошла 5–10 сентября 2016 г. в Абрау-Дюрсо (сборник тезисов издан ИММ УрО РАН в Екатеринбурге);
+# тезисы — с. 13–14. Программа (Math-Net.Ru): 15.30–16.00, в программе название «Моделирование гидроразрыва пласта
+# в пороупругой среде». День, формат и докладчик — TODO
+date: 2016-09-05
+date_end: 2016-09-10
+lang: ru
+title_ru: Численное моделирование трещины гидроразрыва в пороупругой среде
+title_en: Numerical modelling of a hydraulic fracture in a poroelastic medium
+translation: auto
+conference: sidorov
+event_ru: VIII Всероссийская конференция «Актуальные проблемы прикладной математики и механики», посвящённая памяти академика А. Ф. Сидорова, и Всероссийская молодёжная школа-конференция
+event_en: VIII All-Russian Conference “Actual Problems of Applied Mathematics and Mechanics” in memory of Academician A. F. Sidorov and the All-Russian Youth School-Conference
+city_ru: Абрау-Дюрсо
+city_en: Abrau-Dyurso
+status: TODO
+scope: national
+speaker: TODO
+publications: [baykin2016chislennoe]

@@ -1,0 +1,17 @@
+# Автореферат кандидатской (с. 8 и 19–20): конференция 29 февраля — 2 марта 2016 г., Новосибирск; тезисы — с. 15–16.
+# Доклад есть в программе конференции. День, формат и докладчик — TODO
+date: 2016-02-29
+date_end: 2016-03-02
+lang: ru
+title_ru: Развитие трещины гидроразрыва пласта в пороупругой среде
+title_en: Hydraulic fracture growth in a poroelastic medium
+translation: auto
+conference: nonlinear-waves
+event_ru: "Всероссийская конференция «Нелинейные волны: теория и новые приложения», посвящённая 70-летию со дня рождения чл.-корр. РАН В. М. Тешукова"
+event_en: "All-Russian Conference “Nonlinear Waves: Theory and New Applications” dedicated to the 70th anniversary of Corresponding Member of the RAS V. M. Teshukov"
+city_ru: Новосибирск
+city_en: Novosibirsk
+status: TODO
+scope: national
+speaker: TODO
+publications: [baykin2016razvitie]

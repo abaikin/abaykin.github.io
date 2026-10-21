@@ -1,0 +1,18 @@
+# eLibrary: съезд прошёл 20–24 августа 2015 г. в Казани; доклад — в сборнике докладов, с. 292–294.
+# День доклада и формат неизвестны. Докладчик — единственный автор
+date: 2015-08-20
+date_end: 2015-08-24
+lang: ru
+title_ru: Развитие трещины гидроразрыва в пороупругой среде
+title_en: Hydraulic fracture growth in a poroelastic medium
+translation: auto
+conference: mech-congress
+event_ru: XI Всероссийский съезд по фундаментальным проблемам теоретической и прикладной механики
+event_en: XI All-Russian Congress on Fundamental Problems of Theoretical and Applied Mechanics
+city_ru: Казань
+city_en: Kazan
+status: TODO
+scope: national
+speaker: true
+# Труды съезда (сборник докладов) и аннотация доклада (аннотации докладов)
+publications: [baykin2015razvitie, baykin2015razvitieb]

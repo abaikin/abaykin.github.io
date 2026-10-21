@@ -1,0 +1,22 @@
+# Автореферат кандидатской (раздел «Апробация», с. 7–8) и программа конференции: 17.50–18.10.
+# Даты конференции, формат и докладчик — TODO. Тезисов в списке трудов нет; связанная статья — IJRMMS 2015
+date: 2014
+lang: ru
+title_ru: Численная модель гидроразрыва пласта без отслеживания кончика трещины
+title_en: A numerical model of hydraulic fracturing without fracture tip tracking
+translation: auto
+authors:
+  - Байкин, А. Н.
+  - Головин, С. В.
+  - Исаев, В. И.
+  - Кузнецов, Д. С.
+  - Мамонтов, А. Е.
+conference: nmm
+event_ru: "Всероссийская конференция «Новые математические модели механики сплошных сред: построение и изучение», приуроченная к 95-летию академика Л. В. Овсянникова"
+event_en: "All-Russian Conference “New Mathematical Models of Continuum Mechanics: Construction and Study” on the 95th anniversary of Academician L. V. Ovsyannikov"
+city_ru: Новосибирск
+city_en: Novosibirsk
+status: TODO
+scope: national
+speaker: TODO
+publications: [golovin2015hydraulic]
