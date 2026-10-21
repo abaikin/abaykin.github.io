@@ -1,0 +1,650 @@
+---
+// Опыт: работа, проекты и гранты, образование, дополнительное образование, навыки, студенты, достижения.
+// Данные — src/data/experience/*.yaml и src/content/students/<id>.yaml. Вид — как раздел Experience в референсе 1:
+// вертикальная шкала с маркерами и карточками. Пропуски (TODO) видны на странице как «будет добавлено».
+// Документы (работы, дипломы, сертификаты) раскрываются под записью: на компьютере — встроенный PDF, на телефоне — кнопка.
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import PanelButton from '../../../components/PanelButton.astro';
+import OrgLink from '../../../components/OrgLink.astro';
+import PdfEmbed from '../../../components/PdfEmbed.astro';
+import RelatedList, { type RelatedWork } from '../../../components/RelatedList.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+import TodoNote from '../../../components/TodoNote.astro';
+import { type Lang, type UIKey, isFilled, langPaths, loc, t } from '../../../i18n';
+import { asset, assetExists, langHref } from '../../../lib/site';
+import { byStartDesc, formatPartialDate, formatPeriod, locList } from '../../../lib/experience';
+import { texHtml } from '../../../lib/publications';
+
+export const getStaticPaths = langPaths;
+
+const lang = Astro.params.lang as Lang;
+const tr = (key: string, vars?: Record<string, string | number>) => t(lang, key as UIKey, vars);
+const present = tr('common.present');
+/** Свой PDF в public/assets/: ссылка, если файл есть */
+const pdfHref = (rel?: string) => (rel && isFilled(rel) && assetExists(rel) ? asset(rel) : undefined);
+const quoted = (s: string) => (lang === 'ru' ? `«${s}»` : `“${s}”`);
+
+const work = (await getCollection('work')).sort(byStartDesc);
+const funding = (await getCollection('funding')).sort(byStartDesc);
+const education = (await getCollection('education')).sort((a, b) => b.data.end - a.data.end);
+const training = (await getCollection('training')).sort(byStartDesc);
+const skills = (await getEntry('skills', 'skills'))?.data;
+// Пока в src/content/students/ нет файлов, коллекцию не запрашиваем (иначе Astro предупреждает о пустой коллекции)
+const hasStudents = Object.keys(import.meta.glob('/src/content/students/*.yaml')).length > 0;
+const students = hasStudents ? await getCollection('students') : [];
+// Новые выше; без известной даты (TODO) — в конце
+const dateKey = (d: string) => (d === 'TODO' ? '' : d);
+const achievements = (await getCollection('achievements')).sort((a, b) => dateKey(b.data.date).localeCompare(dateKey(a.data.date)));
+const groups = [
+  { key: 'exp.letters', icon: 'lucide:mail', items: achievements.filter((a) => a.data.kind === 'letter') },
+  { key: 'exp.awards', icon: 'lucide:award', items: achievements.filter((a) => a.data.kind === 'award') },
+];
+
+const pubs = new Map((await getCollection('publications')).map((p) => [p.id, p]));
+const talks = new Map((await getCollection('talks')).map((x) => [x.id, x]));
+const projects = new Map((await getCollection('projects')).map((p) => [p.id, p]));
+
+// Связанные работы — ссылки на записи в «Публикациях» и «Выступлениях»
+const related = (pubRefs: { id: string }[], talkRefs: { id: string }[]): RelatedWork[] => [
+  ...pubRefs.map(({ id }) => {
+    const p = pubs.get(id)!;
+    return {
+      kind: tr(`pubs.kind.${p.data.kind}`),
+      year: String(p.data.year),
+      title: p.data.title,
+      lang: p.data.lang,
+      href: langHref(lang, `publications/#${id}`),
+    };
+  }),
+  ...talkRefs.map(({ id }) => {
+    const x = talks.get(id)!;
+    const title = loc(x.data, 'title', x.data.lang)!;
+    return { kind: tr('pubs.talk'), year: x.data.date.slice(0, 4), title: title.text, lang: title.lang, href: langHref(lang, `talks/#${id}`) };
+  }),
+];
+
+const SECTIONS = [
+  { id: 'work', key: 'exp.work', icon: 'lucide:briefcase' },
+  { id: 'funding', key: 'exp.funding', icon: 'lucide:landmark' },
+  { id: 'education', key: 'exp.education', icon: 'lucide:graduation-cap' },
+  { id: 'training', key: 'exp.training', icon: 'lucide:book-open-check' },
+  { id: 'skills', key: 'exp.skills', icon: 'lucide:wrench' },
+  { id: 'students', key: 'exp.students', icon: 'lucide:users' },
+  { id: 'achievements', key: 'exp.achievements', icon: 'lucide:award' },
+];
+const icon = (id: string) => SECTIONS.find((s) => s.id === id)!.icon;
+// Пометка о машинном переводе — одна на странице (на английской версии), а не у каждой строки
+const hasAuto = [work, funding, education, training, achievements, students].some((list) =>
+  list.some((e: { data: { translation?: string } }) => e.data.translation === 'auto'),
+);
+---
+
+<BaseLayout lang={lang} title={t(lang, 'nav.experience')} description={t(lang, 'section.experience')} section="experience">
+  <noscript slot="head">
+    <style>
+      .exp-panel[hidden] {
+        display: block !important;
+      }
+    </style>
+  </noscript>
+
+  <div class="wrap py-12 lg:py-16" data-panels>
+    <SectionHeading icon="lucide:briefcase" as="h1">{t(lang, 'nav.experience')}</SectionHeading>
+    <p class="max-w-3xl text-lg text-muted">{t(lang, 'section.experience')}</p>
+    {lang === 'en' && hasAuto && <p class="mt-2 text-sm text-subtle italic">{tr('exp.autoNote')}</p>}
+
+    <nav class="year-nav section-nav" aria-label={tr('exp.onPage')} data-pagefind-ignore>
+      <ul>
+        {
+          SECTIONS.map((s) => (
+            <li>
+              <a href={`#${s.id}`}>{tr(s.key)}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Опыт работы -->
+    <section id="work" class="exp-section" aria-labelledby="work-h">
+      <SectionHeading icon={icon('work')} id="work-h">{tr('exp.work')}</SectionHeading>
+      <ol class="timeline">
+        {
+          work.map(({ id, data: d }) => {
+            const position = loc(d, 'position', lang)!;
+            const org = loc(d, 'org', lang)!;
+            const unit = loc(d, 'unit', lang);
+            const city = loc(d, 'city', lang);
+            const note = loc(d, 'note', lang);
+            const duties = locList(d, 'duties', lang);
+            const results = locList(d, 'results', lang);
+            const meta = [d.kind && d.kind !== 'main' ? tr(`exp.kind.${d.kind}`) : '', city?.text ?? ''].filter(Boolean);
+            return (
+              <li id={`work-${id}`} class="timeline-item">
+                <span class="timeline-marker" aria-hidden="true">
+                  <Icon name={icon('work')} size={15} />
+                </span>
+                <article class="timeline-card">
+                  <header class="timeline-head">
+                    <div>
+                      <h3 class="timeline-title" lang={position.lang}>
+                        {position.text}
+                      </h3>
+                      <p class="timeline-org" lang={org.lang}>
+                        {org.text}
+                        {d.org_url && <OrgLink lang={lang} href={d.org_url} name={org.text} />}
+                      </p>
+                      {unit && (
+                        <p class="timeline-unit" lang={unit.lang}>
+                          {unit.text}
+                        </p>
+                      )}
+                    </div>
+                    <p class="timeline-date">
+                      <Icon name="lucide:calendar" size={14} />
+                      {formatPeriod(d.start, d.end, lang, present)}
+                    </p>
+                  </header>
+                  {meta.length > 0 && <p class="timeline-meta">{meta.join(' · ')}</p>}
+                  {duties.items.length > 0 && (
+                    <section class="timeline-block">
+                      <h4 class="pub-dt">{tr('exp.duties')}</h4>
+                      <ul class="exp-list" lang={duties.lang}>
+                        {duties.items.map((x) => (
+                          <li>{x}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                  <section class="timeline-block">
+                    <h4 class="pub-dt">{tr('exp.results')}</h4>
+                    {results.items.length > 0 ? (
+                      <ul class="exp-list" lang={results.lang}>
+                        {results.items.map((x) => (
+                          <li>{x}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p class="mt-1">
+                        <TodoNote lang={lang} />
+                      </p>
+                    )}
+                  </section>
+                  {d.projects.length > 0 && (
+                    <p class="timeline-block text-sm">
+                      <span class="pub-dt">{tr('exp.projects')}:</span>{' '}
+                      {d.projects.map((ref, i) => {
+                        const title = loc(projects.get(ref.id)!.data, 'title', lang)!;
+                        return (
+                          <Fragment>
+                            {i > 0 && ', '}
+                            <a href={langHref(lang, `projects/${ref.id}/`)} lang={title.lang}>
+                              {title.text}
+                            </a>
+                          </Fragment>
+                        );
+                      })}
+                    </p>
+                  )}
+                  {note && (
+                    <p class="timeline-block text-sm text-muted" lang={note.lang}>
+                      {note.text}
+                    </p>
+                  )}
+                </article>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </section>
+
+    <!-- Проекты и гранты -->
+    <section id="funding" class="exp-section" aria-labelledby="funding-h">
+      <SectionHeading icon={icon('funding')} id="funding-h">{tr('exp.funding')}</SectionHeading>
+      <ol class="timeline">
+        {
+          funding.map(({ id, data: d }) => {
+            const title = loc(d, 'title', lang)!;
+            const funder = loc(d, 'funder', lang)!;
+            const note = loc(d, 'note', lang);
+            const role = d.kind === 'scholarship' && d.role === 'leader' ? 'exp.role.holder' : `exp.role.${d.role}`;
+            const links = related(d.publications, []);
+            return (
+              <li id={`funding-${id}`} class="timeline-item">
+                <span class="timeline-marker" aria-hidden="true">
+                  <Icon name={icon('funding')} size={15} />
+                </span>
+                <article class="timeline-card">
+                  <header class="timeline-head">
+                    <div>
+                      <h3 class="timeline-title" lang={title.lang}>
+                        {title.text}
+                      </h3>
+                      <p class="timeline-org" lang={funder.lang}>
+                        {funder.text}
+                        {d.url && <OrgLink lang={lang} href={d.url} name={funder.text} />}
+                        {d.number && <span class="timeline-number">{tr('exp.number', { n: lang === 'en' && d.number_en ? d.number_en : d.number })}</span>}
+                      </p>
+                    </div>
+                    <p class="timeline-date">
+                      <Icon name="lucide:calendar" size={14} />
+                      {formatPeriod(d.start, d.end, lang, present)}
+                    </p>
+                  </header>
+                  <ul class="pub-badges">
+                    <li class="badge">{tr(`exp.fundingKind.${d.kind}`)}</li>
+                    {d.role === 'TODO' ? <li class="todo-note">{tr('exp.role.TODO')}</li> : <li class="badge">{tr(role)}</li>}
+                  </ul>
+                  {note && (
+                    <p class="timeline-block text-sm text-muted" lang={note.lang}>
+                      {note.text}
+                    </p>
+                  )}
+                  {links.length > 0 && (
+                    <Fragment>
+                      <div class="pub-actions">
+                        <PanelButton
+                          controls={`funding-${id}-pubs`}
+                          label={tr('exp.fundingPubs', { n: links.length })}
+                          labelClose={tr('pubs.hide')}
+                        />
+                      </div>
+                      <div id={`funding-${id}-pubs`} class="pub-details exp-panel" hidden>
+                        <RelatedList items={links} />
+                      </div>
+                    </Fragment>
+                  )}
+                </article>
+              </li>
+            );
+          })
+        }
+      </ol>
+      <p class="exp-todo">
+        <TodoNote lang={lang} text={tr('exp.fundingTodo')} />
+      </p>
+    </section>
+
+    <!-- Образование -->
+    <section id="education" class="exp-section" aria-labelledby="education-h">
+      <SectionHeading icon={icon('education')} id="education-h">{tr('exp.education')}</SectionHeading>
+      <ol class="timeline">
+        {
+          education.map(({ id, data: d }) => {
+            const degree = loc(d, 'degree', lang)!;
+            const org = loc(d, 'org', lang)!;
+            const program = loc(d, 'program', lang)!;
+            const thesis = loc(d, 'thesis_title', lang)!;
+            const supervisor = loc(d, 'supervisor', lang)!;
+            const council = loc(d, 'council', lang);
+            const unit = loc(d, 'unit', lang);
+            const abstract = loc(d, 'abstract', lang);
+            const links = related(d.publications, d.talks);
+            const docs = [
+              { key: 'thesis', href: pdfHref(d.pdf), label: tr('exp.thesisText') },
+              { key: 'autoref', href: pdfHref(d.autoreferat_pdf), label: tr('exp.autoreferat') },
+              { key: 'diploma', href: pdfHref(d.diploma_pdf), label: tr('exp.diploma') },
+            ].filter((x) => x.href);
+            return (
+              <li id={`education-${id}`} class="timeline-item">
+                <span class="timeline-marker" aria-hidden="true">
+                  <Icon name={icon('education')} size={15} />
+                </span>
+                <article class="timeline-card">
+                  <header class="timeline-head">
+                    <div>
+                      <h3 class="timeline-title" lang={degree.lang}>
+                        {degree.text}
+                      </h3>
+                      <p class="timeline-org" lang={org.lang}>
+                        {org.text}
+                        {d.org_url && <OrgLink lang={lang} href={d.org_url} name={org.text} />}
+                      </p>
+                      {unit && (
+                        <p class="timeline-unit" lang={unit.lang}>
+                          {unit.text}
+                        </p>
+                      )}
+                    </div>
+                    <p class="timeline-date">
+                      <Icon name="lucide:calendar" size={14} />
+                      {d.start === 'TODO' ? d.end : `${d.start}–${d.end}`}
+                    </p>
+                  </header>
+                  {(d.honors || d.start === 'TODO') && (
+                    <ul class="pub-badges">
+                      {d.honors && <li class="badge">{tr('common.honors')}</li>}
+                      {d.start === 'TODO' && <li class="todo-note">{tr('exp.startTodo')}</li>}
+                    </ul>
+                  )}
+                  <dl class="exp-facts">
+                    <dt>{tr(d.level === 'phd' ? 'exp.specialty' : 'exp.program')}</dt>
+                    <dd lang={program.lang}>{program.text}</dd>
+                    <dt>{tr(`exp.thesis.${d.level}`)}</dt>
+                    <dd lang={thesis.lang}>{quoted(thesis.text)}</dd>
+                    <dt>{tr('exp.supervisor')}</dt>
+                    <dd lang={supervisor.lang}>{supervisor.text}</dd>
+                    {d.defense_date && (
+                      <Fragment>
+                        <dt>{tr('exp.defense')}</dt>
+                        <dd>{[formatPartialDate(d.defense_date.toISOString().slice(0, 10), lang), council?.text].filter(Boolean).join(', ')}</dd>
+                      </Fragment>
+                    )}
+                  </dl>
+                  <div class="pub-actions">
+                    <PanelButton controls={`education-${id}-more`} label={tr('pubs.details')} labelClose={tr('pubs.hide')} />
+                    {docs.map((x) => (
+                      <PanelButton
+                        controls={`education-${id}-${x.key}`}
+                        label={x.label}
+                        icon={x.key === 'diploma' ? 'lucide:scroll-text' : 'lucide:file-text'}
+                      />
+                    ))}
+                    {d.defense_url && (
+                      <a class="pub-btn" href={d.defense_url}>
+                        {tr('exp.defensePage')}
+                      </a>
+                    )}
+                  </div>
+                  <div id={`education-${id}-more`} class="pub-details exp-panel" hidden>
+                    <section>
+                      <h4 class="pub-dt">
+                        {tr('pubs.abstract')}
+                        {abstract && abstract.lang === 'en' && d.translation === 'auto' && (
+                          <span class="mt-note">{tr('common.autoTranslation')}</span>
+                        )}
+                        {abstract?.fallback && <span class="mt-note">{tr('common.textInOtherLang')}</span>}
+                      </h4>
+                      {abstract ? (
+                        <div class="pub-abstract" lang={abstract.lang} set:html={texHtml(abstract.text, true)} />
+                      ) : (
+                        <p class="mt-1">
+                          <TodoNote lang={lang} />
+                        </p>
+                      )}
+                    </section>
+                    <section>
+                      <h4 class="pub-dt">{tr('exp.related')}</h4>
+                      {links.length > 0 ? (
+                        <RelatedList items={links} />
+                      ) : (
+                        <p class="mt-1">
+                          <TodoNote lang={lang} />
+                        </p>
+                      )}
+                    </section>
+                  </div>
+                  {docs.map((x) => (
+                    <div id={`education-${id}-${x.key}`} class="talk-panel exp-panel" hidden>
+                      <PdfEmbed lang={lang} href={x.href!} title={`${x.label}: ${thesis.text}`} />
+                    </div>
+                  ))}
+                </article>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </section>
+
+    <!-- Дополнительное образование -->
+    <section id="training" class="exp-section" aria-labelledby="training-h">
+      <SectionHeading icon={icon('training')} id="training-h">{tr('exp.training')}</SectionHeading>
+      <ol class="timeline">
+        {
+          training.map(({ id, data: d }) => {
+            const title = loc(d, 'title', lang)!;
+            const provider = loc(d, 'provider', lang)!;
+            const description = loc(d, 'description', lang);
+            const cert = pdfHref(d.certificate);
+            const docLabel = tr(d.kind === 'qualification' ? 'exp.doc.qualification' : 'exp.doc.certificate');
+            return (
+              <li id={`training-${id}`} class="timeline-item">
+                <span class="timeline-marker" aria-hidden="true">
+                  <Icon name={icon('training')} size={15} />
+                </span>
+                <article class="timeline-card">
+                  <header class="timeline-head">
+                    <div>
+                      <h3 class="timeline-title" lang={title.lang}>
+                        {title.text}
+                      </h3>
+                      <p class="timeline-org" lang={provider.lang}>
+                        {provider.text}
+                        {d.provider_url && <OrgLink lang={lang} href={d.provider_url} name={provider.text} />}
+                      </p>
+                    </div>
+                    <p class="timeline-date">
+                      <Icon name="lucide:calendar" size={14} />
+                      {formatPeriod(d.start, d.end, lang, present)}
+                    </p>
+                  </header>
+                  <ul class="pub-badges">
+                    <li class="badge">{tr(`exp.trainingKind.${d.kind}`)}</li>
+                    {d.hours && <li class="badge">{tr('exp.hours', { n: d.hours })}</li>}
+                  </ul>
+                  {description ? (
+                    <p class="timeline-block" lang={description.lang}>
+                      {description.text}
+                    </p>
+                  ) : (
+                    <p class="timeline-block">
+                      <TodoNote lang={lang} text={tr('exp.descriptionTodo')} />
+                    </p>
+                  )}
+                  {cert && (
+                    <Fragment>
+                      <div class="pub-actions">
+                        <PanelButton controls={`training-${id}-doc`} label={docLabel} icon="lucide:file-badge" />
+                      </div>
+                      <div id={`training-${id}-doc`} class="talk-panel exp-panel" hidden>
+                        <PdfEmbed lang={lang} href={cert} title={`${docLabel}: ${title.text}`} />
+                      </div>
+                    </Fragment>
+                  )}
+                </article>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </section>
+
+    <!-- Навыки -->
+    <section id="skills" class="exp-section" aria-labelledby="skills-h">
+      <SectionHeading icon={icon('skills')} id="skills-h">{tr('exp.skills')}</SectionHeading>
+      <div class="grid gap-5 md:grid-cols-2">
+        {
+          (['technical', 'management'] as const).map((group) => {
+            const items = (skills?.[group] ?? []).filter((s) => isFilled(s.ru) || isFilled(s.en));
+            return (
+              <div class="card p-5">
+                <h3 class="text-lg font-semibold">{tr(`exp.skills.${group}`)}</h3>
+                {items.length > 0 ? (
+                  <ul class="mt-3 flex flex-wrap gap-1.5">
+                    {items.map((s) => {
+                      const own = isFilled(s[lang]);
+                      return (
+                        <li class="chip chip-sm" lang={own ? lang : lang === 'ru' ? 'en' : 'ru'}>
+                          {own ? s[lang] : lang === 'ru' ? s.en : s.ru}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p class="mt-3">
+                    <TodoNote lang={lang} />
+                  </p>
+                )}
+              </div>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    <!-- Студенты -->
+    <section id="students" class="exp-section" aria-labelledby="students-h">
+      <SectionHeading icon={icon('students')} id="students-h">{tr('exp.students')}</SectionHeading>
+      {
+        students.length > 0 ? (
+          <ul class="grid gap-5 md:grid-cols-2">
+            {students.map(({ id, data: d }) => {
+              const name = loc(d, 'name', lang)!;
+              const org = loc(d, 'org', lang);
+              const title = loc(d, 'title', lang);
+              const abstract = loc(d, 'abstract', lang);
+              const pdf = pdfHref(d.pdf);
+              const links = related(d.publications, d.talks);
+              const meta = [
+                d.work !== 'TODO' ? tr(`exp.studentWork.${d.work}`) : '',
+                d.year !== 'TODO' ? String(d.year) : '',
+                d.status !== 'TODO' ? tr(`exp.studentStatus.${d.status}`) : '',
+                org?.text ?? '',
+              ].filter(Boolean);
+              const hasMore = Boolean(abstract || links.length);
+              return (
+                <li id={`student-${id}`} class="card flex flex-col p-5">
+                  <h3 class="text-lg font-semibold" lang={name.lang}>
+                    {name.text}
+                  </h3>
+                  {meta.length > 0 && <p class="mt-1 text-sm text-muted">{meta.join(' · ')}</p>}
+                  {title ? (
+                    <p class="mt-3" lang={title.lang}>
+                      {quoted(title.text)}
+                    </p>
+                  ) : (
+                    <p class="mt-3">
+                      <TodoNote lang={lang} text={tr('exp.studentTodo')} />
+                    </p>
+                  )}
+                  {(hasMore || pdf) && (
+                    <div class="pub-actions">
+                      {hasMore && (
+                        <PanelButton controls={`student-${id}-more`} label={tr('pubs.details')} labelClose={tr('pubs.hide')} />
+                      )}
+                      {pdf && <PanelButton controls={`student-${id}-pdf`} label={tr('exp.thesisText')} icon="lucide:file-text" />}
+                    </div>
+                  )}
+                  {hasMore && (
+                    <div id={`student-${id}-more`} class="pub-details exp-panel" hidden>
+                      {abstract && (
+                        <section>
+                          <h4 class="pub-dt">{tr('pubs.abstract')}</h4>
+                          <div class="pub-abstract" lang={abstract.lang} set:html={texHtml(abstract.text, true)} />
+                        </section>
+                      )}
+                      {links.length > 0 && (
+                        <section>
+                          <h4 class="pub-dt">{tr('exp.related')}</h4>
+                          <RelatedList items={links} />
+                        </section>
+                      )}
+                    </div>
+                  )}
+                  {pdf && (
+                    <div id={`student-${id}-pdf`} class="talk-panel exp-panel" hidden>
+                      <PdfEmbed lang={lang} href={pdf} title={name.text} />
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p>
+            <TodoNote lang={lang} />
+          </p>
+        )
+      }
+    </section>
+
+    <!-- Достижения: благодарственные письма отдельно от наград и документов о достижениях -->
+    <section id="achievements" class="exp-section" aria-labelledby="achievements-h">
+      <SectionHeading icon={icon('achievements')} id="achievements-h">{tr('exp.achievements')}</SectionHeading>
+      {
+        groups.map((group) => (
+          <Fragment>
+            <h3 class="exp-subheading">{tr(group.key)}</h3>
+            {group.items.length > 0 ? (
+              <ol class="timeline">
+                {group.items.map(({ id, data: d }) => {
+                  const title = loc(d, 'title', lang)!;
+                  const issuer = loc(d, 'issuer', lang);
+                  const note = loc(d, 'note', lang);
+                  const pdf = pdfHref(d.pdf);
+                  return (
+                    <li id={`achievement-${id}`} class="timeline-item">
+                      <span class="timeline-marker" aria-hidden="true">
+                        <Icon name={group.icon} size={15} />
+                      </span>
+                      <article class="timeline-card">
+                        <header class="timeline-head">
+                          <div>
+                            <h4 class="timeline-title" lang={title.lang}>
+                              {title.text}
+                            </h4>
+                            {issuer && (
+                              <p class="timeline-org" lang={issuer.lang}>
+                                {issuer.text}
+                              </p>
+                            )}
+                          </div>
+                          <p class="timeline-date">
+                            <Icon name="lucide:calendar" size={14} />
+                            {d.date === 'TODO' ? <TodoNote lang={lang} text={tr('exp.dateTodo')} /> : formatPartialDate(d.date, lang)}
+                          </p>
+                        </header>
+                        {note && (
+                          <p class="timeline-block text-sm text-muted" lang={note.lang}>
+                            {note.text}
+                          </p>
+                        )}
+                        <div class="pub-actions">
+                          {pdf ? (
+                            <PanelButton controls={`achievement-${id}-doc`} label={tr('exp.document')} icon="lucide:file-badge" />
+                          ) : (
+                            <TodoNote lang={lang} text={tr('exp.scanTodo')} />
+                          )}
+                          {d.talk && (
+                            <a class="pub-btn" href={langHref(lang, `talks/#${d.talk.id}`)}>
+                              <Icon name="lucide:presentation" size={14} /> {tr('pubs.talk')}
+                            </a>
+                          )}
+                          {d.funding && (
+                            <a class="pub-btn" href={`#funding-${d.funding.id}`}>
+                              <Icon name="lucide:landmark" size={14} /> {tr('exp.grantLink')}
+                            </a>
+                          )}
+                        </div>
+                        {pdf && (
+                          <div id={`achievement-${id}-doc`} class="talk-panel exp-panel" hidden>
+                            <PdfEmbed lang={lang} href={pdf} title={title.text} />
+                          </div>
+                        )}
+                      </article>
+                    </li>
+                  );
+                })}
+              </ol>
+            ) : (
+              <p>
+                <TodoNote lang={lang} />
+              </p>
+            )}
+          </Fragment>
+        ))
+      }
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  import { bindPanels } from '../../../scripts/panels';
+
+  const root = document.querySelector<HTMLElement>('[data-panels]');
+  if (root) bindPanels(root);
+</script>

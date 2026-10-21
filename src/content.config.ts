@@ -10,6 +10,16 @@ const year = z.number().int().min(1900).max(2100);
 const yearOrTodo = z.union([year, z.literal('TODO')]);
 const translation = z.enum(['auto', 'human']).optional();
 
+const isoDay = /^\d{4}-\d{2}-\d{2}$/;
+// YAML превращает 2025-09-09 в дату, а 2025 — в число; кавычки писать не нужно, приводим к строке
+const dateText = (re: RegExp, message: string) =>
+  z.preprocess(
+    (v) => (v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v),
+    z.string().regex(re, message),
+  );
+/** Дата с точностью до года, месяца или дня: 2019, 2019-09, 2019-09-01 */
+const anyDate = (field: string) => dateText(/^\d{4}(-\d{2}(-\d{2})?)?$/, `${field}: 2019, 2019-09 или 2019-09-01`);
+
 /** Страница «Обо мне»: src/data/profile.yaml */
 const profile = defineCollection({
   loader: glob({ pattern: 'profile.yaml', base: './src/data' }),
@@ -57,6 +67,9 @@ const education = defineCollection({
     org_short_ru: text,
     org_short_en: text,
     org_url: z.url().optional(),
+    // Подразделение: факультет, кафедра (строкой под организацией)
+    unit_ru: text.optional(),
+    unit_en: text.optional(),
     honors: z.boolean().default(false),
     thesis_title_ru: text,
     thesis_title_en: text,
@@ -65,7 +78,16 @@ const education = defineCollection({
     abstract_ru: text,
     abstract_en: text,
     defense_url: z.url().optional(),
+    // Где прошла защита (если не там, где учился): диссертационный совет
+    council_ru: text.optional(),
+    council_en: text.optional(),
+    // PDF внутри public/assets/: работа, автореферат (для кандидатской), скан диплома
     pdf: text.optional(),
+    autoreferat_pdf: text.optional(),
+    diploma_pdf: text.optional(),
+    // Связанные работы: ключи из publications.bib и id выступлений
+    publications: z.array(reference('publications')).default([]),
+    talks: z.array(reference('talks')).default([]),
     translation,
   }),
 });
@@ -233,14 +255,6 @@ const conferences = defineCollection({
     .refine((c) => c.short_ru || c.short_en || c.name_ru || c.name_en, 'нужно короткое или полное название'),
 });
 
-const isoDay = /^\d{4}-\d{2}-\d{2}$/;
-// YAML превращает 2025-09-09 в дату, а 2025 — в число; кавычки писать не нужно, приводим к строке
-const dateText = (re: RegExp, message: string) =>
-  z.preprocess(
-    (v) => (v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v),
-    z.string().regex(re, message),
-  );
-
 /**
  * Выступления: src/content/talks/<id>.yaml, один файл на доклад; id (имя файла) — якорь …/talks/#id.
  * date — день доклада; если известны только даты мероприятия: date — первый день, date_end — последний.
@@ -295,9 +309,152 @@ const talks = defineCollection({
     }),
 });
 
+// ---------- Опыт: src/data/experience/*.yaml (ключи — id записей) ----------
+
+/** Опыт работы: work.yaml. Нет end — работа по настоящее время. results — «полученные результаты» */
+const work = defineCollection({
+  loader: file('src/data/experience/work.yaml'),
+  schema: z.strictObject({
+    start: anyDate('start'),
+    end: anyDate('end').optional(),
+    // main — основное место, part-time — по совместительству, internship — стажировка; не знаем — не пишем
+    kind: z.enum(['main', 'part-time', 'internship']).optional(),
+    position_ru: text,
+    position_en: text,
+    org_ru: text,
+    org_en: text,
+    org_url: z.url().optional(),
+    unit_ru: optText,
+    unit_en: optText,
+    city_ru: optText,
+    city_en: optText,
+    duties_ru: z.array(text).default([]),
+    duties_en: z.array(text).default([]),
+    results_ru: z.array(text).default([]),
+    results_en: z.array(text).default([]),
+    projects: z.array(reference('projects')).default([]),
+    tags: z.array(reference('tags')).default([]),
+    note_ru: optText,
+    note_en: optText,
+    translation,
+  }),
+});
+
+/** Проекты и гранты: funding.yaml. role: leader — руководитель, participant — исполнитель */
+const funding = defineCollection({
+  loader: file('src/data/experience/funding.yaml'),
+  schema: z
+    .strictObject({
+      kind: z.enum(['grant', 'scholarship', 'contract', 'program']).default('grant'),
+      number: optText,
+      // Номер латиницей для английской страницы (если в оригинале кириллица: СП-… → SP-…)
+      number_en: optText,
+      funder_ru: text,
+      funder_en: text,
+      title_ru: optText,
+      title_en: optText,
+      start: anyDate('start'),
+      end: anyDate('end').optional(),
+      role: z.enum(['leader', 'participant', 'TODO']).default('TODO'),
+      url: z.url().optional(),
+      publications: z.array(reference('publications')).default([]),
+      projects: z.array(reference('projects')).default([]),
+      tags: z.array(reference('tags')).default([]),
+      note_ru: optText,
+      note_en: optText,
+      translation,
+    })
+    .refine((f) => f.title_ru || f.title_en, 'нужно title_ru или title_en'),
+});
+
+/** Дополнительное образование: training.yaml. certificate — PDF внутри public/assets/ */
+const training = defineCollection({
+  loader: file('src/data/experience/training.yaml'),
+  schema: z
+    .strictObject({
+      kind: z.enum(['qualification', 'course', 'intensive', 'lectures', 'other']).default('course'),
+      title_ru: optText,
+      title_en: optText,
+      provider_ru: text,
+      provider_en: optText,
+      provider_url: z.url().optional(),
+      start: anyDate('start').optional(),
+      end: anyDate('end'),
+      hours: z.number().int().positive().optional(),
+      description_ru: optText,
+      description_en: optText,
+      certificate: optText,
+      tags: z.array(reference('tags')).default([]),
+      translation,
+    })
+    .refine((c) => c.title_ru || c.title_en, 'нужно title_ru или title_en'),
+});
+
+/** Навыки: skills.yaml — два списка, technical и management */
+const skill = z.strictObject({ ru: text, en: text });
+const skills = defineCollection({
+  loader: glob({ pattern: 'skills.yaml', base: './src/data/experience' }),
+  schema: z.strictObject({
+    technical: z.array(skill).default([]),
+    management: z.array(skill).default([]),
+    translation,
+  }),
+});
+
+/**
+ * Достижения: achievements.yaml. kind: letter — благодарственное письмо, award — документ о достижении
+ * (награда, премия, стипендия, конкурс). pdf — скан внутри public/assets/; talk и funding — связанные записи.
+ */
+const achievements = defineCollection({
+  loader: file('src/data/experience/achievements.yaml'),
+  schema: z.strictObject({
+    kind: z.enum(['letter', 'award']),
+    date: z.union([z.literal('TODO'), anyDate('date')]),
+    title_ru: text,
+    title_en: text,
+    issuer_ru: optText,
+    issuer_en: optText,
+    pdf: optText,
+    talk: reference('talks').optional(),
+    funding: reference('funding').optional(),
+    note_ru: optText,
+    note_en: optText,
+    translation,
+  }),
+});
+
+/** Студенты: src/content/students/<id>.yaml, один файл на работу студента */
+const students = defineCollection({
+  loader: optionalGlob({ base: './src/content/students', extension: '.yaml' }),
+  schema: z.strictObject({
+    name_ru: text,
+    name_en: optText,
+    work: z.enum(['coursework', 'bachelor', 'master', 'specialist', 'phd', 'TODO']).default('TODO'),
+    year: yearOrTodo,
+    status: z.enum(['defended', 'in-progress', 'TODO']).default('TODO'),
+    org_ru: optText,
+    org_en: optText,
+    title_ru: optText,
+    title_en: optText,
+    abstract_ru: optText,
+    abstract_en: optText,
+    pdf: optText,
+    publications: z.array(reference('publications')).default([]),
+    talks: z.array(reference('talks')).default([]),
+    tags: z.array(reference('tags')).default([]),
+    translation,
+  }),
+});
+
 export const collections = {
   profile,
   education,
+  work,
+  funding,
+  training,
+  skills,
+  achievements,
+  students,
   projects,
   laboratory,
   tags,

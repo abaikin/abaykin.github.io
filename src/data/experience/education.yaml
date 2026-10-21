@@ -1,20 +1,25 @@
-# Образование. Ключи (bachelor, master, phd) — идентификаторы записей.
-# Источники: дипломы, страница защиты в ИГиЛ, слова владельца.
+# Образование. Ключи (bachelor, master, phd) — идентификаторы записей (якорь …/experience/#education-<id>).
+# Источники: дипломы и приложения к ним, автореферат и заключение диссертационного совета (сайт ИГиЛ СО РАН), слова владельца.
+# pdf — текст работы, autoreferat_pdf — автореферат, diploma_pdf — скан диплома (файлы в public/assets/).
+# publications / talks — связанные работы (ключи publications.bib и id выступлений).
 # translation: auto — английские тексты переведены машинно, их нужно проверить.
 
 bachelor:
   level: bachelor
-  start: TODO
+  # Приложение к диплому: «Поступил(а) в 2007 году…»
+  start: 2007
   end: 2011
   degree_ru: Бакалавр математики
   degree_en: Bachelor of Mathematics
-  program_ru: Направление «Математика»
+  program_ru: Математика
   program_en: Mathematics
-  org_ru: Новосибирский государственный университет, механико-математический факультет
-  org_en: Novosibirsk State University, Faculty of Mechanics and Mathematics
+  org_ru: Новосибирский государственный университет
+  org_en: Novosibirsk State University
   org_short_ru: НГУ, механико-математический факультет
   org_short_en: Novosibirsk State University
   org_url: https://www.nsu.ru/
+  unit_ru: Механико-математический факультет
+  unit_en: Faculty of Mechanics and Mathematics
   honors: true
   thesis_title_ru: Теоремы типа Лиувилля для функций с ограниченным (p,q)-искажением
   thesis_title_en: Liouville-type theorems for functions with bounded (p,q)-distortion
@@ -22,21 +27,28 @@ bachelor:
   supervisor_en: Prof. Sergey K. Vodopyanov, Dr. Sci. (Phys.-Math.)
   abstract_ru: TODO
   abstract_en: TODO
+  diploma_pdf: pdf/diplomas/2011-bachelor-diploma.pdf
+  # Статья 2015 г. с научным руководителем — по совпадению темы; проверьте
+  publications: [baykin2015emkostnye]
   translation: auto
 
 master:
   level: master
-  start: TODO
+  # Год поступления в документах не указан; 2011 — по приложению к диплому (нормативный срок 2 года,
+  # предыдущий документ — диплом бакалавра 2011 г.). Проверьте
+  start: 2011
   end: 2013
   degree_ru: Магистр
   degree_en: Master's degree
-  program_ru: Направление «Механика и математическое моделирование»
-  program_en: Mechanics and Mathematical Modelling
-  org_ru: Новосибирский государственный университет, механико-математический факультет
-  org_en: Novosibirsk State University, Faculty of Mechanics and Mathematics
+  program_ru: Механика и математическое моделирование; магистерская программа «Теоретическая механика»
+  program_en: Mechanics and Mathematical Modelling; master's programme “Theoretical Mechanics”
+  org_ru: Новосибирский государственный университет
+  org_en: Novosibirsk State University
   org_short_ru: НГУ, механико-математический факультет
   org_short_en: Novosibirsk State University
   org_url: https://www.nsu.ru/
+  unit_ru: Механико-математический факультет
+  unit_en: Faculty of Mechanics and Mathematics
   honors: true
   thesis_title_ru: Стационарный цилиндрический вихрь в вязкой электропроводной жидкости
   thesis_title_en: Stationary cylindrical vortex in a viscous electrically conducting fluid
@@ -44,10 +56,14 @@ master:
   supervisor_en: Prof. Sergey V. Golovin, Dr. Sci. (Phys.-Math.), Professor of the RAS
   abstract_ru: TODO
   abstract_en: TODO
+  diploma_pdf: pdf/diplomas/2013-master-diploma.pdf
+  # Статья 2013 г. с тем же названием, что и магистерская диссертация
+  publications: [baikin2013statsionarnyi]
   translation: auto
 
 phd:
   level: phd
+  # TODO: год поступления в аспирантуру (в документах не указан)
   start: TODO
   end: 2016
   defense_date: 2016-12-06
@@ -55,19 +71,40 @@ phd:
   degree_en: Candidate of Sciences (PhD) in Physics and Mathematics
   program_ru: 01.02.05 — механика жидкости, газа и плазмы
   program_en: Mechanics of fluids, gases and plasma (01.02.05)
-  org_ru: Институт гидродинамики им. М. А. Лаврентьева СО РАН (диссертационный совет Д 003.054.04)
-  org_en: Lavrentyev Institute of Hydrodynamics SB RAS (dissertation council D 003.054.04)
-  org_short_ru: ИГиЛ СО РАН
-  org_short_en: Lavrentyev Institute of Hydrodynamics SB RAS
-  org_url: https://www.hydro.nsc.ru/
+  # Заключение совета: «Диссертация выполнена на кафедре теоретической механики механико-математического факультета … НГУ»;
+  # «В 2016 году соискатель окончил аспирантуру … НГУ»
+  org_ru: Новосибирский государственный университет
+  org_en: Novosibirsk State University
+  unit_ru: Аспирантура; кафедра теоретической механики механико-математического факультета
+  unit_en: Postgraduate studies; Department of Theoretical Mechanics, Faculty of Mechanics and Mathematics
+  org_short_ru: НГУ, аспирантура; защита — ИГиЛ СО РАН
+  org_short_en: Novosibirsk State University; defended at the Lavrentyev Institute of Hydrodynamics
+  org_url: https://www.nsu.ru/
+  council_ru: диссертационный совет Д 003.054.04 при Институте гидродинамики им. М. А. Лаврентьева СО РАН
+  council_en: dissertation council D 003.054.04 at the Lavrentyev Institute of Hydrodynamics SB RAS
   honors: false
   thesis_title_ru: Динамика трещины гидроразрыва пласта в неоднородной пороупругой среде
   thesis_title_en: Dynamics of a hydraulic fracture in an inhomogeneous poroelastic medium
   supervisor_ru: д. ф.-м. н., профессор РАН Сергей Валерьевич Головин
   supervisor_en: Prof. Sergey V. Golovin, Dr. Sci. (Phys.-Math.), Professor of the RAS
   defense_url: https://www.hydro.nsc.ru/education/dissertations/baikin.php
-  abstract_ru: TODO
-  abstract_en: TODO
-  # Шаг 4: скопировать диссертацию с сайта ИГиЛ в public/assets/pdf/theses/
-  pdf: TODO
+  # Аннотация — абзацы автореферата (с. 4–6) без изменений, кроме связок «В связи с этим» и «Кроме этого … также»
+  abstract_ru: |-
+    Целью диссертационной работы является разработка численного подхода для эффективного решения задачи гидроразрыва в неоднородной пороупругой среде и его применение к детальному исследованию влияния порового давления и неоднородностей породы на динамику развития трещины ГРП.
+
+    Для моделирования развития трещины ГРП в неоднородной пороупругой среде разработан новый численный алгоритм на основе метода конечных элементов. Отличительной особенностью алгоритма является то, что задача формулируется в единой слабой постановке, позволяющей одновременно решать двумерные уравнения равновесия и фильтрации и одномерное уравнение для течения жидкости по трещине. В предложенном численном подходе нет необходимости перестраивать расчетную область, явно отслеживать положение вершины трещины и делать априорные предположения относительно поведения решения вблизи нее, что существенно расширяет класс решаемых задач. Для задачи о стационарной полубесконечной трещине в пороупругой среде построено новое точное автомодельное решение, для которого была дана физическая интерпретация и которое использовалось для верификации численного подхода.
+
+    В ходе исследования показано, что при наличии неоднородности проницаемости среды роль порового давления усиливается, что качественно влияет на направление распространения трещины ГРП и ее геометрические характеристики. Кроме этого обнаружено, что в среде со слоистой структурой контраст сжимающих напряжений даже в 1 % приводит к несимметричному распространению трещины.
+  abstract_en: |-
+    The aim of the thesis is to develop a numerical approach for efficiently solving the hydraulic fracturing problem in an inhomogeneous poroelastic medium and to apply it to a detailed study of how pore pressure and rock inhomogeneities affect the dynamics of hydraulic fracture growth.
+
+    A new finite element algorithm is developed for modelling hydraulic fracture propagation in an inhomogeneous poroelastic medium. Its distinctive feature is a single weak formulation that solves the two-dimensional equilibrium and filtration equations together with the one-dimensional equation of fluid flow in the fracture. The approach does not require remeshing, explicit tracking of the fracture tip or a priori assumptions about the solution near the tip, which considerably widens the class of problems that can be solved. A new exact self-similar solution is constructed for a stationary semi-infinite fracture in a poroelastic medium; it is given a physical interpretation and used to verify the numerical approach.
+
+    The study shows that permeability inhomogeneity strengthens the role of pore pressure, which qualitatively affects the direction of fracture propagation and its geometry. It is also found that in a layered medium even a 1 % contrast in confining stresses leads to asymmetric fracture growth.
+  pdf: pdf/theses/2016-phd-thesis.pdf
+  autoreferat_pdf: pdf/theses/2016-phd-autoreferat.pdf
+  diploma_pdf: pdf/diplomas/2016-phd-diploma.pdf
+  # Публикации по теме диссертации — список автореферата (с. 19–20); выступления — раздел «Апробация»
+  publications: [golovin2015hydraulic, golovin2015stationary, baykin2016modelling, baykin2015razvitieb, baykin2015razvitiec, baykin2016razvitie, baykin2016hydraulic, baykin2015razvitie]
+  talks: [2014-nmm, 2015-mech-congress, 2015-lavrentyev, 2016-nonlinear-waves, 2016-apm]
   translation: auto

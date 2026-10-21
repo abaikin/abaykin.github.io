@@ -1,0 +1,178 @@
+# Опыт работы (страница «Опыт» → «Опыт работы»). Ключ — id записи (якорь …/experience/#work-<id>).
+# start / end — 2019, 2019-09 или 2019-09-01; нет end — по настоящее время.
+# kind: main — основное место работы, part-time — по совместительству, internship — стажировка; неизвестно — не писать.
+# duties_* — зона ответственности (по резюме), results_* — полученные результаты (TODO — владелец добавит).
+# projects — проекты из src/content/projects/. note_* — примечание под записью.
+# Источники: резюме (2026), исследовательский портал НГУ (Pure: кафедра и лаборатория), сайт ИГиЛ СО РАН (лаборатория),
+# отзыв научного руководителя на диссертацию (2016: семинары на ММФ НГУ).
+# translation: auto — английские тексты переведены машинно, проверьте.
+
+nsu-lab-head:
+  start: 2025-05
+  kind: main
+  position_ru: Заведующий лабораторией
+  position_en: Head of Laboratory
+  org_ru: Новосибирский государственный университет
+  org_en: Novosibirsk State University
+  org_url: https://www.nsu.ru/
+  unit_ru: Лаборатория программных систем оптимизации добычи углеводородов
+  unit_en: Laboratory of Software Systems for Hydrocarbon Production Optimization
+  city_ru: Новосибирск
+  city_en: Novosibirsk
+  duties_ru:
+    - Руководство научным коллективом
+    - Подбор и обсуждение научных тематик
+    - Работа по хозяйственным договорам
+    - Руководство группой по разработке симулятора авто-ГРП
+    - Выступления на конференциях, написание статей
+  duties_en:
+    - Leading the research team
+    - Selecting and discussing research topics
+    - Contract research for industry
+    - Leading the development team of the self-induced fracturing simulator
+    - Conference talks and papers
+  results_ru: [TODO]
+  projects: [autofrac-simulator]
+  translation: auto
+
+nsu-senior-researcher:
+  start: 2019
+  end: 2025-12
+  position_ru: Старший научный сотрудник
+  position_en: Senior Researcher
+  org_ru: Новосибирский государственный университет
+  org_en: Novosibirsk State University
+  org_url: https://www.nsu.ru/
+  city_ru: Новосибирск
+  city_en: Novosibirsk
+  duties_ru:
+    - Исследования в области математического моделирования в механике сплошных сред с применением в нефтегазовых технологиях
+    - Работа по хозяйственным договорам
+    - Руководство исследовательской группой
+    - Руководство группой по разработке симулятора авто-ГРП
+    - Выступления на конференциях, написание статей
+  duties_en:
+    - Research in mathematical modelling in continuum mechanics with applications to oil and gas technologies
+    - Contract research for industry
+    - Leading a research group
+    - Leading the development team of the self-induced fracturing simulator
+    - Conference talks and papers
+  results_ru: [TODO]
+  projects: [autofrac-simulator]
+  translation: auto
+
+nsu-senior-lecturer:
+  start: 2020
+  position_ru: Старший преподаватель
+  position_en: Senior Lecturer
+  org_ru: Новосибирский государственный университет
+  org_en: Novosibirsk State University
+  org_url: https://www.nsu.ru/
+  unit_ru: Кафедра теоретической механики механико-математического факультета
+  unit_en: Department of Theoretical Mechanics, Faculty of Mechanics and Mathematics
+  city_ru: Новосибирск
+  city_en: Novosibirsk
+  duties_ru:
+    - Занятия по курсам «Гидроразрыв пласта» и «Пакет для численного счёта FreeFEM++»
+  duties_en:
+    - Classes in the courses “Hydraulic Fracturing” and “FreeFEM++ Package for Numerical Computing”
+  results_ru: [TODO]
+  note_ru: Сейчас — по совместительству
+  note_en: Currently part-time
+  translation: auto
+
+igil-senior-researcher:
+  start: 2021
+  position_ru: Старший научный сотрудник
+  position_en: Senior Researcher
+  org_ru: Институт гидродинамики им. М. А. Лаврентьева СО РАН
+  org_en: Lavrentyev Institute of Hydrodynamics SB RAS
+  org_url: https://www.hydro.nsc.ru/
+  unit_ru: Лаборатория цифровых и интеллектуальных систем добычи углеводородов
+  unit_en: Laboratory of Digital and Intelligent Hydrocarbon Production Systems
+  city_ru: Новосибирск
+  city_en: Novosibirsk
+  duties_ru:
+    - Исследования в области математического моделирования в механике сплошных сред с применением в нефтегазовых технологиях
+    - Работа по хозяйственным договорам
+    - Руководство исследовательской группой
+    - Выступления на конференциях, написание статей
+  duties_en:
+    - Research in mathematical modelling in continuum mechanics with applications to oil and gas technologies
+    - Contract research for industry
+    - Leading a research group
+    - Conference talks and papers
+  results_ru: [TODO]
+  note_ru: Сейчас — по совместительству
+  note_en: Currently part-time
+  translation: auto
+
+igil-researcher:
+  start: 2019
+  end: 2021
+  position_ru: Научный сотрудник
+  position_en: Researcher
+  org_ru: Институт гидродинамики им. М. А. Лаврентьева СО РАН
+  org_en: Lavrentyev Institute of Hydrodynamics SB RAS
+  org_url: https://www.hydro.nsc.ru/
+  city_ru: Новосибирск
+  city_en: Novosibirsk
+  duties_ru:
+    - Исследования в области математического моделирования в механике сплошных сред с применением в нефтегазовых технологиях
+    - Работа по хозяйственным договорам
+    - Выступления на конференциях, написание статей
+  duties_en:
+    - Research in mathematical modelling in continuum mechanics with applications to oil and gas technologies
+    - Contract research for industry
+    - Conference talks and papers
+  results_ru: [TODO]
+  translation: auto
+
+nsu-assistant:
+  start: 2015
+  end: 2020
+  position_ru: Ассистент
+  position_en: Teaching Assistant
+  org_ru: Новосибирский государственный университет
+  org_en: Novosibirsk State University
+  org_url: https://www.nsu.ru/
+  unit_ru: Механико-математический факультет
+  unit_en: Faculty of Mechanics and Mathematics
+  city_ru: Новосибирск
+  city_en: Novosibirsk
+  duties_ru:
+    - Семинарские занятия по курсу «Введение в механику сплошных сред»
+  duties_en:
+    - Seminars in the course “Introduction to Continuum Mechanics”
+  results_ru: [TODO]
+  translation: auto
+
+schlumberger-engineer:
+  start: 2014
+  end: 2016
+  position_ru: Инженер по моделированию
+  position_en: Modelling Engineer
+  org_ru: Технологическая компания Шлюмберже
+  org_en: Schlumberger
+  # TODO: подразделение и город (в открытых источниках не найдены)
+  duties_ru:
+    - Разработка математических моделей гидроразрыва пласта
+  duties_en:
+    - Development of mathematical models of hydraulic fracturing
+  results_ru: [TODO]
+  translation: auto
+
+schlumberger-intern:
+  start: 2012
+  end: 2014
+  kind: internship
+  position_ru: Интерн
+  position_en: Intern
+  org_ru: Технологическая компания Шлюмберже
+  org_en: Schlumberger
+  duties_ru:
+    - Разработка математических моделей гидроразрыва пласта
+  duties_en:
+    - Development of mathematical models of hydraulic fracturing
+  results_ru: [TODO]
+  translation: auto

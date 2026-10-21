@@ -1,0 +1,16 @@
+---
+// Маленькая ссылка-иконка на сайт организации рядом с её названием (само название — обычный текст)
+import Icon from './Icon.astro';
+import { type Lang, t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  href: string;
+  name: string;
+}
+
+const { lang, href, name } = Astro.props;
+const label = t(lang, 'exp.siteOf', { name });
+---
+
+<a class="timeline-org-link" href={href} title={label} aria-label={label}><Icon name="lucide:external-link" size={13} /></a>

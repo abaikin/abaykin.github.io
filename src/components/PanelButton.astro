@@ -1,0 +1,29 @@
+---
+// Кнопка, раскрывающая панель под записью (обработчик — scripts/panels.ts).
+// С labelClose подпись меняется: «Подробнее» ↔ «Свернуть»; без него остаётся прежней («Диплом», «Сертификат»).
+import Icon from './Icon.astro';
+
+interface Props {
+  /** id раскрываемой панели */
+  controls: string;
+  label: string;
+  labelClose?: string;
+  /** Иконка; по умолчанию — стрелка, которая поворачивается при раскрытии */
+  icon?: string;
+}
+
+const { controls, label, labelClose, icon } = Astro.props;
+---
+
+<button
+  type="button"
+  class="pub-btn"
+  data-toggle
+  aria-expanded="false"
+  aria-controls={controls}
+  data-label-open={labelClose ? label : undefined}
+  data-label-close={labelClose}
+>
+  {icon ? <Icon name={icon} size={14} /> : <Icon name="lucide:chevron-down" size={15} class="pub-chevron" />}
+  <span data-label>{label}</span>
+</button>

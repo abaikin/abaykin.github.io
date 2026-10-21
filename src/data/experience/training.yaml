@@ -1,0 +1,121 @@
+# Дополнительное образование (страница «Опыт» → «Дополнительное образование»). Ключ — id записи.
+# kind: qualification — удостоверение о повышении квалификации, course, intensive, lectures (онлайн-лекции), other.
+# start / end — даты обучения (2023-09-26); hours — объём в часах; certificate — скан в public/assets/.
+# description_* — описание курса: TODO, владелец опишет (решение от 19.10.2026).
+# Источник — сами документы (ForCLAUDE/Сертификаты); даты INDUSTRIX — по новостям ТПУ (в сертификате только «2026»).
+# translation: auto — английские тексты переведены машинно, проверьте.
+
+2026-geomodel-lecture-production-logging:
+  kind: lectures
+  title_ru: Применение геофизических методов контроля разработки месторождений нефти и газа для выявления потенциала увеличения добычи
+  title_en: Application of geophysical methods of oil and gas field development monitoring to identify production enhancement potential
+  provider_ru: ООО «Геомодель Развитие», онлайн-лекция (лектор — Д. Н. Гуляев)
+  provider_en: Geomodel Razvitie LLC, online lecture (lecturer D. N. Gulyaev)
+  provider_url: https://geomodel.ru/
+  end: 2026-05-25
+  description_ru: TODO
+  certificate: pdf/certificates/2026-geomodel-lecture-production-logging.pdf
+  translation: auto
+
+2026-gazpromneft-industrix-praktikum:
+  kind: intensive
+  title_ru: Образовательный интенсив «INDUSTRIX Практикум»
+  title_en: “INDUSTRIX Praktikum” educational intensive
+  provider_ru: ПАО «Газпром нефть» (INDUSTRIX) и Томский политехнический университет, Томск
+  provider_en: Gazprom Neft (INDUSTRIX) and Tomsk Polytechnic University, Tomsk
+  # Даты — по новостям ТПУ (news.tpu.ru, 08.04.2026 и 20.05.2026); в сертификате только «Томск, ТПУ 2026»
+  start: 2026-05-21
+  end: 2026-05-22
+  description_ru: TODO
+  certificate: pdf/certificates/2026-gazpromneft-industrix-praktikum.pdf
+  translation: auto
+
+2026-geomodel-lecture-well-testing:
+  kind: lectures
+  title_ru: Выявление и расчёт потенциала для увеличения добычи на основе гидродинамических исследований скважин и пластов при контроле разработки нефтяных и газовых месторождений
+  title_en: Identifying and estimating production enhancement potential from well and reservoir tests in oil and gas field development monitoring
+  provider_ru: ООО «Геомодель Развитие», онлайн-лекция (лектор — В. М. Кричевский)
+  provider_en: Geomodel Razvitie LLC, online lecture (lecturer V. M. Krichevsky)
+  provider_url: https://geomodel.ru/
+  end: 2026-05-19
+  description_ru: TODO
+  certificate: pdf/certificates/2026-geomodel-lecture-well-testing.pdf
+  translation: auto
+
+2023-skolkovo-agile:
+  kind: qualification
+  title_ru: Agile и гибридные методы управления проектами
+  title_en: Agile and hybrid project management methods
+  provider_ru: Московская школа управления «СКОЛКОВО»
+  provider_en: Moscow School of Management SKOLKOVO
+  start: 2023-09-26
+  end: 2023-12-15
+  hours: 54
+  description_ru: TODO
+  certificate: pdf/certificates/2023-skolkovo-agile-hybrid-pm.pdf
+  translation: auto
+
+2023-kharizma-public-speaking:
+  kind: qualification
+  title_ru: Навыки публичных выступлений
+  title_en: Public speaking skills
+  provider_ru: ООО Центр «Харизма» Нелли Власовой, Новосибирск
+  provider_en: Kharizma Centre of Nelli Vlasova, Novosibirsk
+  start: 2023-11-18
+  end: 2023-12-04
+  hours: 34
+  description_ru: TODO
+  certificate: pdf/certificates/2023-kharizma-public-speaking.pdf
+  translation: auto
+
+2023-kharizma-soft-skills:
+  kind: qualification
+  title_ru: Игры разума. Развитие гибких навыков
+  title_en: Mind games. Developing soft skills
+  provider_ru: ООО Центр «Харизма» Нелли Власовой, Новосибирск
+  provider_en: Kharizma Centre of Nelli Vlasova, Novosibirsk
+  start: 2023-11-11
+  end: 2023-11-30
+  hours: 24
+  description_ru: TODO
+  certificate: pdf/certificates/2023-kharizma-soft-skills.pdf
+  translation: auto
+
+2023-sirius-supercomputing:
+  kind: qualification
+  title_ru: Современные технологии суперкомпьютерного моделирования
+  title_en: Modern technologies of supercomputer modelling
+  provider_ru: Научно-технологический университет «Сириус»
+  provider_en: Sirius University of Science and Technology
+  start: 2023-11-13
+  end: 2023-11-18
+  hours: 34
+  description_ru: TODO
+  certificate: pdf/certificates/2023-sirius-supercomputer-modeling.pdf
+  translation: auto
+
+2022-skolkovo-project-management:
+  kind: qualification
+  title_ru: "Управление проектами: как правильно делать правильные вещи"
+  title_en: "Project management: how to do the right things right"
+  provider_ru: Московская школа управления «СКОЛКОВО»
+  provider_en: Moscow School of Management SKOLKOVO
+  start: 2022-11-22
+  end: 2022-12-22
+  hours: 27
+  description_ru: TODO
+  certificate: pdf/certificates/2022-skolkovo-project-management.pdf
+  translation: auto
+
+2018-skolkovo-university-strategy:
+  kind: qualification
+  title_ru: Проблемные точки реализации стратегических направлений университета
+  title_en: Critical points in implementing a university’s strategic directions
+  provider_ru: Московская школа управления «СКОЛКОВО»
+  provider_en: Moscow School of Management SKOLKOVO
+  start: 2018-01-13
+  end: 2018-01-19
+  hours: 53
+  description_ru: TODO
+  certificate: pdf/certificates/2018-skolkovo-university-strategy.pdf
+  translation: auto

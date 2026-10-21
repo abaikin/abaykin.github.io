@@ -1,0 +1,32 @@
+---
+// Связанные работы: «Статья, 2018: Название» со ссылкой на запись в «Публикациях» или «Выступлениях»
+import type { Lang } from '../i18n';
+import { texHtml } from '../lib/publications';
+
+export interface RelatedWork {
+  kind: string;
+  year: string;
+  title: string;
+  lang: Lang;
+  href: string;
+}
+
+interface Props {
+  items: RelatedWork[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="pub-related">
+  {
+    items.map((r) => (
+      <li>
+        <span class="text-subtle">
+          {r.kind}, {r.year}:{' '}
+        </span>
+        <a href={r.href} lang={r.lang} set:html={texHtml(r.title)} />
+      </li>
+    ))
+  }
+</ul>

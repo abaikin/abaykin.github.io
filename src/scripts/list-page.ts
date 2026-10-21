@@ -10,9 +10,10 @@
 //   [data-list] section[data-year-section] li[data-item]; у записи data-f-<фильтр>="v1 v2", data-alt — доп. текст для поиска
 //   [data-year-nav] ul        — ссылки на годы
 //   a[data-tag]               — тег у записи: включает фильтр tag
-//   button[data-toggle][aria-controls] — раскрыть/свернуть панель (data-label-open / data-label-close)
 //   button[data-copy-text] (+ data-copy-html) — копирование
-//   [data-embed="pdf"|"youtube"] внутри раскрываемой панели — iframe создаётся при первом открытии
+//   «Подробнее» и встроенные PDF / видео — src/scripts/panels.ts
+
+import { bindPanels } from './panels';
 
 const root = document.querySelector<HTMLElement>('[data-list-root]');
 if (root) init(root);
@@ -144,7 +145,8 @@ function init(root: HTMLElement) {
     input?.focus();
   });
 
-  // ---------- Действия внутри записей ----------
+  // ---------- Действия внутри записей: тег → фильтр, копирование; «Подробнее» — в panels.ts ----------
+  bindPanels(list);
   list.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
 
@@ -156,48 +158,9 @@ function init(root: HTMLElement) {
       return;
     }
 
-    const toggle = target.closest<HTMLButtonElement>('button[data-toggle]');
-    if (toggle) {
-      const panel = document.getElementById(toggle.getAttribute('aria-controls') ?? '');
-      const open = toggle.getAttribute('aria-expanded') !== 'true';
-      toggle.setAttribute('aria-expanded', String(open));
-      const label = toggle.querySelector('[data-label]');
-      if (label) label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? label.textContent;
-      if (panel) {
-        panel.hidden = !open;
-        if (open) panel.querySelectorAll<HTMLElement>('[data-embed]').forEach(embed);
-        // Скрытое видео продолжило бы играть: убираем плеер, при следующем открытии он создастся заново
-        else panel.querySelectorAll<HTMLElement>('[data-embed="youtube"]').forEach((box) => box.replaceChildren());
-      }
-      return;
-    }
-
     const copyBtn = target.closest<HTMLButtonElement>('button[data-copy-text]');
     if (copyBtn) void copy(copyBtn, copyBtn.dataset.copyText ?? '', copyBtn.dataset.copyHtml);
   });
-
-  // ---------- Встроенные PDF и видео: создаются при первом открытии панели ----------
-  function embed(box: HTMLElement) {
-    if (box.querySelector('iframe')) return;
-    const kind = box.dataset.embed;
-    if (kind === 'pdf') {
-      // На телефонах встроенный просмотр PDF работает плохо — там остаётся только кнопка «Открыть / Скачать»
-      if (!matchMedia('(min-width: 768px)').matches) return;
-      const frame = document.createElement('iframe');
-      frame.src = `${box.dataset.src}#view=FitH`;
-      frame.title = box.dataset.title ?? '';
-      frame.loading = 'lazy';
-      box.prepend(frame);
-    } else if (kind === 'youtube') {
-      const frame = document.createElement('iframe');
-      frame.src = `https://www.youtube-nocookie.com/embed/${box.dataset.id}?autoplay=1&rel=0`;
-      frame.title = box.dataset.title ?? '';
-      frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-      frame.allowFullscreen = true;
-      frame.referrerPolicy = 'strict-origin-when-cross-origin';
-      box.replaceChildren(frame);
-    }
-  }
 
   // ---------- Ссылка на запись (#id): показать её, даже если фильтры из адреса её скрывали ----------
   function revealHash() {

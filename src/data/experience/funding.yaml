@@ -1,0 +1,40 @@
+# Проекты и гранты (страница «Опыт» → «Проекты и гранты»). Ключ — id записи (якорь …/experience/#funding-<id>).
+# kind: grant | scholarship | contract | program; role: leader — руководитель (у стипендии — стипендиат), participant — исполнитель.
+# start / end — 2018, 2018-03 или 2018-03-26. url — карточка проекта; publications — работы с благодарностью проекту
+# (ключи publications.bib; источники — тексты статей, Crossref, раздел «Информация о финансовой поддержке» в eLibrary).
+# Проекты, где владелец был исполнителем, он добавит сам (TODO.md). Источники: резюме (2026), карточки НИР в eLibrary.
+# translation: auto — английские тексты переведены машинно, проверьте.
+
+president-sp-1703-2022-1:
+  kind: scholarship
+  number: СП-1703.2022.1
+  number_en: SP-1703.2022.1
+  # eLibrary 54002986: «Совет по грантам Президента Российской Федерации», «Стипендии Президента РФ молодым ученым и аспирантам», «Годы: 2022-2024»
+  funder_ru: Стипендия Президента Российской Федерации молодым учёным и аспирантам (Совет по грантам Президента РФ)
+  funder_en: Scholarship of the President of the Russian Federation for young scientists and postgraduates (Council for Grants of the President of the Russian Federation)
+  url: https://elibrary.ru/item.asp?id=54002986
+  title_ru: Математическое моделирование самопроизвольного развития техногенной трещины гидроразрыва пласта на нагнетательной скважине (автоГРП) в термо-пороупругой среде
+  title_en: Mathematical modelling of the spontaneous growth of an induced hydraulic fracture at an injection well (self-induced fracturing) in a thermo-poroelastic medium
+  start: 2022
+  end: 2024
+  role: leader
+  publications: [kopeikin2025metodika, astafyev2024razvitie, gimazov2024reshenie, kopeikin2024proektirovanie, sibin2024ispolzovanie, baykin2023twodimensional, baykin2023modelirovanieb, kalinin2022analiz]
+  translation: auto
+
+rfbr-18-31-00410:
+  kind: grant
+  number: 18-31-00410
+  # eLibrary 50716445: «Руководитель НИР: БАЙКИН А.Н.», конкурс «программа адресной поддержки талантливой молодежи
+  # "От школьника до доктора наук" (МОЛ_А)». В карточке и резюме — «об оценки» (опечатка), на сайте — «об оценке»
+  funder_ru: Российский фонд фундаментальных исследований (РФФИ)
+  funder_en: Russian Foundation for Basic Research (RFBR)
+  url: https://elibrary.ru/item.asp?id=50716445
+  title_ru: Разработка и анализ численных моделей задачи гидроразрыва пласта в пороупругой среде и их применение для решения обратной задачи об оценке физических свойств горной породы
+  title_en: Development and analysis of numerical models of hydraulic fracturing in a poroelastic medium and their application to the inverse problem of estimating rock properties
+  start: 2018-03-26
+  end: 2019-12-31
+  role: leader
+  note_ru: Конкурс «мол_а» — программа адресной поддержки талантливой молодёжи «От школьника до доктора наук»
+  note_en: “mol_a” competition, a targeted support programme for talented young researchers
+  publications: [baykin2021minifrac, baykin2020range]
+  translation: auto

@@ -1,0 +1,23 @@
+---
+// Встроенный просмотр PDF внутри раскрывающейся панели: iframe создаёт scripts/panels.ts при первом открытии,
+// на телефонах вместо него — подсказка и кнопка «Открыть / скачать».
+import Icon from './Icon.astro';
+import { type Lang, t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  href: string;
+  /** Подпись iframe для экранных читалок */
+  title: string;
+}
+
+const { lang, href, title } = Astro.props;
+---
+
+<div class="pdf-embed" data-embed="pdf" data-src={href} data-title={title}>
+  <p class="pdf-embed-mobile">{t(lang, 'common.pdfMobile')}</p>
+  <a class="pub-btn w-fit" href={href}>
+    <Icon name="lucide:download" size={14} />
+    {t(lang, 'common.openPdf')}
+  </a>
+</div>

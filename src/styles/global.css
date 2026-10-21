@@ -898,6 +898,177 @@
     border: 0;
   }
 
+  /* ===== Опыт: вертикальная шкала с маркерами и карточками (формат раздела Experience референса 1) =====
+     Акцент (primary) — только у ссылок и кнопок; линия, маркеры и организация — вторичный цвет (teal). */
+  .exp-section {
+    margin-top: 3.5rem;
+    scroll-margin-top: 7.5rem;
+  }
+  .exp-subheading {
+    margin: 2rem 0 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--c-heading);
+  }
+  .exp-todo {
+    margin-top: 1.25rem;
+    padding-left: 3rem;
+  }
+  .timeline {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    left: calc(1rem - 1px);
+    width: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(var(--c-secondary-line), color-mix(in oklab, var(--c-secondary-line) 25%, transparent));
+  }
+  .timeline-item {
+    position: relative;
+    padding-left: 3rem;
+    scroll-margin-top: 7.5rem;
+  }
+  .timeline-marker {
+    position: absolute;
+    top: 1.25rem;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--c-secondary-line);
+    border-radius: 9999px;
+    background: var(--c-bg);
+    color: var(--c-secondary);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--c-secondary-line) 14%, transparent);
+    transition: transform 0.2s ease;
+  }
+  .timeline-card {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--c-border);
+    border-radius: 0.75rem;
+    background: var(--c-surface);
+    box-shadow: 0 1px 2px rgb(var(--c-shadow) / 0.05);
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+  .timeline-item:hover .timeline-card {
+    border-color: color-mix(in oklab, var(--c-secondary-line) 55%, var(--c-border));
+    transform: translateX(4px);
+  }
+  .timeline-item:hover .timeline-marker {
+    transform: scale(1.08);
+  }
+  .timeline-item:target .timeline-card {
+    border-color: var(--c-secondary-line);
+    background: var(--c-surface-alt);
+  }
+  /* Шапка карточки: на телефоне дата под названием, шире — в правой колонке */
+  .timeline-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem 1.25rem;
+  }
+  .timeline-head > div {
+    min-width: 0;
+  }
+  .timeline-org-link {
+    display: inline-flex;
+    margin-inline-start: 0.35rem;
+    vertical-align: -0.1em;
+    color: var(--c-primary);
+  }
+  .timeline-org-link:hover {
+    color: var(--c-primary-hover);
+  }
+  /* Навигация по разделам страницы «Опыт» — обычным шрифтом (у годов в списках — моноширинный) */
+  .section-nav a {
+    font-family: var(--font-sans);
+  }
+  .timeline-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--c-heading);
+  }
+  .timeline-org {
+    margin-top: 0.2rem;
+    font-weight: 500;
+    color: var(--c-secondary);
+  }
+  .timeline-unit {
+    margin-top: 0.1rem;
+    font-size: 0.9375rem;
+    color: var(--c-muted);
+  }
+  .timeline-number {
+    margin-inline-start: 0.5rem;
+    font-weight: 400;
+    color: var(--c-muted);
+  }
+  .timeline-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    color: var(--c-subtle);
+    white-space: nowrap;
+  }
+  .timeline-meta {
+    margin-top: 0.35rem;
+    font-size: 0.875rem;
+    color: var(--c-subtle);
+  }
+  .timeline-block {
+    margin-top: 0.9rem;
+  }
+  .exp-list {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: 0.3rem;
+    padding-inline-start: 1.25rem;
+    list-style: disc;
+  }
+  .exp-facts {
+    display: grid;
+    gap: 0.25rem 1rem;
+    margin-top: 0.9rem;
+    font-size: 0.9375rem;
+  }
+  .exp-facts dt {
+    color: var(--c-subtle);
+  }
+  @media (min-width: 640px) {
+    .timeline-head {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .timeline-head > div {
+      flex: 1;
+    }
+    .timeline-date {
+      flex: none;
+      padding-top: 0.2rem;
+    }
+    .timeline-item {
+      padding-left: 3.75rem;
+    }
+    .exp-todo {
+      padding-left: 3.75rem;
+    }
+    .exp-facts {
+      grid-template-columns: max-content 1fr;
+    }
+  }
+
   /* Цвета плагина typography берём из палитры */
   .prose {
     --tw-prose-body: var(--c-fg);
@@ -988,5 +1159,10 @@
   .copy-bubble {
     animation-name: copy-bubble-fade !important;
     animation-duration: 1.7s !important;
+  }
+  /* Карточки шкалы «Опыта» не сдвигаются при наведении */
+  .timeline-item:hover .timeline-card,
+  .timeline-item:hover .timeline-marker {
+    transform: none;
   }
 }

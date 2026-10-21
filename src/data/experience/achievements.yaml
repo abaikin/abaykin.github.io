@@ -1,0 +1,94 @@
+# Достижения (страница «Опыт» → «Достижения»). Ключ — id записи.
+# kind: letter — благодарственное письмо, award — награда, премия, стипендия, конкурс (документ о достижении).
+# date — 2024, 2025-09 или TODO; pdf — скан в public/assets/ (нет — на странице «скан будет добавлен»).
+# talk — связанное выступление (id в src/content/talks/), funding — связанный грант (id в funding.yaml).
+# Источники: документы владельца, резюме (2026), текст диссертации (2016, с. 20–21).
+# translation: auto — английские тексты переведены машинно, проверьте.
+
+# ---------- Благодарственные письма ----------
+2024-technohack-expert:
+  kind: letter
+  # Проходил 29.01–04.02.2024 (engineers2030.ru); в письме — только год
+  date: 2024
+  title_ru: Благодарственное письмо за работу экспертом Зимнего инженерного интенсива TechnoHack’24
+  title_en: Letter of appreciation for serving as an expert at the TechnoHack’24 Winter Engineering Intensive
+  issuer_ru: Передовая инженерная школа НГУ «Когнитивная инженерия»
+  issuer_en: Advanced Engineering School “Cognitive Engineering”, Novosibirsk State University
+  pdf: pdf/certificates/2024-nsu-technohack-expert.pdf
+  translation: auto
+
+technohack-mentor:
+  kind: letter
+  # TODO: год — в письме не указан; по оформлению и партнёрам, вероятно, первый зимний TechnoHack (28.01–02.02.2023)
+  date: TODO
+  title_ru: Благодарность за работу наставником на Зимнем инженерном интенсиве TechnoHack
+  title_en: Letter of appreciation for serving as a mentor at the TechnoHack Winter Engineering Intensive
+  issuer_ru: Передовая инженерная школа НГУ «Когнитивная инженерия» и Открытый университет Сколково
+  issuer_en: Advanced Engineering School “Cognitive Engineering” (Novosibirsk State University) and Skolkovo Open University
+  pdf: pdf/certificates/nsu-technohack-mentor.pdf
+  translation: auto
+
+# ---------- Награды и документы о достижениях ----------
+2025-geomodel-best-talk:
+  kind: award
+  date: 2025-09
+  title_ru: Лучший доклад сессии «Геомеханика и гидродинамика»
+  title_en: Best talk of the Geomechanics and Hydrodynamics session
+  issuer_ru: «Геомодель 2025» — 27-я научно-практическая конференция по вопросам геологоразведки и разработки месторождений нефти и газа
+  issuer_en: Geomodel 2025, 27th scientific and practical conference on oil and gas exploration and field development
+  pdf: pdf/certificates/2025-geomodel-best-talk.pdf
+  talk: 2025-geomodel
+  translation: auto
+
+2022-president-scholarship:
+  kind: award
+  date: 2022
+  title_ru: Стипендия Президента Российской Федерации молодым учёным и аспирантам (2022–2024)
+  title_en: Scholarship of the President of the Russian Federation for young scientists and postgraduates (2022–2024)
+  issuer_ru: Совет по грантам Президента Российской Федерации
+  issuer_en: Council for Grants of the President of the Russian Federation
+  funding: president-sp-1703-2022-1
+  # TODO: скан документа — владелец добавит
+  translation: auto
+
+2015-igil-young-scientists:
+  kind: award
+  date: 2015-10
+  title_ru: 1-е место на конкурсе молодых учёных Института гидродинамики им. М. А. Лаврентьева СО РАН
+  title_en: First prize at the Young Scientists Competition of the Lavrentyev Institute of Hydrodynamics SB RAS
+  issuer_ru: Институт гидродинамики им. М. А. Лаврентьева СО РАН
+  issuer_en: Lavrentyev Institute of Hydrodynamics SB RAS
+  # TODO: скан документа — владелец добавит
+  translation: auto
+
+2014-schlumberger-phd-scholarship:
+  kind: award
+  date: 2014
+  title_ru: Schlumberger PhD Scholarship Bronze Award (2014/2015 учебный год)
+  title_en: Schlumberger PhD Scholarship Bronze Award for the Academic Year 2014/2015
+  issuer_ru: Шлюмберже
+  issuer_en: Schlumberger
+  note_ru: В диссертации — «конкурс среди аспирантов СО РАН и НГУ 1-го и 2-го годов обучения на соискание стипендий Шлюмберже (Новосибирск, 2014), где было получено призовое 3-е место».
+  note_en: The thesis mentions the 3rd prize at the Schlumberger scholarship competition for first- and second-year postgraduates of SB RAS and NSU (Novosibirsk, 2014).
+  # TODO: скан документа — владелец добавит
+  translation: auto
+
+2014-igil-young-scientists:
+  kind: award
+  date: 2014-11
+  title_ru: 1-е место на конкурсе молодых учёных Института гидродинамики им. М. А. Лаврентьева СО РАН
+  title_en: First prize at the Young Scientists Competition of the Lavrentyev Institute of Hydrodynamics SB RAS
+  issuer_ru: Институт гидродинамики им. М. А. Лаврентьева СО РАН
+  issuer_en: Lavrentyev Institute of Hydrodynamics SB RAS
+  # TODO: скан документа — владелец добавит
+  translation: auto
+
+2013-igil-young-scientists:
+  kind: award
+  date: 2013-12
+  title_ru: 2-е место на конкурсе молодых учёных Института гидродинамики им. М. А. Лаврентьева СО РАН
+  title_en: Second prize at the Young Scientists Competition of the Lavrentyev Institute of Hydrodynamics SB RAS
+  issuer_ru: Институт гидродинамики им. М. А. Лаврентьева СО РАН
+  issuer_en: Lavrentyev Institute of Hydrodynamics SB RAS
+  # TODO: скан документа — владелец добавит
+  translation: auto

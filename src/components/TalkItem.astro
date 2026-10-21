@@ -3,6 +3,7 @@
 // награда, теги, кнопки (Подробнее, Тезисы, Слайды, Видео, Сертификат, Сайт, Программа, Публикация)
 // и раскрывающаяся панель: секция, встроенные PDF из public/assets, связанные публикации.
 import Icon from './Icon.astro';
+import PdfEmbed from './PdfEmbed.astro';
 import { type Lang, type UIKey, loc, t } from '../i18n';
 import { asset, assetExists, langHref } from '../lib/site';
 import { type Pub, isOwner, normalize, texHtml, translit, venueLine } from '../lib/publications';
@@ -246,11 +247,8 @@ const alt = normalize(
             .map((f) => (
               <section>
                 <h4 class="pub-dt">{f.label}</h4>
-                <div class="pdf-embed mt-2" data-embed="pdf" data-src={f.href} data-title={`${f.label}: ${title.text}`}>
-                  <p class="pdf-embed-mobile">{tr('talks.pdfMobile')}</p>
-                  <a class="pub-btn w-fit" href={f.href}>
-                    <Icon name="lucide:download" size={14} /> {tr('talks.open')}
-                  </a>
+                <div class="mt-2">
+                  <PdfEmbed lang={lang} href={f.href!} title={`${f.label}: ${title.text}`} />
                 </div>
               </section>
             ))}
